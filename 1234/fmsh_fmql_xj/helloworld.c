@@ -76,8 +76,7 @@ void oled_display_task(void) {
 	uint8_t ip1 = 0;
 	uint8_t ip2 = 0;
 	uint8_t ip3 = 0;
-
-	OLED_Init();  // 初始化 OLED
+	
 	while(1)
 	{
 		OLED_Refresh();

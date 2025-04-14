@@ -32,6 +32,13 @@ Initialize user application code.
 * usrAppInit - initialize the users application
 */ 
 extern void uart_task(unsigned int channel);
+
+
+void Init_HardWare(void)
+{
+    OLED_Init();  // 初始化 OLED
+}
+
 void usrAppInit (void)
     {
 #ifdef	USER_APPL_INIT
@@ -39,8 +46,15 @@ void usrAppInit (void)
 #endif
 
     /* add application specific code here */
-	printf("hello   22222!\r\n"); 
-//	startUartRecvTask();
+	printf("Device Start Run ... \r\n"); 
+    Init_HardWare();
+    /*
+        2. Para Read form flash & Store
+        3. Task Create：
+            A.TCP Server Init
+            B.
+            C.
+    */
 	startPortTcpServer();
 	startTcpServerTask();
 	//startOLEDtask();
