@@ -1,5 +1,0 @@
-set WIND_BASE D:/WindRiver69_new/WindRiver69_new/vxworks-6.9
-set VSB_DIR D:/WindRiver69_new/WindRiver69_new/vxworks-6.9/target/lib
-set BSP_DIR D:/WindRiver69_new/WindRiver69_new/vxworks-6.9/target/config/fmsh_fmql_xj
-set ANALYSIS_DKM_DIR D:/WindRiver69_new/WindRiver69_new/vxworks-6.9/target/lib/arm/ARMARCH7/common/dkm/analysis
-set PRJ_FULL_PATH D:/vxworkspace/FMSH/1234
