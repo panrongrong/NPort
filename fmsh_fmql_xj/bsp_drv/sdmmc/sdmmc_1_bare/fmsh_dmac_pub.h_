@@ -1,0 +1,123 @@
+/******************************************************************************
+*
+* Copyright (C) 2018 - 2028 FMSH, Inc.  All rights reserved.
+*
+******************************************************************************/
+/******************************************************************************
+*
+* @file  fmsh_dmac_pub.h
+*
+* This file contains
+*
+* @note		None.
+*
+* MODIFICATION HISTORY:
+*
+*<pre>
+* Ver   Who  Date     Changes
+* ----- ---- -------- ---------------------------------------------
+* 0.01   yl  12/20/2018  First Release
+*</pre>
+******************************************************************************/
+#ifndef _FMSH_DMAC_PUB_H_
+#define _FMSH_DMAC_PUB_H_
+
+#ifdef __cplusplus
+extern "C" {    /* allow C++ to use these headers*/
+#endif
+
+/***************************** Include Files *********************************/
+
+#include "../../common/fmsh_common.h"
+  
+/************************** Constant Definitions *****************************/
+
+/**************************** Type Definitions *******************************/
+
+/*****************************************************************************
+* DESCRIPTION
+*  This is the data type used for enabling software or hardware
+*  handshaking for DMA transfers.  Using software handshaking changes
+*  how an interrupt handler processes Rx full and Tx empty interrupts.
+*  Any DesignWare peripheral which supports DMA transfers has API
+*  function which match those listed below.
+*
+*****************************************************************************/
+enum FMSH_dmaMode {
+    FMSH_dma_none,            /* DMA is not being used*/
+    FMSH_dma_sw_handshake,    /* DMA using software handshaking*/
+    FMSH_dma_hw_handshake     /* DMA using hardware handshaking*/
+};
+
+/*****************************************************************************
+* DESCRIPTION
+*  This is the primary structure used when dealing with DMA controller.
+*  It allows this code to support more than one device of the same type
+*  simultaneously.  This structure needs to be initialized with
+*  meaningful values before a pointer to it is passed to a driver
+*  initialization function.
+* PARAMETERS
+*  name            name of device
+*  dataWidth       bus data width of the device
+*  baseAddress     physical base address of device
+*  instance        device private data structure pointer
+*  os              unused pointer for associating with an OS structure
+*  compParam       pointer to structure containing device's
+*                  coreConsultant configuration parameters structure
+*  compVersion     device version identification number
+*  compType        device identification number
+*
+*****************************************************************************/
+typedef struct _dmac_device {
+    const char *name;
+    unsigned data_width;
+    u32 base_address;
+    struct _dmac_instance *instance;
+    struct _dmac_param *comp_param;
+    UINT32 comp_version;
+    enum FMSH_compType comp_type;
+    FMSH_listHead list;
+}FDmaPs_T;
+
+/***************** Macros (Inline Functions) Definitions *********************/
+
+/*****************************************************************************
+* DESCRIPTION
+*  This is the data type used for specifying DMA notifier functions.
+*  These are needed when software handshaking is used with peripheral
+*  DMA transfers in order to inform the DMA controller when data is
+*  ready to be sent/received.
+*
+* @param    
+*           pDmac is the pointer to the DMA controller device.
+*           channel associated channel number
+*           single single or burst transfer?
+*           last is this the last block?
+*
+* @note     NA.
+*
+*****************************************************************************/
+typedef void (*FMSH_dmaNotifierFunc)(FDmaPs_T *pDmac, unsigned
+        channel, BOOL single, BOOL last);
+
+/*****************************************************************************
+* DESCRIPTION
+*  This is the data structure used to store a DMA notifier function
+*  and its related arguments.
+*
+*****************************************************************************/
+typedef struct fmsh_dma_config {
+    enum FMSH_dmaMode mode;
+    FMSH_dmaNotifierFunc notifier;
+    FDmaPs_T *dmac;
+    unsigned channel;
+}FDmaPs_config_T;
+
+/************************** Function Prototypes ******************************/
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* ifndef _FMSH_COMMON_PUB_H_ */
+
