@@ -1,0 +1,1214 @@
+
+////////////////////////////////////////////////////////////////////////////////////////
+// 2st version chip huali founder
+////////////////////////////////////////////////////////////////////////////////////////
+
+-> lsusb
+bus count = 1
+
+ Bus 000 Device 127: ID 0000:0000  
+ Bus 000 Device 001: ID 2109:2813 VIA Labs, Inc.6 USB2.0 HubT 
+ Bus 000 Device 003: ID 1C4F:0002 SIGMACHIP USB Keyboard 
+ Bus 000 Device 004: ID 17EF:608D PixArt Lenovo USB Optical Mouse 
+ Bus 000 Device 002: ID 8644:800A General                       - USB Flash Disk                > 0000000000000774
+ Bus 000 Device 005: ID 0DD8:E203 Ntc USB Flash Disk5 1988F82FA1739F76
+value = 1 = 0x1
+-> 
+-> 
+-> usbShow
+bus count = 1
+
+=============================
+Enumerating Root Hub bus 0
+
+  Node ID: 0x7F (Bus - 0x0 Address - 0x7F)
+  Descriptor Type: 0x1
+  USB Release (BCD): 0x0200
+  Device Class: 0x09
+  Device SubClass: 0x00
+  Device Protocol: 0x01
+  Translation of above: Hub
+  Max Packet Size 0: 0x40 (64)
+  Vendor Code: 0x0000
+  Product Code: 0x0000
+  Device Version: 0x0000
+  Manufacturer Index: 0x00 ("")
+  Product Index: 0x00 ("")
+  Serial Number Index: 0x00 ("")
+  Number of Configurations: 0x01
+======================================================
+ 
+  The hub at Bus:000 has 1 available ports
+--------------------------------------------------
+ 
+  Bus:000 Port:0
+  A device is connected to Bus:000 Port:0.
+  Node ID: 0x1 (Bus - 0x0 Address - 0x1)
+  Descriptor Type: 0x1
+  USB Release (BCD): 0x0210
+  Device Class: 0x09
+  Device SubClass: 0x00
+  Device Protocol: 0x01
+  Translation of above: Hub
+  Max Packet Size 0: 0x40 (64)
+  Vendor Code: 0x2109
+  Product Code: 0x2813
+  Device Version: 0x9011
+  Manufacturer Index: 0x01 ("VIA Labs, Inc.6")
+  Product Index: 0x02 ("USB2.0 HubT")
+  Serial Number Index: 0x00 ("")
+  Number of Configurations: 0x01
+  Configuration index 0:
+      Config Descriptor Length: 0x09
+      Config Descriptor Type: 0x02
+      Config Descriptor Total Length: 0x0019 (25)
+      Config Descriptor Number of Interfaces: 0x01
+      Config Descriptor Configuration Value: 0x01
+      Config Descriptor String Index: 0x0000 ("")
+      Config Descriptor Attribute byte: 0xE0
+          Device can be bus powered (valid only for usb1.x)
+          Device can be self powered
+          Device does have remote wakeup capability
+      Config Descriptor Max Power: 0x0 (0 ma)
+      --------------------------
+      Configuration Interface 0
+         Interface Descriptor Length: 0x09
+         Interface Descriptor Type: 0x04
+         Interface Number: 0x00
+         Interface Alternate Setting: 0x00
+         Interface numEndpoints: 0x01
+         Interface Class: 0x09
+         Interface SubClass: 0x00
+         Interface Protocol: 0x00
+         Translation of above: Hub
+         Interface Index: 0x00 ("")
+         Endpoint Index: 0
+           Endpoint Descriptor length: 0x07
+           Endpoint Descriptor Type: 0x05
+           Endpoint Address Mask: 0x81
+               Endpoint number: 0x01
+               Endpoint Direction: IN
+           Attributes Mask: 0x03
+               Transfer Type: Interrupt.
+               Synchronization Type: No Synchronization.
+               Usage Type: Data Endpoint.
+           Maximum Packet Size: 0x0001 (1)
+           Interval: 0x0C
+======================================================
+ 
+ - The hub at Bus:000 HubPort:0 has 4 available ports
+--------------------------------------------------
+ 
+ - Bus:000 HubPort:0 Port:0
+ - A device is connected to Bus:000 HubPort:0 Port:0.
+ - Node ID: 0x3 (Bus - 0x0 Address - 0x3)
+ - Descriptor Type: 0x1
+ - USB Release (BCD): 0x0110
+ - Device Class: 0x00
+ - Device SubClass: 0x00
+ - Device Protocol: 0x00
+ - Translation of above: Unknown
+ - Max Packet Size 0: 0x08 (8)
+ - Vendor Code: 0x1C4F
+ - Product Code: 0x0002
+ - Device Version: 0x0110
+ - Manufacturer Index: 0x01 ("SIGMACHIP")
+ - Product Index: 0x02 ("USB Keyboard")
+ - Serial Number Index: 0x00 ("")
+ - Number of Configurations: 0x01
+ - Port Connection Status: A device is present. (0x0303)
+ - Port is enabled.
+ - Port is not suspended.
+ - Port is not in an overcurrent situation.
+ - Reset signalling is not being asserted.
+ - Port Power is not in the powered of state.
+ - Device is attached as a LOW SPEED device.
+ - This device is not in Port Test Mode.
+ - Configuration index 0:
+ -     Config Descriptor Length: 0x09
+ -     Config Descriptor Type: 0x02
+ -     Config Descriptor Total Length: 0x003B (59)
+ -     Config Descriptor Number of Interfaces: 0x02
+ -     Config Descriptor Configuration Value: 0x01
+ -     Config Descriptor String Index: 0x0000 ("")
+ -     Config Descriptor Attribute byte: 0xA0
+ -         Device can be bus powered (valid only for usb1.x)
+ -         Device cannot be self powered
+ -         Device does have remote wakeup capability
+ -     Config Descriptor Max Power: 0x31 (98 ma)
+ -     --------------------------
+ -     Configuration Interface 0
+ -        Interface Descriptor Length: 0x09
+ -        Interface Descriptor Type: 0x04
+ -        Interface Number: 0x00
+ -        Interface Alternate Setting: 0x00
+ -        Interface numEndpoints: 0x01
+ -        Interface Class: 0x03
+ -        Interface SubClass: 0x01
+ -        Interface Protocol: 0x01
+ -        Translation of above: Human Interface Device
+ -        Interface Index: 0x00 ("")
+ -        Endpoint Index: 0
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x81
+ -              Endpoint number: 0x01
+ -              Endpoint Direction: IN
+ -          Attributes Mask: 0x03
+ -              Transfer Type: Interrupt.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0008 (8)
+ -          Interval: 0x0A
+ -     --------------------------
+ -     Configuration Interface 1
+ -        Interface Descriptor Length: 0x09
+ -        Interface Descriptor Type: 0x04
+ -        Interface Number: 0x01
+ -        Interface Alternate Setting: 0x00
+ -        Interface numEndpoints: 0x01
+ -        Interface Class: 0x03
+ -        Interface SubClass: 0x00
+ -        Interface Protocol: 0x00
+ -        Translation of above: Human Interface Device
+ -        Interface Index: 0x00 ("")
+ -        Endpoint Index: 0
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x82
+ -              Endpoint number: 0x02
+ -              Endpoint Direction: IN
+ -          Attributes Mask: 0x03
+ -              Transfer Type: Interrupt.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0003 (3)
+ -          Interval: 0x0A
+--------------------------------------------------
+ 
+ - Bus:000 HubPort:0 Port:1
+ - A device is connected to Bus:000 HubPort:0 Port:1.
+ - Node ID: 0x4 (Bus - 0x0 Address - 0x4)
+ - Descriptor Type: 0x1
+ - USB Release (BCD): 0x0200
+ - Device Class: 0x00
+ - Device SubClass: 0x00
+ - Device Protocol: 0x00
+ - Translation of above: Unknown
+ - Max Packet Size 0: 0x08 (8)
+ - Vendor Code: 0x17EF
+ - Product Code: 0x608D
+ - Device Version: 0x0100
+ - Manufacturer Index: 0x01 ("PixArt")
+ - Product Index: 0x02 ("Lenovo USB Optical Mouse")
+ - Serial Number Index: 0x00 ("")
+ - Number of Configurations: 0x01
+ - Port Connection Status: A device is present. (0x0303)
+ - Port is enabled.
+ - Port is not suspended.
+ - Port is not in an overcurrent situation.
+ - Reset signalling is not being asserted.
+ - Port Power is not in the powered of state.
+ - Device is attached as a LOW SPEED device.
+ - This device is not in Port Test Mode.
+ - Configuration index 0:
+ -     Config Descriptor Length: 0x09
+ -     Config Descriptor Type: 0x02
+ -     Config Descriptor Total Length: 0x0022 (34)
+ -     Config Descriptor Number of Interfaces: 0x01
+ -     Config Descriptor Configuration Value: 0x01
+ -     Config Descriptor String Index: 0x0000 ("")
+ -     Config Descriptor Attribute byte: 0xA0
+ -         Device can be bus powered (valid only for usb1.x)
+ -         Device cannot be self powered
+ -         Device does have remote wakeup capability
+ -     Config Descriptor Max Power: 0x32 (100 ma)
+ -     --------------------------
+ -     Configuration Interface 0
+ -        Interface Descriptor Length: 0x09
+ -        Interface Descriptor Type: 0x04
+ -        Interface Number: 0x00
+ -        Interface Alternate Setting: 0x00
+ -        Interface numEndpoints: 0x01
+ -        Interface Class: 0x03
+ -        Interface SubClass: 0x01
+ -        Interface Protocol: 0x02
+ -        Translation of above: Human Interface Device
+ -        Interface Index: 0x00 ("")
+ -        Endpoint Index: 0
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x81
+ -              Endpoint number: 0x01
+ -              Endpoint Direction: IN
+ -          Attributes Mask: 0x03
+ -              Transfer Type: Interrupt.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0008 (8)
+ -          Interval: 0x0A
+--------------------------------------------------
+ 
+ - Bus:000 HubPort:0 Port:2
+ - A device is connected to Bus:000 HubPort:0 Port:2.
+ - Node ID: 0x2 (Bus - 0x0 Address - 0x2)
+ - Descriptor Type: 0x1
+ - USB Release (BCD): 0x0200
+ - Device Class: 0x00
+ - Device SubClass: 0x00
+ - Device Protocol: 0x00
+ - Translation of above: Unknown
+ - Max Packet Size 0: 0x40 (64)
+ - Vendor Code: 0x8644
+ - Product Code: 0x800A
+ - Device Version: 0x0100
+ - Manufacturer Index: 0x01 ("General                       -")
+ - Product Index: 0x02 ("USB Flash Disk                >")
+ - Serial Number Index: 0x03 ("0000000000000774")
+ - Number of Configurations: 0x01
+ - Port Connection Status: A device is present. (0x0503)
+ - Port is enabled.
+ - Port is not suspended.
+ - Port is not in an overcurrent situation.
+ - Reset signalling is not being asserted.
+ - Port Power is not in the powered of state.
+ - Device is attached as a HIGH SPEED device.
+ - This device is not in Port Test Mode.
+ - Configuration index 0:
+ -     Config Descriptor Length: 0x09
+ -     Config Descriptor Type: 0x02
+ -     Config Descriptor Total Length: 0x0020 (32)
+ -     Config Descriptor Number of Interfaces: 0x01
+ -     Config Descriptor Configuration Value: 0x01
+ -     Config Descriptor String Index: 0x0000 ("")
+ -     Config Descriptor Attribute byte: 0x80
+ -         Device can be bus powered (valid only for usb1.x)
+ -         Device cannot be self powered
+ -         Device does not have remote wakeup capability
+ -     Config Descriptor Max Power: 0x64 (200 ma)
+ -     --------------------------
+ -     Configuration Interface 0
+ -        Interface Descriptor Length: 0x09
+ -        Interface Descriptor Type: 0x04
+ -        Interface Number: 0x00
+ -        Interface Alternate Setting: 0x00
+ -        Interface numEndpoints: 0x02
+ -        Interface Class: 0x08
+ -        Interface SubClass: 0x06
+ -        Interface Protocol: 0x50
+ -        Translation of above: Mass Storage device
+ -        Interface Index: 0x00 ("")
+ -        Endpoint Index: 0
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x02
+ -              Endpoint number: 0x02
+ -              Endpoint Direction: OUT
+ -          Attributes Mask: 0x02
+ -              Transfer Type: Bulk.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0200 (512)
+ -          Interval: 0x00
+ -        Endpoint Index: 1
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x82
+ -              Endpoint number: 0x02
+ -              Endpoint Direction: IN
+ -          Attributes Mask: 0x02
+ -              Transfer Type: Bulk.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0200 (512)
+ -          Interval: 0x00
+--------------------------------------------------
+ 
+ - Bus:000 HubPort:0 Port:3
+ - A device is connected to Bus:000 HubPort:0 Port:3.
+ - Node ID: 0x5 (Bus - 0x0 Address - 0x5)
+ - Descriptor Type: 0x1
+ - USB Release (BCD): 0x0200
+ - Device Class: 0x00
+ - Device SubClass: 0x00
+ - Device Protocol: 0x00
+ - Translation of above: Unknown
+ - Max Packet Size 0: 0x40 (64)
+ - Vendor Code: 0x0DD8
+ - Product Code: 0xE203
+ - Device Version: 0x0100
+ - Manufacturer Index: 0x01 ("Ntc")
+ - Product Index: 0x02 ("USB Flash Disk5")
+ - Serial Number Index: 0x03 ("1988F82FA1739F76")
+ - Number of Configurations: 0x01
+ - Port Connection Status: A device is present. (0x0503)
+ - Port is enabled.
+ - Port is not suspended.
+ - Port is not in an overcurrent situation.
+ - Reset signalling is not being asserted.
+ - Port Power is not in the powered of state.
+ - Device is attached as a HIGH SPEED device.
+ - This device is not in Port Test Mode.
+ - Configuration index 0:
+ -     Config Descriptor Length: 0x09
+ -     Config Descriptor Type: 0x02
+ -     Config Descriptor Total Length: 0x0020 (32)
+ -     Config Descriptor Number of Interfaces: 0x01
+ -     Config Descriptor Configuration Value: 0x01
+ -     Config Descriptor String Index: 0x0000 ("")
+ -     Config Descriptor Attribute byte: 0x80
+ -         Device can be bus powered (valid only for usb1.x)
+ -         Device cannot be self powered
+ -         Device does not have remote wakeup capability
+ -     Config Descriptor Max Power: 0xFA (500 ma)
+ -     --------------------------
+ -     Configuration Interface 0
+ -        Interface Descriptor Length: 0x09
+ -        Interface Descriptor Type: 0x04
+ -        Interface Number: 0x00
+ -        Interface Alternate Setting: 0x00
+ -        Interface numEndpoints: 0x02
+ -        Interface Class: 0x08
+ -        Interface SubClass: 0x06
+ -        Interface Protocol: 0x50
+ -        Translation of above: Mass Storage device
+ -        Interface Index: 0x00 ("")
+ -        Endpoint Index: 0
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x01
+ -              Endpoint number: 0x01
+ -              Endpoint Direction: OUT
+ -          Attributes Mask: 0x02
+ -              Transfer Type: Bulk.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0200 (512)
+ -          Interval: 0x00
+ -        Endpoint Index: 1
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x82
+ -              Endpoint number: 0x02
+ -              Endpoint Direction: IN
+ -          Attributes Mask: 0x02
+ -              Transfer Type: Bulk.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0200 (512)
+ -          Interval: 0x00
+value = 1 = 0x1
+-> 
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+// 1st version chip
+////////////////////////////////////////////////////////////////////////////////////////
+
+-> 
+-> 
+-> lsusb
+bus count = 1
+
+ Bus 000 Device 127: ID 0000:0000  
+ Bus 000 Device 001: ID 2109:2813 VIA Labs, Inc.6 USB2.0 HubT 
+ Bus 000 Device 002: ID 1C4F:0002 SIGMACHIP USB Keyboard 
+ Bus 000 Device 003: ID 17EF:608D PixArt Lenovo USB Optical Mouse 
+ Bus 000 Device 004: ID 8644:800A General                       - USB Flash Disk                > 0000000000000774
+ Bus 000 Device 005: ID 0DD8:E203 Ntc USB Flash Disk5 1988F82FA1739F76
+value = 1 = 0x1
+-> 
+-> 
+-> usbShow
+bus count = 1
+
+=============================
+Enumerating Root Hub bus 0
+
+  Node ID: 0x7F (Bus - 0x0 Address - 0x7F)
+  Descriptor Type: 0x1
+  USB Release (BCD): 0x0200
+  Device Class: 0x09
+  Device SubClass: 0x00
+  Device Protocol: 0x01
+  Translation of above: Hub
+  Max Packet Size 0: 0x40 (64)
+  Vendor Code: 0x0000
+  Product Code: 0x0000
+  Device Version: 0x0000
+  Manufacturer Index: 0x00 ("")
+  Product Index: 0x00 ("")
+  Serial Number Index: 0x00 ("")
+  Number of Configurations: 0x01
+======================================================
+ 
+  The hub at Bus:000 has 1 available ports
+--------------------------------------------------
+ 
+  Bus:000 Port:0
+  A device is connected to Bus:000 Port:0.
+  Node ID: 0x1 (Bus - 0x0 Address - 0x1)
+  Descriptor Type: 0x1
+  USB Release (BCD): 0x0210
+  Device Class: 0x09
+  Device SubClass: 0x00
+  Device Protocol: 0x01
+  Translation of above: Hub
+  Max Packet Size 0: 0x40 (64)
+  Vendor Code: 0x2109
+  Product Code: 0x2813
+  Device Version: 0x9011
+  Manufacturer Index: 0x01 ("VIA Labs, Inc.6")
+  Product Index: 0x02 ("USB2.0 HubT")
+  Serial Number Index: 0x00 ("")
+  Number of Configurations: 0x01
+  Configuration index 0:
+      Config Descriptor Length: 0x09
+      Config Descriptor Type: 0x02
+      Config Descriptor Total Length: 0x0019 (25)
+      Config Descriptor Number of Interfaces: 0x01
+      Config Descriptor Configuration Value: 0x01
+      Config Descriptor String Index: 0x0000 ("")
+      Config Descriptor Attribute byte: 0xE0
+          Device can be bus powered (valid only for usb1.x)
+          Device can be self powered
+          Device does have remote wakeup capability
+      Config Descriptor Max Power: 0x0 (0 ma)
+      --------------------------
+      Configuration Interface 0
+         Interface Descriptor Length: 0x09
+         Interface Descriptor Type: 0x04
+         Interface Number: 0x00
+         Interface Alternate Setting: 0x00
+         Interface numEndpoints: 0x01
+         Interface Class: 0x09
+         Interface SubClass: 0x00
+         Interface Protocol: 0x00
+         Translation of above: Hub
+         Interface Index: 0x00 ("")
+         Endpoint Index: 0
+           Endpoint Descriptor length: 0x07
+           Endpoint Descriptor Type: 0x05
+           Endpoint Address Mask: 0x81
+               Endpoint number: 0x01
+               Endpoint Direction: IN
+           Attributes Mask: 0x03
+               Transfer Type: Interrupt.
+               Synchronization Type: No Synchronization.
+               Usage Type: Data Endpoint.
+           Maximum Packet Size: 0x0001 (1)
+           Interval: 0x0C
+======================================================
+ 
+ - The hub at Bus:000 HubPort:0 has 4 available ports
+--------------------------------------------------
+ 
+ - Bus:000 HubPort:0 Port:0
+ - A device is connected to Bus:000 HubPort:0 Port:0.
+ - Node ID: 0x2 (Bus - 0x0 Address - 0x2)
+ - Descriptor Type: 0x1
+ - USB Release (BCD): 0x0110
+ - Device Class: 0x00
+ - Device SubClass: 0x00
+ - Device Protocol: 0x00
+ - Translation of above: Unknown
+ - Max Packet Size 0: 0x08 (8)
+ - Vendor Code: 0x1C4F
+ - Product Code: 0x0002
+ - Device Version: 0x0110
+ - Manufacturer Index: 0x01 ("SIGMACHIP")
+ - Product Index: 0x02 ("USB Keyboard")
+ - Serial Number Index: 0x00 ("")
+ - Number of Configurations: 0x01
+ - Port Connection Status: A device is present. (0x0303)
+ - Port is enabled.
+ - Port is not suspended.
+ - Port is not in an overcurrent situation.
+ - Reset signalling is not being asserted.
+ - Port Power is not in the powered of state.
+ - Device is attached as a LOW SPEED device.
+ - This device is not in Port Test Mode.
+ - Configuration index 0:
+ -     Config Descriptor Length: 0x09
+ -     Config Descriptor Type: 0x02
+ -     Config Descriptor Total Length: 0x003B (59)
+ -     Config Descriptor Number of Interfaces: 0x02
+ -     Config Descriptor Configuration Value: 0x01
+ -     Config Descriptor String Index: 0x0000 ("")
+ -     Config Descriptor Attribute byte: 0xA0
+ -         Device can be bus powered (valid only for usb1.x)
+ -         Device cannot be self powered
+ -         Device does have remote wakeup capability
+ -     Config Descriptor Max Power: 0x31 (98 ma)
+ -     --------------------------
+ -     Configuration Interface 0
+ -        Interface Descriptor Length: 0x09
+ -        Interface Descriptor Type: 0x04
+ -        Interface Number: 0x00
+ -        Interface Alternate Setting: 0x00
+ -        Interface numEndpoints: 0x01
+ -        Interface Class: 0x03
+ -        Interface SubClass: 0x01
+ -        Interface Protocol: 0x01
+ -        Translation of above: Human Interface Device
+ -        Interface Index: 0x00 ("")
+ -        Endpoint Index: 0
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x81
+ -              Endpoint number: 0x01
+ -              Endpoint Direction: IN
+ -          Attributes Mask: 0x03
+ -              Transfer Type: Interrupt.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0008 (8)
+ -          Interval: 0x0A
+ -     --------------------------
+ -     Configuration Interface 1
+ -        Interface Descriptor Length: 0x09
+ -        Interface Descriptor Type: 0x04
+ -        Interface Number: 0x01
+ -        Interface Alternate Setting: 0x00
+ -        Interface numEndpoints: 0x01
+ -        Interface Class: 0x03
+ -        Interface SubClass: 0x00
+ -        Interface Protocol: 0x00
+ -        Translation of above: Human Interface Device
+ -        Interface Index: 0x00 ("")
+ -        Endpoint Index: 0
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x82
+ -              Endpoint number: 0x02
+ -              Endpoint Direction: IN
+ -          Attributes Mask: 0x03
+ -              Transfer Type: Interrupt.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0003 (3)
+ -          Interval: 0x0A
+--------------------------------------------------
+ 
+ - Bus:000 HubPort:0 Port:1
+ - A device is connected to Bus:000 HubPort:0 Port:1.
+ - Node ID: 0x3 (Bus - 0x0 Address - 0x3)
+ - Descriptor Type: 0x1
+ - USB Release (BCD): 0x0200
+ - Device Class: 0x00
+ - Device SubClass: 0x00
+ - Device Protocol: 0x00
+ - Translation of above: Unknown
+ - Max Packet Size 0: 0x08 (8)
+ - Vendor Code: 0x17EF
+ - Product Code: 0x608D
+ - Device Version: 0x0100
+ - Manufacturer Index: 0x01 ("PixArt")
+ - Product Index: 0x02 ("Lenovo USB Optical Mouse")
+ - Serial Number Index: 0x00 ("")
+ - Number of Configurations: 0x01
+ - Port Connection Status: A device is present. (0x0303)
+ - Port is enabled.
+ - Port is not suspended.
+ - Port is not in an overcurrent situation.
+ - Reset signalling is not being asserted.
+ - Port Power is not in the powered of state.
+ - Device is attached as a LOW SPEED device.
+ - This device is not in Port Test Mode.
+ - Configuration index 0:
+ -     Config Descriptor Length: 0x09
+ -     Config Descriptor Type: 0x02
+ -     Config Descriptor Total Length: 0x0022 (34)
+ -     Config Descriptor Number of Interfaces: 0x01
+ -     Config Descriptor Configuration Value: 0x01
+ -     Config Descriptor String Index: 0x0000 ("")
+ -     Config Descriptor Attribute byte: 0xA0
+ -         Device can be bus powered (valid only for usb1.x)
+ -         Device cannot be self powered
+ -         Device does have remote wakeup capability
+ -     Config Descriptor Max Power: 0x32 (100 ma)
+ -     --------------------------
+ -     Configuration Interface 0
+ -        Interface Descriptor Length: 0x09
+ -        Interface Descriptor Type: 0x04
+ -        Interface Number: 0x00
+ -        Interface Alternate Setting: 0x00
+ -        Interface numEndpoints: 0x01
+ -        Interface Class: 0x03
+ -        Interface SubClass: 0x01
+ -        Interface Protocol: 0x02
+ -        Translation of above: Human Interface Device
+ -        Interface Index: 0x00 ("")
+ -        Endpoint Index: 0
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x81
+ -              Endpoint number: 0x01
+ -              Endpoint Direction: IN
+ -          Attributes Mask: 0x03
+ -              Transfer Type: Interrupt.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0008 (8)
+ -          Interval: 0x0A
+--------------------------------------------------
+ 
+ - Bus:000 HubPort:0 Port:2
+ - A device is connected to Bus:000 HubPort:0 Port:2.
+ - Node ID: 0x4 (Bus - 0x0 Address - 0x4)
+ - Descriptor Type: 0x1
+ - USB Release (BCD): 0x0200
+ - Device Class: 0x00
+ - Device SubClass: 0x00
+ - Device Protocol: 0x00
+ - Translation of above: Unknown
+ - Max Packet Size 0: 0x40 (64)
+ - Vendor Code: 0x8644
+ - Product Code: 0x800A
+ - Device Version: 0x0100
+ - Manufacturer Index: 0x01 ("General                       -")
+ - Product Index: 0x02 ("USB Flash Disk                >")
+ - Serial Number Index: 0x03 ("0000000000000774")
+ - Number of Configurations: 0x01
+ - Port Connection Status: A device is present. (0x0503)
+ - Port is enabled.
+ - Port is not suspended.
+ - Port is not in an overcurrent situation.
+ - Reset signalling is not being asserted.
+ - Port Power is not in the powered of state.
+ - Device is attached as a HIGH SPEED device.
+ - This device is not in Port Test Mode.
+ - Configuration index 0:
+ -     Config Descriptor Length: 0x09
+ -     Config Descriptor Type: 0x02
+ -     Config Descriptor Total Length: 0x0020 (32)
+ -     Config Descriptor Number of Interfaces: 0x01
+ -     Config Descriptor Configuration Value: 0x01
+ -     Config Descriptor String Index: 0x0000 ("")
+ -     Config Descriptor Attribute byte: 0x80
+ -         Device can be bus powered (valid only for usb1.x)
+ -         Device cannot be self powered
+ -         Device does not have remote wakeup capability
+ -     Config Descriptor Max Power: 0x64 (200 ma)
+ -     --------------------------
+ -     Configuration Interface 0
+ -        Interface Descriptor Length: 0x09
+ -        Interface Descriptor Type: 0x04
+ -        Interface Number: 0x00
+ -        Interface Alternate Setting: 0x00
+ -        Interface numEndpoints: 0x02
+ -        Interface Class: 0x08
+ -        Interface SubClass: 0x06
+ -        Interface Protocol: 0x50
+ -        Translation of above: Mass Storage device
+ -        Interface Index: 0x00 ("")
+ -        Endpoint Index: 0
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x02
+ -              Endpoint number: 0x02
+ -              Endpoint Direction: OUT
+ -          Attributes Mask: 0x02
+ -              Transfer Type: Bulk.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0200 (512)
+ -          Interval: 0x00
+ -        Endpoint Index: 1
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x82
+ -              Endpoint number: 0x02
+ -              Endpoint Direction: IN
+ -          Attributes Mask: 0x02
+ -              Transfer Type: Bulk.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0200 (512)
+ -          Interval: 0x00
+--------------------------------------------------
+ 
+ - Bus:000 HubPort:0 Port:3
+ - A device is connected to Bus:000 HubPort:0 Port:3.
+ - Node ID: 0x5 (Bus - 0x0 Address - 0x5)
+ - Descriptor Type: 0x1
+ - USB Release (BCD): 0x0200
+ - Device Class: 0x00
+ - Device SubClass: 0x00
+ - Device Protocol: 0x00
+ - Translation of above: Unknown
+ - Max Packet Size 0: 0x40 (64)
+ - Vendor Code: 0x0DD8
+ - Product Code: 0xE203
+ - Device Version: 0x0100
+ - Manufacturer Index: 0x01 ("Ntc")
+ - Product Index: 0x02 ("USB Flash Disk5")
+ - Serial Number Index: 0x03 ("1988F82FA1739F76")
+ - Number of Configurations: 0x01
+ - Port Connection Status: A device is present. (0x0503)
+ - Port is enabled.
+ - Port is not suspended.
+ - Port is not in an overcurrent situation.
+ - Reset signalling is not being asserted.
+ - Port Power is not in the powered of state.
+ - Device is attached as a HIGH SPEED device.
+ - This device is not in Port Test Mode.
+ - Configuration index 0:
+ -     Config Descriptor Length: 0x09
+ -     Config Descriptor Type: 0x02
+ -     Config Descriptor Total Length: 0x0020 (32)
+ -     Config Descriptor Number of Interfaces: 0x01
+ -     Config Descriptor Configuration Value: 0x01
+ -     Config Descriptor String Index: 0x0000 ("")
+ -     Config Descriptor Attribute byte: 0x80
+ -         Device can be bus powered (valid only for usb1.x)
+ -         Device cannot be self powered
+ -         Device does not have remote wakeup capability
+ -     Config Descriptor Max Power: 0xFA (500 ma)
+ -     --------------------------
+ -     Configuration Interface 0
+ -        Interface Descriptor Length: 0x09
+ -        Interface Descriptor Type: 0x04
+ -        Interface Number: 0x00
+ -        Interface Alternate Setting: 0x00
+ -        Interface numEndpoints: 0x02
+ -        Interface Class: 0x08
+ -        Interface SubClass: 0x06
+ -        Interface Protocol: 0x50
+ -        Translation of above: Mass Storage device
+ -        Interface Index: 0x00 ("")
+ -        Endpoint Index: 0
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x01
+ -              Endpoint number: 0x01
+ -              Endpoint Direction: OUT
+ -          Attributes Mask: 0x02
+ -              Transfer Type: Bulk.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0200 (512)
+ -          Interval: 0x00
+ -        Endpoint Index: 1
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x82
+ -              Endpoint number: 0x02
+ -              Endpoint Direction: IN
+ -          Attributes Mask: 0x02
+ -              Transfer Type: Bulk.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0200 (512)
+ -          Interval: 0x00
+value = 1 = 0x1
+-> 
+-> 
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////
+// 1st version chip: keyboard is ok and used in console
+////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+-> 
+-> lsusb
+bus count = 1
+
+ Bus 000 Device 127: ID 0000:0000  
+ Bus 000 Device 001: ID 2109:2813 VIA Labs, Inc.6 USB2.0 HubT 
+ Bus 000 Device 002: ID 1C4F:0002 SIGMACHIP USB Keyboard 
+ Bus 000 Device 003: ID 17EF:608D PixArt Lenovo USB Optical Mouse 
+ Bus 000 Device 004: ID 8644:800A General                       - USB Flash Disk                > 0000000000000774
+ Bus 000 Device 005: ID 0DD8:E203 Ntc USB Flash Disk5 1988F82FA1739F76
+value = 1 = 0x1
+-> 
+-> 
+-> usbShow
+bus count = 1
+
+=============================
+Enumerating Root Hub bus 0
+
+  Node ID: 0x7F (Bus - 0x0 Address - 0x7F)
+  Descriptor Type: 0x1
+  USB Release (BCD): 0x0200
+  Device Class: 0x09
+  Device SubClass: 0x00
+  Device Protocol: 0x01
+  Translation of above: Hub
+  Max Packet Size 0: 0x40 (64)
+  Vendor Code: 0x0000
+  Product Code: 0x0000
+  Device Version: 0x0000
+  Manufacturer Index: 0x00 ("")
+  Product Index: 0x00 ("")
+  Serial Number Index: 0x00 ("")
+  Number of Configurations: 0x01
+======================================================
+ 
+  The hub at Bus:000 has 1 available ports
+--------------------------------------------------
+ 
+  Bus:000 Port:0
+  A device is connected to Bus:000 Port:0.
+  Node ID: 0x1 (Bus - 0x0 Address - 0x1)
+  Descriptor Type: 0x1
+  USB Release (BCD): 0x0210
+  Device Class: 0x09
+  Device SubClass: 0x00
+  Device Protocol: 0x01
+  Translation of above: Hub
+  Max Packet Size 0: 0x40 (64)
+  Vendor Code: 0x2109
+  Product Code: 0x2813
+  Device Version: 0x9011
+  Manufacturer Index: 0x01 ("VIA Labs, Inc.6")
+  Product Index: 0x02 ("USB2.0 HubT")
+  Serial Number Index: 0x00 ("")
+  Number of Configurations: 0x01
+  Configuration index 0:
+      Config Descriptor Length: 0x09
+      Config Descriptor Type: 0x02
+      Config Descriptor Total Length: 0x0019 (25)
+      Config Descriptor Number of Interfaces: 0x01
+      Config Descriptor Configuration Value: 0x01
+      Config Descriptor String Index: 0x0000 ("")
+      Config Descriptor Attribute byte: 0xE0
+          Device can be bus powered (valid only for usb1.x)
+          Device can be self powered
+          Device does have remote wakeup capability
+      Config Descriptor Max Power: 0x0 (0 ma)
+      --------------------------
+      Configuration Interface 0
+         Interface Descriptor Length: 0x09
+         Interface Descriptor Type: 0x04
+         Interface Number: 0x00
+         Interface Alternate Setting: 0x00
+         Interface numEndpoints: 0x01
+         Interface Class: 0x09
+         Interface SubClass: 0x00
+         Interface Protocol: 0x00
+         Translation of above: Hub
+         Interface Index: 0x00 ("")
+         Endpoint Index: 0
+           Endpoint Descriptor length: 0x07
+           Endpoint Descriptor Type: 0x05
+           Endpoint Address Mask: 0x81
+               Endpoint number: 0x01
+               Endpoint Direction: IN
+           Attributes Mask: 0x03
+               Transfer Type: Interrupt.
+               Synchronization Type: No Synchronization.
+               Usage Type: Data Endpoint.
+           Maximum Packet Size: 0x0001 (1)
+           Interval: 0x0C
+======================================================
+ 
+ - The hub at Bus:000 HubPort:0 has 4 available ports
+--------------------------------------------------
+ 
+ - Bus:000 HubPort:0 Port:0
+ - A device is connected to Bus:000 HubPort:0 Port:0.
+ - Node ID: 0x2 (Bus - 0x0 Address - 0x2)
+ - Descriptor Type: 0x1
+ - USB Release (BCD): 0x0110
+ - Device Class: 0x00
+ - Device SubClass: 0x00
+ - Device Protocol: 0x00
+ - Translation of above: Unknown
+ - Max Packet Size 0: 0x08 (8)
+ - Vendor Code: 0x1C4F
+ - Product Code: 0x0002
+ - Device Version: 0x0110
+ - Manufacturer Index: 0x01 ("SIGMACHIP")
+ - Product Index: 0x02 ("USB Keyboard")
+ - Serial Number Index: 0x00 ("")
+ - Number of Configurations: 0x01
+ - Port Connection Status: A device is present. (0x0303)
+ - Port is enabled.
+ - Port is not suspended.
+ - Port is not in an overcurrent situation.
+ - Reset signalling is not being asserted.
+ - Port Power is not in the powered of state.
+ - Device is attached as a LOW SPEED device.
+ - This device is not in Port Test Mode.
+ - Configuration index 0:
+ -     Config Descriptor Length: 0x09
+ -     Config Descriptor Type: 0x02
+ -     Config Descriptor Total Length: 0x003B (59)
+ -     Config Descriptor Number of Interfaces: 0x02
+ -     Config Descriptor Configuration Value: 0x01
+ -     Config Descriptor String Index: 0x0000 ("")
+ -     Config Descriptor Attribute byte: 0xA0
+ -         Device can be bus powered (valid only for usb1.x)
+ -         Device cannot be self powered
+ -         Device does have remote wakeup capability
+ -     Config Descriptor Max Power: 0x31 (98 ma)
+ -     --------------------------
+ -     Configuration Interface 0
+ -        Interface Descriptor Length: 0x09
+ -        Interface Descriptor Type: 0x04
+ -        Interface Number: 0x00
+ -        Interface Alternate Setting: 0x00
+ -        Interface numEndpoints: 0x01
+ -        Interface Class: 0x03
+ -        Interface SubClass: 0x01
+ -        Interface Protocol: 0x01
+ -        Translation of above: Human Interface Device
+ -        Interface Index: 0x00 ("")
+ -        Endpoint Index: 0
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x81
+ -              Endpoint number: 0x01
+ -              Endpoint Direction: IN
+ -          Attributes Mask: 0x03
+ -              Transfer Type: Interrupt.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0008 (8)
+ -          Interval: 0x0A
+ -     --------------------------
+ -     Configuration Interface 1
+ -        Interface Descriptor Length: 0x09
+ -        Interface Descriptor Type: 0x04
+ -        Interface Number: 0x01
+ -        Interface Alternate Setting: 0x00
+ -        Interface numEndpoints: 0x01
+ -        Interface Class: 0x03
+ -        Interface SubClass: 0x00
+ -        Interface Protocol: 0x00
+ -        Translation of above: Human Interface Device
+ -        Interface Index: 0x00 ("")
+ -        Endpoint Index: 0
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x82
+ -              Endpoint number: 0x02
+ -              Endpoint Direction: IN
+ -          Attributes Mask: 0x03
+ -              Transfer Type: Interrupt.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0003 (3)
+ -          Interval: 0x0A
+--------------------------------------------------
+ 
+ - Bus:000 HubPort:0 Port:1
+ - A device is connected to Bus:000 HubPort:0 Port:1.
+ - Node ID: 0x3 (Bus - 0x0 Address - 0x3)
+ - Descriptor Type: 0x1
+ - USB Release (BCD): 0x0200
+ - Device Class: 0x00
+ - Device SubClass: 0x00
+ - Device Protocol: 0x00
+ - Translation of above: Unknown
+ - Max Packet Size 0: 0x08 (8)
+ - Vendor Code: 0x17EF
+ - Product Code: 0x608D
+ - Device Version: 0x0100
+ - Manufacturer Index: 0x01 ("PixArt")
+ - Product Index: 0x02 ("Lenovo USB Optical Mouse")
+ - Serial Number Index: 0x00 ("")
+ - Number of Configurations: 0x01
+ - Port Connection Status: A device is present. (0x0303)
+ - Port is enabled.
+ - Port is not suspended.
+ - Port is not in an overcurrent situation.
+ - Reset signalling is not being asserted.
+ - Port Power is not in the powered of state.
+ - Device is attached as a LOW SPEED device.
+ - This device is not in Port Test Mode.
+ - Configuration index 0:
+ -     Config Descriptor Length: 0x09
+ -     Config Descriptor Type: 0x02
+ -     Config Descriptor Total Length: 0x0022 (34)
+ -     Config Descriptor Number of Interfaces: 0x01
+ -     Config Descriptor Configuration Value: 0x01
+ -     Config Descriptor String Index: 0x0000 ("")
+ -     Config Descriptor Attribute byte: 0xA0
+ -         Device can be bus powered (valid only for usb1.x)
+ -         Device cannot be self powered
+ -         Device does have remote wakeup capability
+ -     Config Descriptor Max Power: 0x32 (100 ma)
+ -     --------------------------
+ -     Configuration Interface 0
+ -        Interface Descriptor Length: 0x09
+ -        Interface Descriptor Type: 0x04
+ -        Interface Number: 0x00
+ -        Interface Alternate Setting: 0x00
+ -        Interface numEndpoints: 0x01
+ -        Interface Class: 0x03
+ -        Interface SubClass: 0x01
+ -        Interface Protocol: 0x02
+ -        Translation of above: Human Interface Device
+ -        Interface Index: 0x00 ("")
+ -        Endpoint Index: 0
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x81
+ -              Endpoint number: 0x01
+ -              Endpoint Direction: IN
+ -          Attributes Mask: 0x03
+ -              Transfer Type: Interrupt.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0008 (8)
+ -          Interval: 0x0A
+--------------------------------------------------
+ 
+ - Bus:000 HubPort:0 Port:2
+ - A device is connected to Bus:000 HubPort:0 Port:2.
+ - Node ID: 0x4 (Bus - 0x0 Address - 0x4)
+ - Descriptor Type: 0x1
+ - USB Release (BCD): 0x0200
+ - Device Class: 0x00
+ - Device SubClass: 0x00
+ - Device Protocol: 0x00
+ - Translation of above: Unknown
+ - Max Packet Size 0: 0x40 (64)
+ - Vendor Code: 0x8644
+ - Product Code: 0x800A
+ - Device Version: 0x0100
+ - Manufacturer Index: 0x01 ("General                       -")
+ - Product Index: 0x02 ("USB Flash Disk                >")
+ - Serial Number Index: 0x03 ("0000000000000774")
+ - Number of Configurations: 0x01
+ - Port Connection Status: A device is present. (0x0503)
+ - Port is enabled.
+ - Port is not suspended.
+ - Port is not in an overcurrent situation.
+ - Reset signalling is not being asserted.
+ - Port Power is not in the powered of state.
+ - Device is attached as a HIGH SPEED device.
+ - This device is not in Port Test Mode.
+ - Configuration index 0:
+ -     Config Descriptor Length: 0x09
+ -     Config Descriptor Type: 0x02
+ -     Config Descriptor Total Length: 0x0020 (32)
+ -     Config Descriptor Number of Interfaces: 0x01
+ -     Config Descriptor Configuration Value: 0x01
+ -     Config Descriptor String Index: 0x0000 ("")
+ -     Config Descriptor Attribute byte: 0x80
+ -         Device can be bus powered (valid only for usb1.x)
+ -         Device cannot be self powered
+ -         Device does not have remote wakeup capability
+ -     Config Descriptor Max Power: 0x64 (200 ma)
+ -     --------------------------
+ -     Configuration Interface 0
+ -        Interface Descriptor Length: 0x09
+ -        Interface Descriptor Type: 0x04
+ -        Interface Number: 0x00
+ -        Interface Alternate Setting: 0x00
+ -        Interface numEndpoints: 0x02
+ -        Interface Class: 0x08
+ -        Interface SubClass: 0x06
+ -        Interface Protocol: 0x50
+ -        Translation of above: Mass Storage device
+ -        Interface Index: 0x00 ("")
+ -        Endpoint Index: 0
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x02
+ -              Endpoint number: 0x02
+ -              Endpoint Direction: OUT
+ -          Attributes Mask: 0x02
+ -              Transfer Type: Bulk.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0200 (512)
+ -          Interval: 0x00
+ -        Endpoint Index: 1
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x82
+ -              Endpoint number: 0x02
+ -              Endpoint Direction: IN
+ -          Attributes Mask: 0x02
+ -              Transfer Type: Bulk.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0200 (512)
+ -          Interval: 0x00
+--------------------------------------------------
+ 
+ - Bus:000 HubPort:0 Port:3
+ - A device is connected to Bus:000 HubPort:0 Port:3.
+ - Node ID: 0x5 (Bus - 0x0 Address - 0x5)
+ - Descriptor Type: 0x1
+ - USB Release (BCD): 0x0200
+ - Device Class: 0x00
+ - Device SubClass: 0x00
+ - Device Protocol: 0x00
+ - Translation of above: Unknown
+ - Max Packet Size 0: 0x40 (64)
+ - Vendor Code: 0x0DD8
+ - Product Code: 0xE203
+ - Device Version: 0x0100
+ - Manufacturer Index: 0x01 ("Ntc")
+ - Product Index: 0x02 ("USB Flash Disk5")
+ - Serial Number Index: 0x03 ("1988F82FA1739F76")
+ - Number of Configurations: 0x01
+ - Port Connection Status: A device is present. (0x0503)
+ - Port is enabled.
+ - Port is not suspended.
+ - Port is not in an overcurrent situation.
+ - Reset signalling is not being asserted.
+ - Port Power is not in the powered of state.
+ - Device is attached as a HIGH SPEED device.
+ - This device is not in Port Test Mode.
+ - Configuration index 0:
+ -     Config Descriptor Length: 0x09
+ -     Config Descriptor Type: 0x02
+ -     Config Descriptor Total Length: 0x0020 (32)
+ -     Config Descriptor Number of Interfaces: 0x01
+ -     Config Descriptor Configuration Value: 0x01
+ -     Config Descriptor String Index: 0x0000 ("")
+ -     Config Descriptor Attribute byte: 0x80
+ -         Device can be bus powered (valid only for usb1.x)
+ -         Device cannot be self powered
+ -         Device does not have remote wakeup capability
+ -     Config Descriptor Max Power: 0xFA (500 ma)
+ -     --------------------------
+ -     Configuration Interface 0
+ -        Interface Descriptor Length: 0x09
+ -        Interface Descriptor Type: 0x04
+ -        Interface Number: 0x00
+ -        Interface Alternate Setting: 0x00
+ -        Interface numEndpoints: 0x02
+ -        Interface Class: 0x08
+ -        Interface SubClass: 0x06
+ -        Interface Protocol: 0x50
+ -        Translation of above: Mass Storage device
+ -        Interface Index: 0x00 ("")
+ -        Endpoint Index: 0
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x01
+ -              Endpoint number: 0x01
+ -              Endpoint Direction: OUT
+ -          Attributes Mask: 0x02
+ -              Transfer Type: Bulk.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0200 (512)
+ -          Interval: 0x00
+ -        Endpoint Index: 1
+ -          Endpoint Descriptor length: 0x07
+ -          Endpoint Descriptor Type: 0x05
+ -          Endpoint Address Mask: 0x82
+ -              Endpoint number: 0x02
+ -              Endpoint Direction: IN
+ -          Attributes Mask: 0x02
+ -              Transfer Type: Bulk.
+ -              Synchronization Type: No Synchronization.
+ -              Usage Type: Data Endpoint.
+ -          Maximum Packet Size: 0x0200 (512)
+ -          Interval: 0x00
+value = 1 = 0x1
+-> 
