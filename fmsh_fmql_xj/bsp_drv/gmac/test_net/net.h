@@ -1,6 +1,0 @@
-#define DATASIZE 1024
-
-#define SVRPORT 8000 
-#define FRAMESIZE 0x400
-#define TCPPROTOCAL  1 
-#define UDPPROTOCAL  0
