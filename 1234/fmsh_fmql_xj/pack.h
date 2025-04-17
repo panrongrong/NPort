@@ -1,128 +1,81 @@
+//#ifndef PACK_H_
+//#define PACK_H_
+///*ä¸Šé¢ä»£ç å®ç°è¿æ¥å¤šç«¯å£è¿æ¥tcp*/
+//#define BUFFERCOM_SIZE 1024
+//#define     STATE_INIT      0
+//#define     STATE_CONN_FAIL 1
+//#define     STATE_TCP_OPEN  2
+//#define     STATE_TCP_CONN  3
+//#define     STATE_TCP_CLOSE 4
+//#define     STATE_TCP_WAIT  5
+//#define     STATE_RW_DATA   6
+//#define NUM_PORTS 16
+//
+//const char* STATE_NAMES[] = {
+//    "STATE_INIT",       
+//    "STATE_CONN_FAIL",  
+//    "STATE_TCP_OPEN",   
+//    "STATE_TCP_CONN",   
+//    "STATE_TCP_CLOSE",  
+//    "STATE_TCP_WAIT",   
+//    "STATE_RW_DATA",    
+//};
+//const int portdata_array[] = {950, 951, 952, 953, 954, 955, 956, 957, 958, 959, 960, 961, 962, 963, 964, 965};
+//const int channel_array[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+//const int portcmd_array[] = {966, 967, 968, 969, 970, 971, 972, 973, 974, 975, 976, 977, 978, 979, 980, 981};
+//int bauderate_table[] = { 300, 600, 1200, 2400, 4800, 7200, 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600, 150, 134, 110, 75, 50};
+//unsigned int data_bit_table[] = { 5, 6, 7, 8 };
+//
+//typedef struct usart_params1
+//{
+//	unsigned int  baud_rate;
+//	unsigned char data_bit;
+//	unsigned char stop_bit;
+//	unsigned char parity;
+//	unsigned char mark;
+//	unsigned char space;
+//	unsigned char usart_mcr_dtr;
+//	unsigned char usart_mcr_rts;
+//	unsigned char usart_crtscts;
+//	unsigned char IX_on;
+//	unsigned char IX_off; //XonXoff
+//}usart_params1_t;
+//
+//typedef struct {
+//    usart_params1_t config;  
+//    MSG_Q_ID msg_queue;          
+//
+//    int server_fdcmd;	
+//    int sock_cmd;               // Socketæ–‡ä»¶æè¿°ç¬¦
+//    struct sockaddr_in serverAddr_cmd;
+//    struct sockaddr_in clientAddr_cmd;
+//    socklen_t clientLen_cmd;
+//    
+//    int sock_data;              // Socketæ–‡ä»¶æè¿°ç¬¦
+//    struct sockaddr_in serverAddr_data;
+//    struct sockaddr_in clientAddr_data;
+//    socklen_t clientLen_data;
+//    
+//    uint16_t sock_cmd_port;       // Socketç«¯å£å·
+//    uint16_t sock_data_port;       // Socketç«¯å£å·
+//
+//    char tx_buffer[1024];          // å‘é€ç¼“å†²åŒºæŒ‡é’ˆ
+//    char rx_buffer[1024];          // æ¥æ”¶ç¼“å†²åŒºæŒ‡é’ˆ
+//
+//    uint8_t state; 
+//} UART_Config_Params;
+//UART_Config_Params uart_instances[NUM_PORTS];
+//
+//void creat_tcp(UART_Config_Params *uart_instance, int port);
+//void bind_tcp(UART_Config_Params *uart_instance, int port);
+//void listen_tcp(UART_Config_Params *uart_instance, int port);
+//void accept_tcp(UART_Config_Params *uart_instance, int port);
+//void recv_uartdata(UART_Config_Params *uart_instance);
+//void processUartInstances(UART_Config_Params *uart_instances, int num_ports);
+//
+//#endif
 #ifndef PACK_H_
 #define PACK_H_
-
-//typedef enum {
-//	TYPE_700BYTE = 700,
-//	TYPE_1400BYTE = 1400,
-//	TYPE_2000BYTE = 2000
-//}GPPACK_TYPE;
-//
-//typedef enum {
-//	TYPE_730BYTE_IMAGE  = 730,
-//	TYPE_1480BYTE_IMAGE = 1480,
-//	TYPE_2000BYTE_IMAGE = 2000
-//}UNPACKIMAGE_TYPE;
-//
-//#define BASE_LINE 100   //Ö¡³¤¶ÈÄ¿Ç°Îª100£¬¿ÉÒÔ±ä¸ü
-//#define BUFF_TEMP 8096  //»º´æÊı×é
-//#define BUFF_IMAGE 16384 //Í¼ÏñÖ¡»º´æÊı×é
-//
-//typedef enum {
-//	TYPE4 = 3,
-//	TYPE3 = 2,
-//	TYPE2 = 1
-//}GPPACK_LENGTH_TYPE;
-//
-//
-////ÓÅÏÈ¼¶ÅÅĞò£¬ÀàĞÍ4>ÀàĞÍ3>ÀàĞÍ2
-//typedef struct _pack_head_t
-//{
-//	int pack_length2; //ÀàĞÍ2
-//	int pack_length3; //ÀàĞÍ3
-//	int pack_length4; //ÀàĞÍ4
-//}pack_head_t;
-//pack_head_t temp_t;
-//
-//
-//
-//typedef struct 
-//{
-//	int socket_s; //socket¾ä±ú
-//	int deep;  //ÏûÏ¢¶ÓÁĞÉî¶È
-//	int width;  //ÏûÏ¢¶ÓÁĞ¿í¶È
-//	char * IPADDR; //ipµØÖ·
-//	int port;  //¶Ë¿ÚºÅ
-//	MSG_Q_ID recv_m;  //ÏûÏ¢¶ÓÁĞ
-//}DM_message_recv;
-//DM_message_recv dm_recv;
-//
-//
-//
-//typedef struct
-//{
-//	int  type;
-//	int  length;
-//}DM_message_width;
-//
-//
-//typedef struct 
-//{
-//	int socket_s; //socket¾ä±ú
-//	int deep;  //ÏûÏ¢¶ÓÁĞÉî¶È
-//	//int width;  //ÏûÏ¢¶ÓÁĞ¿í¶È
-//	DM_message_width width_s;
-//	//char * IPADDR; //ipµØÖ·
-//	//int port;  //¶Ë¿ÚºÅ
-//	MSG_Q_ID send_m;  //ÏûÏ¢¶ÓÁĞ
-//}DM_message_send;
-//DM_message_send dm_send;
-//
-//
-//
-//
-//typedef struct 
-//{
-//	int socket_s; //socket¾ä±ú
-//	int deep;  //ÏûÏ¢¶ÓÁĞÉî¶È
-//	int width;  //ÏûÏ¢¶ÓÁĞ¿í¶È
-//	char * IPADDR; //ipµØÖ·
-//	int port;  //¶Ë¿ÚºÅ
-//	MSG_Q_ID recv_m;  //ÏûÏ¢¶ÓÁĞ
-//	int (*jz_recv_data)(int sock,MSG_Q_ID msg); //»Øµ÷º¯Êı
-//	TASK_ID jz_task;    //taskid
-//	char * jz_task_name;  //taskname
-//}JZ_message_recv;
-//JZ_message_recv jz_recv1;
-//JZ_message_recv jz_recv2;
-//JZ_message_recv jz_recv3;
-//JZ_message_recv jz_recv4;
-//JZ_message_recv jz_recv5;
-//
-//typedef struct 
-//{
-//	int socket_s; //socket¾ä±ú
-//	int deep;  //ÏûÏ¢¶ÓÁĞÉî¶È
-//	int width;  //ÏûÏ¢¶ÓÁĞ¿í¶È
-//	MSG_Q_ID send_m;  //ÏûÏ¢¶ÓÁĞ
-//}JZ_message_send;
-//JZ_message_send jz_send;
-//
-//
-//typedef struct
-//{
-//	char *images_total; //Í¼ÏñÖ¡°ü
-//	int images_total_length; //Í¼ÏñÖ¡×Ü³¤¶È
-//	char images_nums;//Í¼ÏñÖ¡±àºÅ
-//	char images_unpack; //²ğ°ü±àºÅ
-//	char images_high; //Í¼ÏñÖ¡¸ßÎ»
-//	char images_low; //Í¼ÏñÖ¡µÍÎ»
-//}images_unpack;
-//images_unpack images_nums1;
-//images_unpack images_nums2;
-//
-//
-//
-//
-//
-//
-//
-//extern int kongkou_yaoce(char *buf, int size);
-//void init_DM_data();
-//int get_image_test(char *buf,unsigned int size);
-//int kongkou_image(char *buf, int size);
-//extern int get_image(UINT8 *buf,int size);
-//extern int get_image1(UINT8 *buf,int size);
-//extern int get_xiaxing700(UINT8 *buf,int size);
 
 #define BUFFERCOM_SIZE 1024
 #define     STATE_INIT      0
@@ -169,31 +122,39 @@ typedef struct {
     MSG_Q_ID msg_queue;          
 
     int server_fdcmd;	
-    int sock_cmd;               // SocketÎÄ¼şÃèÊö·û
+    int sock_cmd;               // Socketæ–‡ä»¶æè¿°ç¬¦
     struct sockaddr_in serverAddr_cmd;
     struct sockaddr_in clientAddr_cmd;
     socklen_t clientLen_cmd;
     
-    int sock_data;              // SocketÎÄ¼şÃèÊö·û
+    int server_fddata;
+    int sock_data;              // Socketæ–‡ä»¶æè¿°ç¬¦
     struct sockaddr_in serverAddr_data;
     struct sockaddr_in clientAddr_data;
     socklen_t clientLen_data;
     
-    uint16_t sock_cmd_port;       // Socket¶Ë¿ÚºÅ
-    uint16_t sock_data_port;       // Socket¶Ë¿ÚºÅ
+    uint16_t sock_cmd_port;       // Socketç«¯å£å·
+    uint16_t sock_data_port;       // Socketç«¯å£å·
+    
+    int choose_channel;
 
-    char tx_buffer[1024];          // ·¢ËÍ»º³åÇøÖ¸Õë
-    char rx_buffer[1024];          // ½ÓÊÕ»º³åÇøÖ¸Õë
+    char tx_buffer[1024];          // å‘é€ç¼“å†²åŒºæŒ‡é’ˆ
+    char rx_buffer[1024];          // æ¥æ”¶ç¼“å†²åŒºæŒ‡é’ˆ
 
     uint8_t state; 
 } UART_Config_Params;
 UART_Config_Params uart_instances[NUM_PORTS];
 
-void creat_tcp(UART_Config_Params *uart_instance, int port);
-void bind_tcp(UART_Config_Params *uart_instance, int port);
-void listen_tcp(UART_Config_Params *uart_instance, int port);
-void accept_tcp(UART_Config_Params *uart_instance, int port);
-void recv_uartdata(UART_Config_Params *uart_instance, int port);
+void creat_tcp(UART_Config_Params *uart_instance);
+void bind_tcp(UART_Config_Params *uart_instance);
+void listen_tcp(UART_Config_Params *uart_instance);
+void accept_tcp(UART_Config_Params *uart_instance);
+void creat_tcpdata(UART_Config_Params *uart_instance);
+void bind_tcpdata(UART_Config_Params *uart_instance);
+void listen_tcpdata(UART_Config_Params *uart_instance);
+void accept_tcpdata(UART_Config_Params *uart_instance);
+void recv_tcpdata_task(UART_Config_Params *uart_instance);
+void recv_uartdata_task(UART_Config_Params *uart_instance);
 void processUartInstances(UART_Config_Params *uart_instances, int num_ports);
 
 #endif
