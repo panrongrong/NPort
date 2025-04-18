@@ -76,6 +76,7 @@
 //#endif
 #ifndef PACK_H_
 #define PACK_H_
+#include <netinet/in.h>
 
 #define BUFFERCOM_SIZE 1024
 #define     STATE_INIT      0
@@ -155,6 +156,7 @@ void listen_tcpdata(UART_Config_Params *uart_instance);
 void accept_tcpdata(UART_Config_Params *uart_instance);
 void recv_tcpdata_task(UART_Config_Params *uart_instance);
 void recv_uartdata_task(UART_Config_Params *uart_instance);
+void recv_tcpcmd_task(UART_Config_Params *uart_instance);
 void processUartInstances(UART_Config_Params *uart_instances, int num_ports);
 
 #endif

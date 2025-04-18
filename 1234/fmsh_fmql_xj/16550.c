@@ -4,8 +4,9 @@
 #include <stddef.h>
 #include <fcntl.h>
 #include <tickLib.h>
+#include "pack.h"
 
-#define AXI_UART_BASE(n)         (0x41200000 + 0x2000 * n) /* »ùµØÖ· */
+#define AXI_UART_BASE(n)         (0x41200000 + 0x2000 * n) /* åŸºåœ°å€ */
 #define AXI_16550_INT            (84)
 #define AXI_16550_CLK            (29491200)
 #define AXI_16550_CLK1           (32000000)
@@ -22,48 +23,14 @@
 #define AXI_16550_DLL            (0x1000)
 #define AXI_16550_DLM            (0x1004)
 #define BRAM_KZ                  (0x00000004)
-#define LCR_SBRK                  0x40  // BREAK ÐÅºÅ¿ØÖÆÎ»
+#define LCR_SBRK                  0x40  // BREAK ä¿¡å·æŽ§åˆ¶ä½
 #define LSR_TX_READY              0x01  /* Data Ready */
 #define LSR_TX_BUFFER_EMPTY       0x20  /* Transmit  reg empty */
-// ¶¨Òå XON/XOFF ¿ØÖÆ×Ö·û£¨ASCII Öµ£©
-#define XON_CHAR  0x11  // XON ×Ö·û£¨DC1£©
-#define XOFF_CHAR 0x13  // XOFF ×Ö·û£¨DC3£©
-#define LSR_THRE_MASK  0x20    // ·¢ËÍ±£³Ö¼Ä´æÆ÷Îª¿Õ±êÖ¾Î»
+// å®šä¹‰ XON/XOFF æŽ§åˆ¶å­—ç¬¦ï¼ˆASCII å€¼ï¼‰
+#define XON_CHAR  0x11  // XON å­—ç¬¦ï¼ˆDC1ï¼‰
+#define XOFF_CHAR 0x13  // XOFF å­—ç¬¦ï¼ˆDC3ï¼‰
+#define LSR_THRE_MASK  0x20    // å‘é€ä¿æŒå¯„å­˜å™¨ä¸ºç©ºæ ‡å¿—ä½
 
-#define CHUNK_SIZE 1024  // Ã¿´Î·¢ËÍµÄÊý¾Ý¿é´óÐ¡
-#define TIMEOUT_MS 1000  // ³¬Ê±Ê±¼ä£¨ºÁÃë£©
- 
-#define CHOOSEONE_BAUD 115200  
-typedef struct usart_params
-{
-	unsigned int  baud_rate;
-	unsigned char data_bit;
-	unsigned char stop_bit;
-	unsigned char parity;
-	unsigned char mark;
-	unsigned char space;
-	unsigned char usart_mcr_dtr;
-	unsigned char usart_mcr_rts;
-	unsigned char usart_crtscts;
-	unsigned char IX_on;
-	unsigned char IX_off; //XonXoff
-}usart_params_t;
-
-typedef struct {
-	usart_params_t config;  // »ù´¡ÅäÖÃ
-    MSG_Q_ID msg_queue;           // ÏûÏ¢¶ÓÁÐÖ¸Õë£¨Æ½Ì¨Ïà¹ØÊµÏÖ£©
-
-    int sock_cmd;               // SocketÎÄ¼þÃèÊö·û
-    int sock_data;              // SocketÎÄ¼þÃèÊö·û
-
-    uint16_t sock_cmd_port;       // Socket¶Ë¿ÚºÅ
-    uint16_t sock_data_port;       // Socket¶Ë¿ÚºÅ
-
-    char *tx_buffer;          // ·¢ËÍ»º³åÇøÖ¸Õë
-    char *rx_buffer;          // ½ÓÊÕ»º³åÇøÖ¸Õë
-
-	uint8_t enable; //Ê¹ÄÜ
-} UART_Config_Params;
 
 int32_t sysAxiReadLong(ULONG address) {
 	return *(volatile int32_t*)address;
@@ -117,47 +84,89 @@ int axi16550Send(unsigned int channel, uint8_t *buffer, uint32_t len) {
 	return 0;
 }
 
-void axi165502CInit(unsigned int channel, usart_params_t params)
+//void axi165502CInit(unsigned int channel, usart_params_t params)
+//{
+//	unsigned int div;
+//	unsigned short dlm, dll;
+//	unsigned char reg, lcr = 0;
+//
+//	// 1. è®¡ç®— LCR å€¼
+//	switch(params.data_bit) {
+//	case 5: lcr |= 0x00; break;
+//	case 6: lcr |= 0x01; break;
+//	case 7: lcr |= 0x02; break;
+//	case 8: lcr |= 0x03; break;
+//	}
+//	if (params.stop_bit == 2) lcr |= 0x04;
+//	if (params.parity != 0) {
+//		lcr |= 0x08; // PEN=1ï¼Œå¯ç”¨å¥‡å¶æ ¡éªŒ
+//		if (params.parity == 2) lcr |= 0x10; // EPS=1ï¼Œé€‰æ‹©å¶æ ¡éªŒ
+//	}
+//
+//	// 2. è®¾ç½®æ³¢ç‰¹çŽ‡
+//	div = AXI_16550_CLK / 16 / params.baud_rate;
+//	dlm = (div >> 8) & 0xFF;
+//	dll = div & 0xFF;
+//
+//	// 3. å†™å…¥ LCR å¯„å­˜å™¨ï¼ˆå¼€å¯ DLAB è®¿é—®é™¤æ•°å¯„å­˜å™¨ï¼‰
+//	reg = userAxiCfgRead(channel, AXI_16550_LCR);
+//	userAxiCfgWrite(channel, AXI_16550_LCR, reg | 0x80);
+//	userAxiCfgWrite(channel, AXI_16550_DLM, dlm);
+//	userAxiCfgWrite(channel, AXI_16550_DLL, dll);
+//	userAxiCfgWrite(channel, AXI_16550_LCR, reg); // æ¢å¤ DLAB=0
+//
+//	// 4. å†™å…¥ LCR å¯„å­˜å™¨ï¼ˆé…ç½®æ•°æ®ä½ã€åœæ­¢ä½ã€å¥‡å¶æ ¡éªŒï¼‰
+//	userAxiCfgWrite(channel, AXI_16550_LCR, lcr);
+//
+//	// 5. å…¶ä»–å¯„å­˜å™¨é…ç½®ï¼ˆç¤ºä¾‹ï¼‰
+////	userAxiCfgWrite(channel, AXI_16550_FCR, 0xCF);
+//	userAxiCfgWrite(channel, AXI_16550_FCR, 0x87); 
+//	userAxiCfgWrite(channel, AXI_16550_FCR, 0x81);
+//	userAxiCfgWrite(channel, AXI_16550_MCR, 0x00);
+//	userAxiCfgWrite(channel, AXI_16550_IER, 0x00);
+//}  
+
+ void axi165502CInit(UART_Config_Params *uart_instance)
 {
 	unsigned int div;
 	unsigned short dlm, dll;
 	unsigned char reg, lcr = 0;
 
-	// 1. ¼ÆËã LCR Öµ
-	switch(params.data_bit) {
+	// 1. è®¡ç®— LCR å€¼
+	switch(uart_instance->config.data_bit) {
 	case 5: lcr |= 0x00; break;
 	case 6: lcr |= 0x01; break;
 	case 7: lcr |= 0x02; break;
 	case 8: lcr |= 0x03; break;
 	}
-	if (params.stop_bit == 2) lcr |= 0x04;
-	if (params.parity != 0) {
-		lcr |= 0x08; // PEN=1£¬ÆôÓÃÆæÅ¼Ð£Ñé
-		if (params.parity == 2) lcr |= 0x10; // EPS=1£¬Ñ¡ÔñÅ¼Ð£Ñé
+	if (uart_instance->config.stop_bit == 2) lcr |= 0x04;
+	if (uart_instance->config.parity != 0) {
+		lcr |= 0x08; // PEN=1ï¼Œå¯ç”¨å¥‡å¶æ ¡éªŒ
+		if (uart_instance->config.parity == 2) lcr |= 0x10; // EPS=1ï¼Œé€‰æ‹©å¶æ ¡éªŒ
 	}
 
-	// 2. ÉèÖÃ²¨ÌØÂÊ
-	div = AXI_16550_CLK / 16 / params.baud_rate;
+	// 2. è®¾ç½®æ³¢ç‰¹çŽ‡
+	div = AXI_16550_CLK / 16 /uart_instance->config.baud_rate;
 	dlm = (div >> 8) & 0xFF;
 	dll = div & 0xFF;
 
-	// 3. Ð´Èë LCR ¼Ä´æÆ÷£¨¿ªÆô DLAB ·ÃÎÊ³ýÊý¼Ä´æÆ÷£©
-	reg = userAxiCfgRead(channel, AXI_16550_LCR);
-	userAxiCfgWrite(channel, AXI_16550_LCR, reg | 0x80);
-	userAxiCfgWrite(channel, AXI_16550_DLM, dlm);
-	userAxiCfgWrite(channel, AXI_16550_DLL, dll);
-	userAxiCfgWrite(channel, AXI_16550_LCR, reg); // »Ö¸´ DLAB=0
+	// 3. å†™å…¥ LCR å¯„å­˜å™¨ï¼ˆå¼€å¯ DLAB è®¿é—®é™¤æ•°å¯„å­˜å™¨ï¼‰
+	reg = userAxiCfgRead(uart_instance->choose_channel, AXI_16550_LCR);
+	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_LCR, reg | 0x80);
+	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_DLM, dlm);
+	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_DLL, dll);
+	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_LCR, reg); // æ¢å¤ DLAB=0
 
-	// 4. Ð´Èë LCR ¼Ä´æÆ÷£¨ÅäÖÃÊý¾ÝÎ»¡¢Í£Ö¹Î»¡¢ÆæÅ¼Ð£Ñé£©
-	userAxiCfgWrite(channel, AXI_16550_LCR, lcr);
+	// 4. å†™å…¥ LCR å¯„å­˜å™¨ï¼ˆé…ç½®æ•°æ®ä½ã€åœæ­¢ä½ã€å¥‡å¶æ ¡éªŒï¼‰
+	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_LCR, lcr);
 
-	// 5. ÆäËû¼Ä´æÆ÷ÅäÖÃ£¨Ê¾Àý£©
-//	userAxiCfgWrite(channel, AXI_16550_FCR, 0xCF);
-	userAxiCfgWrite(channel, AXI_16550_FCR, 0x87); 
-	userAxiCfgWrite(channel, AXI_16550_FCR, 0x81);
-	userAxiCfgWrite(channel, AXI_16550_MCR, 0x00);
-	userAxiCfgWrite(channel, AXI_16550_IER, 0x00);
-}    
+	// 5. å…¶ä»–å¯„å­˜å™¨é…ç½®ï¼ˆç¤ºä¾‹ï¼‰
+//	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_FCR, 0xCF);
+	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_FCR, 0x87); 
+	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_FCR, 0x81);
+	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_MCR, 0x00);
+	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_IER, 0x00);
+} 
 
 void axi16550BaudInit(unsigned int channel, unsigned int baud) {
 	unsigned int div;
@@ -173,31 +182,31 @@ void axi16550BaudInit(unsigned int channel, unsigned int baud) {
 	userAxiCfgWrite(channel, AXI_16550_LCR, reg);
 }
 
-// ·¢ËÍ START BREAK ÐÅºÅ
+// å‘é€ START BREAK ä¿¡å·
 void axi16550SendStartBreak(unsigned int channel) {
 	unsigned char lcr = userAxiCfgRead(channel, AXI_16550_LCR);
-	// ÉèÖÃ SBRK Î»£¬Æô¶¯ BREAK
+	// è®¾ç½® SBRK ä½ï¼Œå¯åŠ¨ BREAK
 	lcr |= LCR_SBRK;
 	userAxiCfgWrite(channel, AXI_16550_LCR, lcr);
 
-	// ±£³ÖÒ»¶ÎÊ±¼ä£¨¸ù¾ÝÐèÇóµ÷ÕûÑÓÊ±£©
-	taskDelay(10);  // ¼ÙÉè taskDelay µ¥Î»ÎªÏµÍ³Ê±ÖÓµÎ´ð£¬ÑÓÊ± 10 ¸öµÎ´ð
+	// ä¿æŒä¸€æ®µæ—¶é—´ï¼ˆæ ¹æ®éœ€æ±‚è°ƒæ•´å»¶æ—¶ï¼‰
+	taskDelay(10);  // å‡è®¾ taskDelay å•ä½ä¸ºç³»ç»Ÿæ—¶é’Ÿæ»´ç­”ï¼Œå»¶æ—¶ 10 ä¸ªæ»´ç­”
 }
 
-// ·¢ËÍ STOP BREAK ÐÅºÅ
+// å‘é€ STOP BREAK ä¿¡å·
 void axi16550SendStopBreak(unsigned int channel) {
 	unsigned char lcr = userAxiCfgRead(channel, AXI_16550_LCR);
-	// Çå³ý SBRK Î»£¬Í£Ö¹ BREAK
+	// æ¸…é™¤ SBRK ä½ï¼Œåœæ­¢ BREAK
 	lcr &= ~LCR_SBRK;
 	userAxiCfgWrite(channel, AXI_16550_LCR, lcr);
 }
 
-// ·¢ËÍ XON/XOFF ×Ö·ûº¯Êý
+// å‘é€ XON/XOFF å­—ç¬¦å‡½æ•°
 void send_xon_xoff_char(uint8_t channel, uint8_t is_xon) {
 	uint8_t control_char = is_xon ? XON_CHAR : XOFF_CHAR;
-	// µÈ´ý·¢ËÍ»º³åÇøÎª¿Õ
+	// ç­‰å¾…å‘é€ç¼“å†²åŒºä¸ºç©º
 	while (!(userAxiCfgRead(channel, AXI_16550_LSR) & LSR_THRE_MASK));
-	// Ð´Èë·¢ËÍ±£³Ö¼Ä´æÆ÷
+	// å†™å…¥å‘é€ä¿æŒå¯„å­˜å™¨
 	userAxiCfgWrite(channel, AXI_16550_THR, control_char);
 }
 
@@ -237,9 +246,98 @@ void axi16550Init(unsigned int channel, unsigned int baud)
     userAxiCfgWrite(channel, AXI_16550_LCR, reg);
     userAxiCfgWrite(channel, AXI_16550_LCR, 0x03);
 
-    userAxiCfgWrite(channel, AXI_16550_FCR, 0xCF);
-//    userAxiCfgWrite(channel, AXI_16550_FCR, 0x81);
+    userAxiCfgWrite(channel, AXI_16550_FCR, 0x87);
+    userAxiCfgWrite(channel, AXI_16550_FCR, 0x81);
     userAxiCfgWrite(channel, AXI_16550_MCR, 0x00); /* 0x00  normal -> 0x10 loopback */
     userAxiCfgWrite(channel, AXI_16550_IER, 0x00);
 
+}
+
+
+void uart_task(unsigned int channel)
+{
+	uint8_t recv_buf[100];
+	uint8_t send_buf[100];
+	unsigned int i =0;
+	unsigned int j =0;
+	unsigned int cnt =0;
+	unsigned int len=0,res=0;
+	axi16550Init(channel, 921600);
+	while(1)
+	{
+//		for(i=0;i<24;i++)
+//		{
+			res = axi16550Recv(channel,recv_buf,&len);
+			if(res != -1)
+			{
+				cnt = len+cnt;
+				printf("uart485 channel:%d,recv cnt:%d\r\n",channel,cnt);
+				for(j=0;j<len;j++)
+				{
+					 printf("0x%02X  ",recv_buf[j]);
+				}
+				printf("\r\n");
+			}
+//		}
+		len=0;
+		memset(send_buf,0,100);
+		memset(recv_buf,0,100);
+		taskDelay(10);
+	}
+}
+
+void start0TcpServerTask() {
+	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+void start1TcpServerTask() {
+	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+void start2TcpServerTask() {
+	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+void start3TcpServerTask() {
+	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+void start4TcpServerTask() {
+	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+void start5TcpServerTask() {
+	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+void start6TcpServerTask() {
+	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+void start7TcpServerTask() {
+	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+void start8TcpServerTask() {
+	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+void start9TcpServerTask() {
+	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+void start10TcpServerTask() {
+	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+void start11TcpServerTask() {
+	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+void start12TcpServerTask() {
+	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+
+void start13TcpServerTask() {
+	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+void start14TcpServerTask() {
+	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+}
+void start15TcpServerTask() {
+	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 }
