@@ -21,7 +21,7 @@
 #include <selectLib.h>
 #include <tickLib.h>
 #include <msgQLib.h>
-#include "pack.h"
+#include "pack2.h"
 
 
 #define BACKLOG   16
@@ -49,15 +49,37 @@ const char* STATE_NAMES[] = {
 const int portdata_array[] = {950, 951, 952, 953, 954, 955, 956, 957, 958, 959, 960, 961, 962, 963, 964, 965};
 const int portcmd_array[] = {966, 967, 968, 969, 970, 971, 972, 973, 974, 975, 976, 977, 978, 979, 980, 981};
 
-#define TCP_SERVER_TASK_PRIO 90
-#define TCP_SERVER_TASK_STACK 102400
 
-#define UART_TX_TASK_PRIO 90
-#define UART_RX_TASK_PRIO 90
 
-#define UART_TASK_STACK 102400
+#define TCP_SERVER_TASK_PRIO        (115)
+#define UART_TX_TASK_PRIO           (105)
+#define UART_RX_TASK_PRIO           (85)
+#define UART_RX_FORWARD_TASK_PRIO   (95)
+
+#define TCP_SERVER_TASK_STACK 40960
+#define UART_TASK_STACK 81920
+
+
 
 UART_Config_Params uart_instances[NUM_PORTS];
+
+
+// 入队封装
+void uart_ring_buffer_enqueue(ring_buffer_t *buffer, const char *data, ring_buffer_size_t size)
+{
+    if (buffer == NULL || data == NULL || size == 0)
+        return;
+    ring_buffer_queue_arr(buffer, data, size);
+}
+
+// 出队封装
+ring_buffer_size_t uart_ring_buffer_dequeue(ring_buffer_t *buffer, char *data, ring_buffer_size_t len)
+{
+    if (buffer == NULL || data == NULL || len == 0)
+        return 0;
+    return ring_buffer_dequeue_arr(buffer, data, len);
+}
+
 
 
 void uart_info_send(uint8_t i)
@@ -264,7 +286,7 @@ void multi_tcp_data_servers_loop(int unused)
                         uart_instances[i].data_count += n;
 
                         printf("ua[%d] D %d all %lld bytes\n", i, n, uart_instances[i].data_count);
-                        handle_uart_data_rx(i,buf,n);
+                        uart_ring_buffer_enqueue(&uart->data_tx, buf, n);
                         set_state(&uart->sock_data_state, STATE_RW_DATA, i, "DATA", uart->sock_data_port);
 //                        set_state(&uart->sock_data_state, STATE_TCP_CONN, i, "DATA", uart->sock_data_port);
                     } else if (n == 0) {
@@ -288,12 +310,6 @@ void multi_tcp_data_servers_loop(int unused)
 }
 
 
-void handle_uart_data_rx(int i, const char *buf, size_t len)
-{
-    // 短小写入，不考虑超长丢弃等健壮流程
-	ring_buffer_queue_arr(&uart_instances[i].data_tx, buf, len);
-	printf("tail:%d head:%d \n ",uart_instances[i].data_tx.tail_index,uart_instances[i].data_tx.head_index);
-}
 
 // 动态计算建议tick延时
 int calc_poll_delay_ticks(unsigned int baud_rate)
@@ -329,7 +345,7 @@ void multi_uart_tx_loop(int unused)
                 size_t avail = uart->data_tx.head_index - uart->data_tx.tail_index;
                 if (avail > 0) {
                     // 取数据（根据串口效率推荐一次最大发送量256字节）
-                    ring_buffer_size_t n = ring_buffer_dequeue_arr(&uart->data_tx, send_buf, sizeof(send_buf));
+                    ring_buffer_size_t n = uart_ring_buffer_dequeue(&uart->data_tx, send_buf, sizeof(send_buf));
                 	printf("tail:%d head:%d \n ",uart_instances[i].data_tx.tail_index,uart_instances[i].data_tx.head_index);
                     if (n > 0) {
                         // 串口发送
@@ -352,6 +368,72 @@ void multi_uart_tx_loop(int unused)
     }
 }
 
+//---------  阶段一：高速poll UART收数据，写data_rx ----------
+void multi_uart_rx_loop(int unused)
+{
+    int i;
+    uint8_t rxbuf[256];
+    uint32_t rxlen;
+    printf("multi_uart_rx_loop started.\n");
+    while (1) {
+        for (i=0; i<NUM_PORTS; ++i) {
+            UART_Config_Params* uart = &uart_instances[i];
+            if (uart->sock_cmd_state == STATE_TCP_CONN && uart->sock_data_state == STATE_TCP_CONN) 
+            {
+                do {
+                    rxlen = sizeof(rxbuf);
+                    if (axi16550Recv(i, rxbuf, &rxlen) == 0 && rxlen > 0) {
+                        uart_ring_buffer_enqueue(&uart->data_rx, (char*)rxbuf, rxlen);
+                        // 可统计接收字节等逻辑
+                    }
+                } while (rxlen > 0);
+            }
+        }
+        // 动态delay, 各路最短
+        int min_ticks = 20;
+        for (i=0; i<NUM_PORTS; ++i) {
+            int t = calc_poll_delay_ticks(uart_instances[i].config.baud_rate);
+            if (t < min_ticks) min_ticks = t;
+        }
+        if (min_ticks < 1) min_ticks = 1;
+        taskDelay(min_ticks);
+    }
+}
+
+//-------- 阶段二：批量dequeue转发到data_client_fd -------
+void multi_uart_forward_loop(int unused)
+{
+    int i;
+    char netbuf[1024];
+    size_t n;
+    printf("multi_uart_forward_loop started.\n");
+    while (1) {
+        for (i = 0; i < NUM_PORTS; ++i) {
+            UART_Config_Params *uart = &uart_instances[i];
+            if (uart->sock_data_state == STATE_TCP_CONN &&
+                uart->data_client_fd >= 0) {
+                // 一次批量发送，提升效率
+                n = uart_ring_buffer_dequeue(&uart->data_rx, netbuf, sizeof(netbuf));
+                if (n > 0) {
+                    int total = 0;
+                    while (total < (int)n) {
+                        int sent = send(uart->data_client_fd, netbuf + total, n - total, 0);
+                        if (sent <= 0) break; // socket关闭/异常
+                        total += sent;
+                    }
+                }
+            }
+        }
+        // 动态delay，同上（主要服务于低波特率场景）
+        int min_ticks = 20;
+        for (i=0; i<NUM_PORTS; ++i) {
+            int t = calc_poll_delay_ticks(uart_instances[i].config.baud_rate);
+            if (t < min_ticks) min_ticks = t;
+        }
+        if (min_ticks < 1) min_ticks = 1;
+        taskDelay(min_ticks);
+    }
+}
 
 void InitUartTask(UART_Config_Params *uart_instances, int num_ports) {
     int ret = -1;
@@ -427,33 +509,37 @@ void InitUartTask(UART_Config_Params *uart_instances, int num_ports) {
 
     if (tid == ERROR) {
         perror("multi_tcp_cmd_loop failed");
-        // for (i = 0; i < sock_list->count; i++) {
-        //     close(sock_list->listen_socks[i]);
-        // }
-        // free(sock_list);
-        return -1;
+        goto exit;
     }
 
     tid = taskSpawn("multi_tcp_data_servers_loop", TCP_SERVER_TASK_PRIO, 0, TCP_SERVER_TASK_STACK, 
         (FUNCPTR)multi_tcp_data_servers_loop,  0, 0,0,0,0,0,0,0,0,0);
         if (tid == ERROR) {
             perror("multi_tcp_data_servers_loop failed");
-            // for (i = 0; i < sock_list->count; i++) {
-            //     close(sock_list->listen_socks[i]);
-            // }
-            // free(sock_list);
-            return -1;
+            goto exit;
         }
 
     tid =  taskSpawn("uartTxLoop",UART_TX_TASK_PRIO,0,UART_TASK_STACK,(FUNCPTR)multi_uart_tx_loop,0,0,0,0,0,0,0,0,0,0);
     if (tid == ERROR) {
         perror("uartTxLoop failed");
-        // for (i = 0; i < sock_list->count; i++) {
-        //     close(sock_list->listen_socks[i]);
-        // }
-        // free(sock_list);
-        return -1;
+        goto exit;
     }
+
+    tid =  taskSpawn("uartRxLoop",  UART_RX_TASK_PRIO,0,4096,(FUNCPTR)multi_uart_rx_loop, 0,0,0,0,0,0,0,0,0,0);
+    if (tid == ERROR) {
+        perror("uartRxLoop failed");
+        goto exit;
+    }
+    tid =  taskSpawn("uartNetFwd", UART_RX_FORWARD_TASK_PRIO,0,4096,(FUNCPTR)multi_uart_forward_loop,0,0,0,0,0,0,0,0,0,0);
+    if (tid == ERROR) {
+        perror("uartNetFwd failed");
+        goto exit;
+    }
+    goto success;
+exit:
+    perror("Init failed ... \n");
+success:
+    printf("Init Success ... \n");
 }
 
 
