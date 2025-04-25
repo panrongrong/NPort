@@ -4,7 +4,7 @@
 #include <stddef.h>
 #include <fcntl.h>
 #include <tickLib.h>
-#include "pack.h"
+#include "pack2.h"
 
 #define AXI_UART_BASE(n)         (0x41200000 + 0x2000 * n) /* 基地址 */
 #define AXI_16550_INT            (84)
@@ -60,15 +60,12 @@ int axi16550Recv(unsigned int channel, uint8_t *buffer, uint32_t *len) {
 	}
 	if (buffer == NULL || *len == 0)
 		return -1;
-//	printf("buffer[(*len)++]:%d\r\n",*len);
 	return 0;
 }
 
 int axi16550Send(unsigned int channel, uint8_t *buffer, uint32_t len) {
 	int i = 0;
-//	printf("axi16550Send!\r\n");
 	if (buffer == NULL || len < 0) {
-		//printf("buffer null!\r\n");
 		return -1;
 	}
 	for (i = 0; i < len; i++) {
@@ -79,94 +76,10 @@ int axi16550Send(unsigned int channel, uint8_t *buffer, uint32_t len) {
 		}
 		while ((userAxiCfgRead(channel, AXI_16550_LSR) & LSR_TX_BUFFER_EMPTY) == 0);
 		userAxiCfgWrite(channel, AXI_16550_THR, buffer[i]);
-//		printf("userAxiCfgRead!\r\n");
 	}
 	return 0;
 }
 
-//void axi165502CInit(unsigned int channel, usart_params_t params)
-//{
-//	unsigned int div;
-//	unsigned short dlm, dll;
-//	unsigned char reg, lcr = 0;
-//
-//	// 1. 计算 LCR 值
-//	switch(params.data_bit) {
-//	case 5: lcr |= 0x00; break;
-//	case 6: lcr |= 0x01; break;
-//	case 7: lcr |= 0x02; break;
-//	case 8: lcr |= 0x03; break;
-//	}
-//	if (params.stop_bit == 2) lcr |= 0x04;
-//	if (params.parity != 0) {
-//		lcr |= 0x08; // PEN=1，启用奇偶校验
-//		if (params.parity == 2) lcr |= 0x10; // EPS=1，选择偶校验
-//	}
-//
-//	// 2. 设置波特率
-//	div = AXI_16550_CLK / 16 / params.baud_rate;
-//	dlm = (div >> 8) & 0xFF;
-//	dll = div & 0xFF;
-//
-//	// 3. 写入 LCR 寄存器（开启 DLAB 访问除数寄存器）
-//	reg = userAxiCfgRead(channel, AXI_16550_LCR);
-//	userAxiCfgWrite(channel, AXI_16550_LCR, reg | 0x80);
-//	userAxiCfgWrite(channel, AXI_16550_DLM, dlm);
-//	userAxiCfgWrite(channel, AXI_16550_DLL, dll);
-//	userAxiCfgWrite(channel, AXI_16550_LCR, reg); // 恢复 DLAB=0
-//
-//	// 4. 写入 LCR 寄存器（配置数据位、停止位、奇偶校验）
-//	userAxiCfgWrite(channel, AXI_16550_LCR, lcr);
-//
-//	// 5. 其他寄存器配置（示例）
-////	userAxiCfgWrite(channel, AXI_16550_FCR, 0xCF);
-//	userAxiCfgWrite(channel, AXI_16550_FCR, 0x87); 
-//	userAxiCfgWrite(channel, AXI_16550_FCR, 0x81);
-//	userAxiCfgWrite(channel, AXI_16550_MCR, 0x00);
-//	userAxiCfgWrite(channel, AXI_16550_IER, 0x00);
-//}  
-
- void axi165502CInit(UART_Config_Params *uart_instance)
-{
-	unsigned int div;
-	unsigned short dlm, dll;
-	unsigned char reg, lcr = 0;
-
-	// 1. 计算 LCR 值
-	switch(uart_instance->config.data_bit) {
-	case 5: lcr |= 0x00; break;
-	case 6: lcr |= 0x01; break;
-	case 7: lcr |= 0x02; break;
-	case 8: lcr |= 0x03; break;
-	}
-	if (uart_instance->config.stop_bit == 2) lcr |= 0x04;
-	if (uart_instance->config.parity != 0) {
-		lcr |= 0x08; // PEN=1，启用奇偶校验
-		if (uart_instance->config.parity == 2) lcr |= 0x10; // EPS=1，选择偶校验
-	}
-
-	// 2. 设置波特率
-	div = AXI_16550_CLK / 16 /uart_instance->config.baud_rate;
-	dlm = (div >> 8) & 0xFF;
-	dll = div & 0xFF;
-
-	// 3. 写入 LCR 寄存器（开启 DLAB 访问除数寄存器）
-	reg = userAxiCfgRead(uart_instance->choose_channel, AXI_16550_LCR);
-	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_LCR, reg | 0x80);
-	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_DLM, dlm);
-	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_DLL, dll);
-	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_LCR, reg); // 恢复 DLAB=0
-
-	// 4. 写入 LCR 寄存器（配置数据位、停止位、奇偶校验）
-	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_LCR, lcr);
-
-	// 5. 其他寄存器配置（示例）
-//	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_FCR, 0xCF);
-	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_FCR, 0x87); 
-	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_FCR, 0x81);
-	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_MCR, 0x00);
-	userAxiCfgWrite(uart_instance->choose_channel, AXI_16550_IER, 0x00);
-} 
 
 void axi16550BaudInit(unsigned int channel, unsigned int baud) {
 	unsigned int div;
@@ -210,27 +123,6 @@ void send_xon_xoff_char(uint8_t channel, uint8_t is_xon) {
 	userAxiCfgWrite(channel, AXI_16550_THR, control_char);
 }
 
-//void axi16550Init(unsigned int channel,unsigned int baud)
-//{
-//    unsigned int div;
-//    unsigned short dlm,dll;
-//    unsigned char reg;
-//    div = AXI_16550_CLK/16/baud;
-//    dlm = (div>>8)&0xFF;
-//    dll = div&0xFF;
-//    reg = userAxiCfgRead(channel,AXI_16550_LCR);
-//    userAxiCfgWrite(channel,AXI_16550_LCR,reg|0x80);
-//    userAxiCfgWrite(channel,AXI_16550_DLM,dlm);/*dlm*/
-//    userAxiCfgWrite(channel,AXI_16550_DLL,dll);/*dll*/
-//    userAxiCfgWrite(channel,AXI_16550_LCR,reg);
-//    userAxiCfgWrite(channel,AXI_16550_LCR,0x03);
-//    userAxiCfgWrite(channel,AXI_16550_FCR,0xCF);
-////    userAxiCfgWrite(channel,AXI_16550_FCR,0x81);
-//    userAxiCfgWrite(channel,AXI_16550_MCR,0x00);/*0x00  normal -> 0x10 loopback */
-//    userAxiCfgWrite(channel,AXI_16550_IER,0x00);
-////    sysAxiWriteLong(0x58800000+BRAM_KZ,0<<channel);/* recv enable */
-//}
-
 void axi16550Init(unsigned int channel, unsigned int baud)
 {
     unsigned int div;
@@ -245,13 +137,50 @@ void axi16550Init(unsigned int channel, unsigned int baud)
     userAxiCfgWrite(channel, AXI_16550_DLL, dll); /* dll */
     userAxiCfgWrite(channel, AXI_16550_LCR, reg);
     userAxiCfgWrite(channel, AXI_16550_LCR, 0x03);
-
     userAxiCfgWrite(channel, AXI_16550_FCR, 0x87);
     userAxiCfgWrite(channel, AXI_16550_FCR, 0x81);
     userAxiCfgWrite(channel, AXI_16550_MCR, 0x00); /* 0x00  normal -> 0x10 loopback */
     userAxiCfgWrite(channel, AXI_16550_IER, 0x00);
 
 }
+
+void axi165502CInit(UART_Config_Params *uart_instance,int channel)
+{
+	unsigned int div;
+	unsigned short dlm, dll;
+	unsigned char reg, lcr = 0;
+
+	switch(uart_instance->config.data_bit) {
+	case 5: lcr |= 0x00; break;
+	case 6: lcr |= 0x01; break;
+	case 7: lcr |= 0x02; break;
+	case 8: lcr |= 0x03; break;
+	}
+	if (uart_instance->config.stop_bit == 2) lcr |= 0x04;
+	if (uart_instance->config.parity != 0) {
+		lcr |= 0x08; 
+		if (uart_instance->config.parity == 2) lcr |= 0x10;
+	}
+
+
+	div = AXI_16550_CLK / 16 /uart_instance->config.baud_rate;
+	dlm = (div >> 8) & 0xFF;
+	dll = div & 0xFF;
+
+
+	reg = userAxiCfgRead(channel, AXI_16550_LCR);
+	userAxiCfgWrite(channel, AXI_16550_LCR, reg | 0x80);
+	userAxiCfgWrite(channel, AXI_16550_DLM, dlm);
+	userAxiCfgWrite(channel, AXI_16550_DLL, dll);
+	userAxiCfgWrite(channel, AXI_16550_LCR, reg); 
+
+	userAxiCfgWrite(channel, AXI_16550_LCR, lcr);
+
+	userAxiCfgWrite(channel, AXI_16550_FCR, 0x87); 
+	userAxiCfgWrite(channel, AXI_16550_FCR, 0x81);
+	userAxiCfgWrite(channel, AXI_16550_MCR, 0x00);
+	userAxiCfgWrite(channel, AXI_16550_IER, 0x00);
+} 
 
 
 void uart_task(unsigned int channel)
@@ -284,60 +213,4 @@ void uart_task(unsigned int channel)
 		memset(recv_buf,0,100);
 		taskDelay(10);
 	}
-}
-
-void start0TcpServerTask() {
-	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-}
-
-void start1TcpServerTask() {
-	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-}
-void start2TcpServerTask() {
-	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-}
-void start3TcpServerTask() {
-	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-}
-
-void start4TcpServerTask() {
-	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-}
-
-void start5TcpServerTask() {
-	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-}
-void start6TcpServerTask() {
-	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-}
-void start7TcpServerTask() {
-	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-}
-
-void start8TcpServerTask() {
-	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-}
-
-void start9TcpServerTask() {
-	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-}
-void start10TcpServerTask() {
-	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 10, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-}
-void start11TcpServerTask() {
-	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 11, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-}
-
-void start12TcpServerTask() {
-	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-}
-
-void start13TcpServerTask() {
-	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 13, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-}
-void start14TcpServerTask() {
-	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-}
-void start15TcpServerTask() {
-	taskSpawn("uart_task", 90, 0, 40000, (FUNCPTR)uart_task, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 }

@@ -4,7 +4,7 @@
 
 #include "ringbuffer.h"
 
-#define BUFFERCOM_SIZE 4096
+#define BUFFERCOM_SIZE 	(65536*2*2)
 #define NUM_PORTS       16
 
 typedef struct usart_params1
