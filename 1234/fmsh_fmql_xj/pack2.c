@@ -53,27 +53,36 @@ const int portcmd_array[] = {966, 967, 968, 969, 970, 971, 972, 973, 974, 975, 9
 
 #define TCP_SERVER_TASK_PRIO        (95)
 #define UART_TX_TASK_PRIO           (85)
-#define UART_RX_TASK_PRIO           (65)
-#define UART_RX_FORWARD_TASK_PRIO   (85)
+#define UART_RX_TASK_PRIO           (55)
+#define UART_RX_FORWARD_TASK_PRIO   (75)
 
-#define TCP_SERVER_TASK_STACK       (4096)
-#define UART_TASK_STACK             (8192)
+/*  */
+#define UART_TX_TASK_MIN_DELAY              (5)
+#define UART_RX_TASK_MIN_DELAY              (5)
+#define UART_RX_FORWARD_TASK_MIN_DELAY      (50)
 
-#define UART_FPGA_BUFFER            (256)
-static uint8_t uart_fpga_rxbuf[UART_FPGA_BUFFER];
-static uint8_t uart_fpga_txbuf[UART_FPGA_BUFFER];
+#define TCP_SERVER_TASK_STACK 4096
+#define UART_TASK_STACK 8192
+
+#define UART_FPGA_BUFFER            (1024)
+static char uart_fpga_rxbuf[UART_FPGA_BUFFER];
+static char uart_fpga_txbuf[UART_FPGA_BUFFER];
 
 #define NET_BUFFER            (1024)
-static uint8_t net_tx_buf[NET_BUFFER];
+static char net_tx_buf[NET_BUFFER];
 
 #define SOCK_DATA_BUFFER        (2048)
-static uint8_t sock_data_tmp[SOCK_DATA_BUFFER];
+static char sock_data_tmp[SOCK_DATA_BUFFER];
 
 #define SOCK_cmd_BUFFER        (256)
-static uint8_t cmd_tmp[SOCK_cmd_BUFFER];
+static char cmd_tmp[SOCK_cmd_BUFFER];
 
 UART_Config_Params uart_instances[NUM_PORTS];
 
+int msToTicks(int ms)
+{
+    return (ms * sysClkRateGet() + 999) / 1000;
+}
 
 // 入队封装
 void uart_ring_buffer_enqueue(ring_buffer_t *buffer, const char *data, ring_buffer_size_t size)
@@ -294,6 +303,7 @@ void multi_tcp_data_servers_loop(int unused)
                         uart_instances[i].data_count += n;
                         uart_ring_buffer_enqueue(&uart->data_tx, sock_data_tmp, n);
 //                        set_state(&uart->sock_data_state, STATE_RW_DATA, i, "DATA", uart->sock_data_port);
+                        // printf("ua[%d] Data [%d]\n", i, n);
                         set_state(&uart->sock_data_state, STATE_TCP_CONN, i, "DATA", uart->sock_data_port);
                     } else if (n == 0) {
                         printf("uart[%d] DATA client closed while reading (fd=%d)\n", i, uart->data_client_fd);
@@ -340,7 +350,6 @@ int calc_poll_delay_ticks(unsigned int baud_rate)
 // 多UART动态tx出队/发送任务
 void multi_uart_tx_loop(int unused)
 {
-
     int i;
     taskDelay(20);
     printf("uart_tx_loop running .... \n");
@@ -354,14 +363,16 @@ void multi_uart_tx_loop(int unused)
                 size_t avail = uart->data_tx.head_index - uart->data_tx.tail_index;
                 if (avail > 0) {
                     // 取数据（根据串口效率推荐一次最大发送量256字节）
-                    ring_buffer_size_t n = uart_ring_buffer_dequeue(&uart->data_tx, uart_fpga_txbuf, sizeof(uart_fpga_txbuf));
-//                	printf("tail:%d head:%d \n ",uart_instances[i].data_tx.tail_index,uart_instances[i].data_tx.head_index);
-                    if (n > 0) {
-                        // 串口发送
-                        int sent = axi16550Send(i, (uint8_t *)uart_fpga_txbuf, n);
-                        // 可计数或错误处理
-//                        printf("[%d],uart[ %d ] : %d send n:%d... \n", __LINE__, i, sent,n);
-                    }
+                	if(axi16550_TxReady(i)){
+                        ring_buffer_size_t n = uart_ring_buffer_dequeue(&uart->data_tx, uart_fpga_txbuf, sizeof(uart_fpga_txbuf));
+    //                	printf("tail:%d head:%d \n ",uart_instances[i].data_tx.tail_index,uart_instances[i].data_tx.head_index);
+                        if (n > 0) {
+                            // 串口发送
+                            int sent = axi16550Send(i, (uint8_t *)uart_fpga_txbuf, n);
+                            // 可计数或错误处理
+                            printf("[%d],uart[ %d ] : %d send n:%d... \n", __LINE__, i, sent,n);
+                        }
+                	}
                 }
             }
             // 其它状态不发送
@@ -372,8 +383,8 @@ void multi_uart_tx_loop(int unused)
             int t = calc_poll_delay_ticks(uart_instances[i].config.baud_rate);
             if (t < min_ticks) min_ticks = t;
         }
-        if (min_ticks < 1) min_ticks=1;
-        taskDelay(min_ticks); // 动态适应各通道，未建连优先轮询最小
+        if (min_ticks < UART_TX_TASK_MIN_DELAY) min_ticks = UART_TX_TASK_MIN_DELAY;
+        taskDelay(msToTicks(min_ticks)); // 动态适应各通道，未建连优先轮询最小
     }
 }
 
@@ -400,14 +411,14 @@ void multi_uart_rx_loop(int unused)
             }
         }
         // 动态delay, 各路最短
-        int min_ticks = 20;
+        int min_ticks = 5;
         for (i=0; i<NUM_PORTS; ++i) {
             int t = calc_poll_delay_ticks(uart_instances[i].config.baud_rate);
             if (t < min_ticks) min_ticks = t;
         }
-        if (min_ticks < 1) min_ticks = 1;
+        if (min_ticks < UART_RX_TASK_MIN_DELAY) min_ticks = UART_RX_TASK_MIN_DELAY;
 //        printf("[%d],min_ticks[ %d ]. \n", __LINE__, min_ticks);
-        taskDelay(min_ticks);
+        taskDelay(msToTicks(min_ticks));
     }
 }
 
@@ -442,9 +453,9 @@ void multi_uart_forward_loop(int unused)
             int t = calc_poll_delay_ticks(uart_instances[i].config.baud_rate);
             if (t < min_ticks) min_ticks = t;
         }
-        if (min_ticks < 1) min_ticks = 1;
+        if (min_ticks < UART_RX_FORWARD_TASK_MIN_DELAY) min_ticks = UART_RX_FORWARD_TASK_MIN_DELAY;
 //        printf("[%d],min_ticks[ %d ]. \n", __LINE__, min_ticks);
-        taskDelay(min_ticks);
+        taskDelay(msToTicks(min_ticks));
     }
 }
 

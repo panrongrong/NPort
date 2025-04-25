@@ -63,6 +63,14 @@ int axi16550Recv(unsigned int channel, uint8_t *buffer, uint32_t *len) {
 	return 0;
 }
 
+int axi16550_TxReady(unsigned int channel)
+{
+	if((userAxiCfgRead(channel, AXI_16550_LSR) & LSR_TX_BUFFER_EMPTY) == 0)
+		return 0;
+	else 
+		return 1;
+}
+
 int axi16550Send(unsigned int channel, uint8_t *buffer, uint32_t len) {
 	int i = 0;
 	if (buffer == NULL || len < 0) {
