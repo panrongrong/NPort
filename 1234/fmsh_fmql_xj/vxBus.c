@@ -20,7 +20,7 @@ modification history
 04w,12nov12,w_x  remove vxbBusRemovalAnnounce() (WIND00387497)
 04v,14sep12,l_z  Zero the pName when remove device. (WIND00191819)
 04u,13sep12,l_z  Release lock when vxbRegUnmapAll failed. (WIND00339448)
-04t,14aug12,l_z  Return NULL when pIntrInfo is NULL in vxbIntVectorGet. 
+04t,14aug12,l_z  Return NULL when pIntrInfo is NULL in vxbIntVectorGet.
                  (WIND00366488)
 04s,04aug12,w_x  add VXB_BUSID_USB_HOST (WIND00372413)
 04r,19jul12,w_x  add vxbBusRemovalAnnounce() API (WIND00338041)
@@ -40,14 +40,14 @@ modification history
 04d,04feb10,d_c  Update API references to clarify CPU index type. See uHLD 1053.
 04c,09dec09,h_k  added unmap the BARs for device disconnection.
 04b,13oct09,yjw  Fix vxbDevFromBusRemove(), vxbDevConnectHelper(), and
-		 vxbDevInitRun() miss mutual exclusion. (WIND00182148)
+         vxbDevInitRun() miss mutual exclusion. (WIND00182148)
 04a,08sep09,rgo  hwMemPool can increase in vxbDevStructAlloc, only when
 04b,17jun10,h_k  reverted the pre-kernel initialization support in LP64.
 04a,07jun10,h_k  added pre-kernel initialization support in LP64.
                  return ERROR when pPlbBus is not initialized in vxbDevIterate.
                  HWMEM_ALLOC_FAIL_DEBUG defined.(WIND145720)
 03z,23jul09,my_  fixed incompatibility issue between vxbDeviceAnnounce() and
-		 vxbDevFromBusRemove() (WIND00172204)
+         vxbDevFromBusRemove() (WIND00172204)
 03y,23jul09,my_  modified vxbDevRemovalAnnounce() to check return value,
                  corrected return value of vxbDevFromBusRemove() (WIND00172190)
 03x,r2jul09,fao  corrected using of vxbLockTake in vxbBusAnnounce.(WIND00170674)
@@ -83,7 +83,7 @@ modification history
 03b,07dec07,tor  optimization
 03a,25sep07,tor  VxBus version checks
 02z,20sep07,h_k  removed error messages.
-		 cleaned up compiler warnings in GNU.
+         cleaned up compiler warnings in GNU.
 02y,30aug07,tor  WIND00101663 VMR routines
 02x,01may07,dlk  Simplify vxbInstInsert() and vxbInstRemove().
                  Support for SPIN_LOCK_TRACE.
@@ -96,7 +96,7 @@ modification history
 02q,10may07,tor  remove undef LOCAL
 02p,04may07,wap  Convert to new register access API
 02o,29apr07,cjj  modified vxbDeviceDriverRelease() to not use
-		 VXB_METHOD_DRIVER_UNLINK.  SMP sandbox merge.
+         VXB_METHOD_DRIVER_UNLINK.  SMP sandbox merge.
 02n,27apr07,slk  add interrupt and cpu route functions
 02m,24apr07,tor  check for null function pointers
 02l,17apr07,sup  USB Bus type names added for display in vxBusShow
@@ -131,12 +131,12 @@ modification history
 01n,19jan06,pdg  added parameter system support
 01m,02jan06,wap  Add MII_Bus type, fix SPR #115878
 01l,05dec05,pdg  Updated vxbSubDevAction () for having the function called for
-		 orphans also
+         orphans also
 01k,28nov05,pdg  Fix for SPR #112638(Unit number API added)
 01j,17nov05,pdg  Fix for the error in vxbDriverUnregister ()(i.e If there are
-		 already registered drivers in the list and if
-		 vxbDriverUnregister () is called without calling
-		 vxbDevRegister (), it returns OK)
+         already registered drivers in the list and if
+         vxbDriverUnregister () is called without calling
+         vxbDevRegister (), it returns OK)
 01i,14nov05,mdo  Add routine - vxbSubDevAction
 01h,29sep05,mdo  Fix gnu warnings
 01g,20sep05,pdg  Fixed vxbus errors identified during testing(SPR #112193)
@@ -145,7 +145,7 @@ modification history
 01d,18aug05,mdo  remove freeBsd_compatibility code
 01c,10aug05,mdo  Phase in new access method
 01b,18jul05,mdo  Fix per coding standards
-		 Fix compiler warnings
+         Fix compiler warnings
 01a,17jan05,tor  written
 */
 
@@ -170,9 +170,9 @@ INCLUDE FILES: vxBus.h vxbPlbLib.h
 
 #include <private/spinLockLibP.h>
 #ifdef _VXBUS_BASIC_RWSEM
-#include <intLib.h>
+    #include <intLib.h>
 #endif /* _VXBUS_BASIC_RWSEM */
-#include <private/memPartLibP.h>	/* for KMEM_ALLOC */
+#include <private/memPartLibP.h>    /* for KMEM_ALLOC */
 
 METHOD_DECL(sysBspDevFilter);
 METHOD_DECL(vxbDrvUnlink);
@@ -195,20 +195,20 @@ METHOD_DECL(vxbIntCtlrFree);
 
 
 #if (defined _WRS_CONFIG_PWR_MGMT) && (defined _WRS_ARCH_HAS_DEV_PWR_MGMT)
-#include <hwif/pwr/pwrDeviceLib.h>
+    #include <hwif/pwr/pwrDeviceLib.h>
 #endif /* (_WRS_CONFIG_PWR_MGMT) && (_WRS_ARCH_HAS_DEV_PWR_MGMT) */
 
 #ifdef VXBUS_DEBUG_ON
 
-int usrBusDebugLevel = 100;
+    int usrBusDebugLevel = 100;
 
-#undef VXB_DEBUG_MSG
-#define VXB_DEBUG_MSG(lvl,msg,a,b,c,d,e,f) if ( usrBusDebugLevel >= lvl ) printf(msg,a,b,c,d,e,f)
+    #undef VXB_DEBUG_MSG
+    #define VXB_DEBUG_MSG(lvl,msg,a,b,c,d,e,f) if ( usrBusDebugLevel >= lvl ) printf(msg,a,b,c,d,e,f)
 
 #else /* VXBUS_DEBUG_ON */
 
-#undef VXB_DEBUG_MSG
-#define VXB_DEBUG_MSG(lvl,msg,a,b,c,d,e,f)
+    #undef VXB_DEBUG_MSG
+    #define VXB_DEBUG_MSG(lvl,msg,a,b,c,d,e,f)
 
 #endif /* VXBUS_DEBUG_ON */
 
@@ -223,83 +223,83 @@ int usrBusDebugLevel = 100;
 
 /* structure used by vxbIntReroute() to pass info to vxbISRCpuReroute() */
 struct vxbIntrRerouteInfo
-    {
+{
     VXB_DEVICE_ID       pInst;
     int                 interruptIndex;
     cpuset_t            destCpu;
-    };
+};
 
 struct vxbMethodRunInfo
-    {
-    VXB_METHOD_ID	method;
-    void *      pArg;
-    };
+{
+    VXB_METHOD_ID   method;
+    void       *pArg;
+};
 
-#ifndef	_WRS_CONFIG_VXBUS_BASIC
+#ifndef _WRS_CONFIG_VXBUS_BASIC
 /* structure used in vxbDriverUnregister to retrieve the status */
 
 struct vxbDrvDisconnectData
-    {
-    struct vxbDevRegInfo *  pDriver;
+{
+    struct vxbDevRegInfo   *pDriver;
     STATUS          status;
-    };
-#endif	/* _WRS_CONFIG_VXBUS_BASIC */
+};
+#endif  /* _WRS_CONFIG_VXBUS_BASIC */
 
 /* Structure used by vxbNextUnitGet() */
 
 typedef struct vxb_unit
-    {
+{
     UINT32 vxbCheckUnit;
     BOOL vxbUnitTaken;
     VXB_DEVICE_ID vxbDev;
-    } VXB_UNIT;
+} VXB_UNIT;
 
 /* PLB device control method function pointer type */
 
-typedef STATUS (*PLB_DEV_CTRL_FUNCPTR)
-    (
+typedef STATUS(*PLB_DEV_CTRL_FUNCPTR)
+(
     VXB_DEVICE_ID       pDev,
     pVXB_DEVCTL_HDR     pBusDevControl
-    );
+);
 
 /* externs */
 
 IMPORT STATUS vxbDrvVerCheck
-    (
-    struct vxbDevRegInfo * pDevInfo /* per-bus recognition info */
-    );
+(
+    struct vxbDevRegInfo *pDevInfo  /* per-bus recognition info */
+);
 
 /* Hook for user post vxbDevInit routine */
 extern VOIDFUNCPTR _func_vxbUserHookDevInit;
 
 /* device drivers which have registered */
-struct vxbDevRegInfo * pDriverListHead = NULL;
+struct vxbDevRegInfo *pDriverListHead = NULL;
 
 /* busTypes which have registered */
-struct vxbBusTypeInfo * pBusListHead = NULL;
+struct vxbBusTypeInfo *pBusListHead = NULL;
 
 /* lock to protect updations of the drivers and bus types list */
 VXB_LOCK_DECL(vxbGlobalListsLock);
 
 /* head of list of actual busses present on the system */
-struct vxbBusPresent * pBusHead = NULL;
+struct vxbBusPresent *pBusHead = NULL;
 
 /* lock to protect updations of the buses list */
 VXB_LOCK_DECL(vxbBusListLock);
 
 #ifdef VXB_PERFORM_SANITY_CHECKS
-/* head of list of devices which do not reside on any bus */
-struct vxbDev	*	pLostDevHead = NULL;
+    /* head of list of devices which do not reside on any bus */
+    struct vxbDev      *pLostDevHead = NULL;
 
-/* head of the list of buses which do not have a parent */
-struct vxbBusPresent *	pLostBusHead = NULL;
+    /* head of the list of buses which do not have a parent */
+    struct vxbBusPresent   *pLostBusHead = NULL;
 
-/* lock to protect updations of the lost devices and buses list */
-VXB_LOCK_DECL(vxbLostDevListLock);
+    /* lock to protect updations of the lost devices and buses list */
+    VXB_LOCK_DECL(vxbLostDevListLock);
 #endif /* VXB_PERFORM_SANITY_CHECKS */
 
-struct vxbBusPresent * pPlbBus = NULL;
-struct vxbDev * pPlbDev = NULL;
+struct vxbBusPresent *pPlbBus = NULL;
+struct vxbDev *pPlbDev = NULL;
 
 /* lock to protect updations of the free and expired devices list */
 
@@ -309,27 +309,27 @@ VXB_LOCK_DECL(vxbDevStructListLock);
 
 LOCAL int vxbInitPhase = -1;
 
-LOCAL struct vxbDev * pBusDevFreeList = NULL;
+LOCAL struct vxbDev *pBusDevFreeList = NULL;
 
 /* forward declarations */
 
-LOCAL void vxbInstInsert(VXB_DEVICE_ID * pHead, VXB_DEVICE_ID pDev);
+LOCAL void vxbInstInsert(VXB_DEVICE_ID *pHead, VXB_DEVICE_ID pDev);
 
-#ifndef	_WRS_CONFIG_VXBUS_BASIC
-LOCAL STATUS vxbInstRemove(VXB_DEVICE_ID * pHead, VXB_DEVICE_ID pDev);
-LOCAL STATUS vxbSubordinateBusRemove (VXB_DEVICE_ID pDev);
-#endif	/* _WRS_CONFIG_VXBUS_BASIC */
+#ifndef _WRS_CONFIG_VXBUS_BASIC
+    LOCAL STATUS vxbInstRemove(VXB_DEVICE_ID *pHead, VXB_DEVICE_ID pDev);
+    LOCAL STATUS vxbSubordinateBusRemove(VXB_DEVICE_ID pDev);
+#endif  /* _WRS_CONFIG_VXBUS_BASIC */
 
 #ifdef SPIN_LOCK_TRACE
-LOCAL void vxbSpinLockTakeStub(spinlockIsr_t * lock, char * file, int line);
-LOCAL void vxbSpinLockStub(spinlockIsr_t * lock);
-SPIN_LOCK_ISR_TAKE_FUNC pVxbSpinLockTake = vxbSpinLockTakeStub;
-#else	/* SPIN_LOCK_TRACE */
-LOCAL void vxbSpinLockStub(spinlockIsr_t * lock);
-SPIN_LOCK_ISR_TAKE_FUNC pVxbSpinLockTake = vxbSpinLockStub;
+    LOCAL void vxbSpinLockTakeStub(spinlockIsr_t *lock, char *file, int line);
+    LOCAL void vxbSpinLockStub(spinlockIsr_t *lock);
+    SPIN_LOCK_ISR_TAKE_FUNC pVxbSpinLockTake = vxbSpinLockTakeStub;
+#else   /* SPIN_LOCK_TRACE */
+    LOCAL void vxbSpinLockStub(spinlockIsr_t *lock);
+    SPIN_LOCK_ISR_TAKE_FUNC pVxbSpinLockTake = vxbSpinLockStub;
 #endif /* SPIN_LOCK_TRACE */
 
-void (*pVxbSpinLockGive)(spinlockIsr_t * lock) = vxbSpinLockStub;
+void (*pVxbSpinLockGive)(spinlockIsr_t *lock) = vxbSpinLockStub;
 
 /*********************************************************************
 *
@@ -342,11 +342,11 @@ void (*pVxbSpinLockGive)(spinlockIsr_t * lock) = vxbSpinLockStub;
 * ERRNO: N/A
 */
 
-STATUS vxbLibInit (void)
-    {
+STATUS vxbLibInit(void)
+{
     vxbInitPhase = 0;
-    return(OK);
-    }
+    return (OK);
+}
 
 /*********************************************************************
 *
@@ -359,13 +359,13 @@ STATUS vxbLibInit (void)
 * ERRNO: N/A
 */
 
-STATUS vxbInit (void)
-    {
+STATUS vxbInit(void)
+{
     vxbInitPhase = 1;
 
     plbInit1(pPlbDev);
-    return(OK);
-    }
+    return (OK);
+}
 
 /*********************************************************************
 *
@@ -382,22 +382,22 @@ STATUS vxbInit (void)
 */
 
 LOCAL void vxbInstInsert
-    (
-    VXB_DEVICE_ID * pHead,
+(
+    VXB_DEVICE_ID *pHead,
     VXB_DEVICE_ID pDev
-    )
-    {
+)
+{
     while (*pHead != NULL)
-	pHead = &(*pHead)->pNext;
+        pHead = &(*pHead)->pNext;
 
     *pHead = pDev;
 
     pDev->pNext = NULL;
 
     return;
-    }
+}
 
-#ifndef	_WRS_CONFIG_VXBUS_BASIC
+#ifndef _WRS_CONFIG_VXBUS_BASIC
 /*********************************************************************
 *
 * vxbInstRemove - remove an instance from an instance list
@@ -411,25 +411,25 @@ LOCAL void vxbInstInsert
 */
 
 LOCAL STATUS vxbInstRemove
-    (
-    VXB_DEVICE_ID * pHead,
+(
+    VXB_DEVICE_ID *pHead,
     VXB_DEVICE_ID pDev
-    )
-    {
+)
+{
     while (*pHead != NULL)
-	{
-	if (*pHead == pDev)
-	    {
-	    *pHead = pDev->pNext;
-	    pDev->pNext = NULL;
-	    return OK;
-	    }
-	pHead = &(*pHead)->pNext;
-	}
+    {
+        if (*pHead == pDev)
+        {
+            *pHead = pDev->pNext;
+            pDev->pNext = NULL;
+            return OK;
+        }
+        pHead = &(*pHead)->pNext;
+    }
 
     return ERROR;
-    }
-#endif	/* _WRS_CONFIG_VXBUS_BASIC */
+}
+#endif  /* _WRS_CONFIG_VXBUS_BASIC */
 
 /*********************************************************************
 *
@@ -444,27 +444,27 @@ LOCAL STATUS vxbInstRemove
 */
 
 LOCAL STATUS vxbDevInit2Helper
-    (
-    struct vxbDev * pInst,
-    void * pArg
-    )
-    {
-    if ( pInst->pDriver == NULL )
-        return(OK);
-    if ( pInst->pDriver->pDrvBusFuncs == NULL )
-        return(ERROR);
+(
+    struct vxbDev *pInst,
+    void *pArg
+)
+{
+    if (pInst->pDriver == NULL)
+        return (OK);
+    if (pInst->pDriver->pDrvBusFuncs == NULL)
+        return (ERROR);
     if (pInst->flags & VXB_INST_INIT2_DONE)
         return (ERROR);
 
-    if ( pInst->pDriver->pDrvBusFuncs->devInstanceInit2 == NULL )
-        return(OK);
+    if (pInst->pDriver->pDrvBusFuncs->devInstanceInit2 == NULL)
+        return (OK);
 
     (*pInst->pDriver->pDrvBusFuncs->devInstanceInit2)(pInst);
 
     pInst->flags |= VXB_INST_INIT2_DONE;
 
-    return(OK);
-    }
+    return (OK);
+}
 
 /*********************************************************************
 *
@@ -478,30 +478,30 @@ LOCAL STATUS vxbDevInit2Helper
 */
 
 LOCAL STATUS vxbDevConnectHelper
-    (
-    struct vxbDev * pInst,  /* device information */
-    void * pArg
-    )
-    {
+(
+    struct vxbDev *pInst,   /* device information */
+    void *pArg
+)
+{
     STATUS status = OK;
 
     /* take device lock */
-    vxbLockTake (&pInst->devLock, VXB_LOCK_WRITER);
+    vxbLockTake(&pInst->devLock, VXB_LOCK_WRITER);
 
     if (pInst->pDriver == NULL)
         goto vxbDevConnectHelperExit;
 
     if (pInst->pDriver->pDrvBusFuncs == NULL)
-        {
+    {
         status = ERROR;
         goto vxbDevConnectHelperExit;
-        }
+    }
 
     if (pInst->flags & VXB_INST_CONNECT_DONE)
-        {
+    {
         status = ERROR;
         goto vxbDevConnectHelperExit;
-        }
+    }
 
     if (pInst->pDriver->pDrvBusFuncs->devInstanceConnect == NULL)
         goto vxbDevConnectHelperExit;
@@ -513,10 +513,10 @@ LOCAL STATUS vxbDevConnectHelper
 vxbDevConnectHelperExit:
 
     /* release device lock */
-    vxbLockGive (&pInst->devLock, VXB_LOCK_WRITER);
+    vxbLockGive(&pInst->devLock, VXB_LOCK_WRITER);
 
     return (status);
-    }
+}
 
 
 /*********************************************************************
@@ -531,8 +531,8 @@ vxbDevConnectHelperExit:
 * ERRNO: N/A
 */
 
-STATUS vxbDevInitInternal (void)
-    {
+STATUS vxbDevInitInternal(void)
+{
     vxbInitPhase = 2;
 
     /*
@@ -560,8 +560,8 @@ STATUS vxbDevInitInternal (void)
 
     vxbDevIterate(vxbDevInit2Helper, NULL, VXB_ITERATE_INSTANCES);
 
-    return(OK);
-    }
+    return (OK);
+}
 
 /*********************************************************************
 *
@@ -575,16 +575,16 @@ STATUS vxbDevInitInternal (void)
 * ERRNO: N/A
 */
 
-STATUS vxbDevConnectInternal (void)
-    {
+STATUS vxbDevConnectInternal(void)
+{
     vxbInitPhase = 3;
     vxbDevIterate(vxbDevConnectHelper, NULL, VXB_ITERATE_INSTANCES);
 
     if (_func_vxbUserHookDevInit != NULL)
-	(*_func_vxbUserHookDevInit)();
+        (*_func_vxbUserHookDevInit)();
 
-    return(OK);
-    }
+    return (OK);
+}
 
 /*********************************************************************
 *
@@ -598,16 +598,16 @@ STATUS vxbDevConnectInternal (void)
 */
 
 STATUS vxbLibError
-    (
+(
     FUNCPTR pAddr,  /* calling routine */
-    char *  pMsg    /* error message */
-    )
-    {
-    if ( _func_logMsg != NULL )
-        _func_logMsg ("vxbLibError: %s @ %p\n",
-                      (_Vx_usr_arg_t)pMsg, (_Vx_usr_arg_t)pAddr, 3L, 4L, 5L, 6L);
-    return(ERROR);
-    }
+    char   *pMsg    /* error message */
+)
+{
+    if (_func_logMsg != NULL)
+        _func_logMsg("vxbLibError: %s @ %p\n",
+                     (_Vx_usr_arg_t)pMsg, (_Vx_usr_arg_t)pAddr, 3L, 4L, 5L, 6L);
+    return (ERROR);
+}
 
 /*********************************************************************
 *
@@ -623,68 +623,68 @@ STATUS vxbLibError
 */
 
 LOCAL void vxbDevInitRun
-    (
+(
     VXB_DEVICE_ID devID,
-    struct vxbDevRegInfo * pDrv
-    )
-    {
+    struct vxbDevRegInfo *pDrv
+)
+{
     /* take device lock */
-    vxbLockTake (&devID->devLock, VXB_LOCK_WRITER);
+    vxbLockTake(&devID->devLock, VXB_LOCK_WRITER);
 
     /* first pass */
 
     if (!(devID->flags & VXB_INST_INIT_DONE))
-        {
-        if ( pDrv->pDrvBusFuncs->devInstanceInit != NULL )
-	    (*(pDrv->pDrvBusFuncs->devInstanceInit))(devID);
+    {
+        if (pDrv->pDrvBusFuncs->devInstanceInit != NULL)
+            (*(pDrv->pDrvBusFuncs->devInstanceInit))(devID);
         devID->flags |= VXB_INST_INIT_DONE;
-        }
+    }
 
     /* second pass */
 
     if (vxbInitPhase >= 2 && !(devID->flags & VXB_INST_INIT2_DONE))
-        {
-        if ( pDrv->pDrvBusFuncs->devInstanceInit2 != NULL )
-	    (*(pDrv->pDrvBusFuncs->devInstanceInit2))(devID);
+    {
+        if (pDrv->pDrvBusFuncs->devInstanceInit2 != NULL)
+            (*(pDrv->pDrvBusFuncs->devInstanceInit2))(devID);
         devID->flags |= VXB_INST_INIT2_DONE;
-        }
+    }
 
     /* third pass */
 
     if (vxbInitPhase >= 3 && !(devID->flags & VXB_INST_CONNECT_DONE))
-        {
-        if ( pDrv->pDrvBusFuncs->devInstanceConnect != NULL )
-	    (*(pDrv->pDrvBusFuncs->devInstanceConnect))(devID);
+    {
+        if (pDrv->pDrvBusFuncs->devInstanceConnect != NULL)
+            (*(pDrv->pDrvBusFuncs->devInstanceConnect))(devID);
         devID->flags |= VXB_INST_CONNECT_DONE;
 
 #if (defined _WRS_CONFIG_PWR_MGMT) && (defined _WRS_ARCH_HAS_DEV_PWR_MGMT)
         /* if device power management is supported */
-        
+
         if (vxbPwrDeviceAnnounceFunc != NULL)
-            {
+        {
             FUNCPTR pMethod = NULL;
 
             /*
              * Get the power management method.
              */
 
-            pMethod = vxbDevMethodGet (devID,
-                                       DEVMETHOD_CALL(pwrStateSet));
+            pMethod = vxbDevMethodGet(devID,
+                                      DEVMETHOD_CALL(pwrStateSet));
 
             if (pMethod != NULL)  /* If the device supports power management */
-                {
-                
+            {
+
                 /* register the device to the device power manager */
 
-                devID->pwrDeviceId = vxbPwrDeviceAnnounceFunc (devID, NULL);
-                }
+                devID->pwrDeviceId = vxbPwrDeviceAnnounceFunc(devID, NULL);
             }
-#endif /* (_WRS_CONFIG_PWR_MGMT) && (_WRS_ARCH_HAS_DEV_PWR_MGMT) */
         }
+#endif /* (_WRS_CONFIG_PWR_MGMT) && (_WRS_ARCH_HAS_DEV_PWR_MGMT) */
+    }
 
     /* release device lock */
-    vxbLockGive (&devID->devLock, VXB_LOCK_WRITER);
-    }
+    vxbLockGive(&devID->devLock, VXB_LOCK_WRITER);
+}
 
 /*********************************************************************
 *
@@ -701,28 +701,28 @@ LOCAL void vxbDevInitRun
 */
 
 LOCAL STATUS vxbNewDriver
-    (
-    struct vxbDev * pDev,    /* Device Information */
-    void * pArg
-    )
-    {
-    struct vxbDevRegInfo *  pDriver = (struct vxbDevRegInfo *)pArg;
-    struct vxbBusTypeInfo *    pBusEntry;
-    struct vxbBusPresent *     pBus;
+(
+    struct vxbDev *pDev,     /* Device Information */
+    void *pArg
+)
+{
+    struct vxbDevRegInfo   *pDriver = (struct vxbDevRegInfo *)pArg;
+    struct vxbBusTypeInfo     *pBusEntry;
+    struct vxbBusPresent      *pBus;
     BOOL            drvFound;
-    struct vxbDev *     pOrphanList;
-    struct vxbDev *     pOrphanNext;
+    struct vxbDev      *pOrphanList;
+    struct vxbDev      *pOrphanNext;
 
 
     VXB_DEBUG_MSG(10, "vxbNewDriver(%p,...)\n", pDev, 2, 3, 4, 5, 6);
 
     /* check busID */
 
-    if ( pDriver->busID != pDev->busID )
-        return(ERROR);
+    if (pDriver->busID != pDev->busID)
+        return (ERROR);
 
-    if ( pDev->pParentBus == NULL )
-        return(ERROR);
+    if (pDev->pParentBus == NULL)
+        return (ERROR);
 
     /* Should never happen */
 
@@ -738,24 +738,24 @@ LOCAL STATUS vxbNewDriver
     /* check bus-specific match routine */
 
     drvFound = (*(pBusEntry->vxbDevMatch))(pDriver, pDev);
-    if ( drvFound == FALSE )
-        return(ERROR);
+    if (drvFound == FALSE)
+        return (ERROR);
 
     VXB_DEBUG_MSG(12, "    vxbNewDriver(%p,...) found bus match\n",
                   pDev, 2, 3, 4, 5, 6);
 
     /* check driver-supplied probe routine */
 
-    if ( pDriver->devProbe == NULL )
-        {
+    if (pDriver->devProbe == NULL)
+    {
         drvFound = TRUE;
-        }
+    }
     else
-        {
+    {
         drvFound = (*(pDriver->devProbe))(pDev);
-        if ( drvFound == FALSE )
-            return(ERROR);
-        }
+        if (drvFound == FALSE)
+            return (ERROR);
+    }
 
     VXB_DEBUG_MSG(10, "vxbNewDriver(%p) orphan found\n",
                   pDev, 2, 3, 4, 5, 6);
@@ -771,7 +771,7 @@ LOCAL STATUS vxbNewDriver
      */
 
     if (pDev->pName == NULL)
-    pDev->pName = &pDriver->drvName[0];
+        pDev->pName = &pDriver->drvName[0];
 
     /* get parent bus */
 
@@ -783,17 +783,17 @@ LOCAL STATUS vxbNewDriver
     /* remove this instance from orphan list */
 
     pOrphanList = pBus->devList;
-    if ( pOrphanList == pDev )
-        {
+    if (pOrphanList == pDev)
+    {
         pBus->devList = pDev->pNext;
         pDev->pNext = NULL;
-        }
+    }
     else
+    {
+        while (pOrphanList->pNext != NULL)
         {
-        while ( pOrphanList->pNext != NULL )
+            if (pOrphanList->pNext == pDev)
             {
-            if ( pOrphanList->pNext == pDev )
-                {
 
                 /* update links to remove from list */
 
@@ -801,18 +801,18 @@ LOCAL STATUS vxbNewDriver
                 pDev->pNext = NULL;
                 pOrphanList->pNext = pOrphanNext;
 
-		break;
-                }
+                break;
+            }
             else
-                {
+            {
                 pOrphanList = pOrphanList->pNext;
-                }
             }
         }
+    }
 
     /* save as instance */
 
-    vxbInstInsert (&pBus->instList, pDev);
+    vxbInstInsert(&pBus->instList, pDev);
 
     /* release the lock */
     vxbLockGive(&pBus->listLock, VXB_LOCK_WRITER);
@@ -821,8 +821,8 @@ LOCAL STATUS vxbNewDriver
 
     vxbDevInitRun(pDev, pDriver);
 
-    return(OK);
-    }
+    return (OK);
+}
 
 /*********************************************************************
 *
@@ -836,17 +836,17 @@ LOCAL STATUS vxbNewDriver
 */
 
 STATUS vxbDevRegister
-    (
-    struct vxbDevRegInfo * pDevInfo /* per-bus recognition info */
-    )
-    {
-    struct vxbDevRegInfo * pListEnd;
-    struct vxbDevRegInfo * pCurrent;
+(
+    struct vxbDevRegInfo *pDevInfo  /* per-bus recognition info */
+)
+{
+    struct vxbDevRegInfo *pListEnd;
+    struct vxbDevRegInfo *pCurrent;
 
-    VXB_ASSERT(pDevInfo!=NULL, ERROR)
+    VXB_ASSERT(pDevInfo != NULL, ERROR)
 
-    if ( vxbDrvVerCheck(pDevInfo) != OK )
-        return(ERROR);
+    if (vxbDrvVerCheck(pDevInfo) != OK)
+        return (ERROR);
 
     /*
      * Walk the list of new registration functions
@@ -856,7 +856,7 @@ STATUS vxbDevRegister
      */
 
     pListEnd = pDevInfo;
-    while ( pListEnd->pNext != NULL )
+    while (pListEnd->pNext != NULL)
         pListEnd = pListEnd->pNext;
 
     /* add new list to driver head */
@@ -880,7 +880,7 @@ STATUS vxbDevRegister
 
     pListEnd = pListEnd->pNext;
 
-    if ( vxbInitPhase < 1 )
+    if (vxbInitPhase < 1)
         return OK;
 
     VXB_DEBUG_MSG(2, "vxbDevRegister(): pDevInfo @ %p, pListEnd @ %p\n",
@@ -889,18 +889,18 @@ STATUS vxbDevRegister
     /* Check existing devices, to see if this driver matches */
 
     pCurrent = pDevInfo;
-    while ( pCurrent != pListEnd )
-        {
+    while (pCurrent != pListEnd)
+    {
         VXB_DEBUG_MSG(2, "vxbDevRegister() checking for orphans on %s\n",
                       vxbBusTypeString(pCurrent->busID), 2, 3, 4, 5, 6);
 
         vxbDevIterate(vxbNewDriver, pCurrent, VXB_ITERATE_ORPHANS);
         pCurrent = pCurrent->pNext;
-        }
+    }
 
     return OK;
 
-    }
+}
 
 /******************************************************************
 *
@@ -915,15 +915,15 @@ STATUS vxbDevRegister
 */
 
 BOOL vxbDrvRescan
-    (
-    struct vxbDevRegInfo * pDriver
-    )
-    {
+(
+    struct vxbDevRegInfo *pDriver
+)
+{
     vxbDevIterate(vxbNewDriver, pDriver, VXB_ITERATE_ORPHANS);
     return TRUE;
-    }
+}
 
-#ifndef	_WRS_CONFIG_VXBUS_BASIC
+#ifndef _WRS_CONFIG_VXBUS_BASIC
 /*********************************************************************
 *
 * vxbDrvDisconnect - dissociate a driver from a device
@@ -936,33 +936,33 @@ BOOL vxbDrvRescan
 */
 
 LOCAL STATUS vxbDrvDisconnect
-    (
-    struct vxbDev * pDev,    /* Device Information */
-    void * pArg
-    )
-    {
-    struct vxbDrvDisconnectData *   pDrvDisconnect =
-                                    (struct vxbDrvDisconnectData *)pArg;
+(
+    struct vxbDev *pDev,     /* Device Information */
+    void *pArg
+)
+{
+    struct vxbDrvDisconnectData    *pDrvDisconnect =
+        (struct vxbDrvDisconnectData *)pArg;
 
-    VXB_ASSERT(pDrvDisconnect!=NULL, ERROR)
+    VXB_ASSERT(pDrvDisconnect != NULL, ERROR)
 
     /* check if this is an instance of the specified driver */
 
-    if ( pDev->pDriver != pDrvDisconnect->pDriver)
-        {
-        return(OK);
-        }
+    if (pDev->pDriver != pDrvDisconnect->pDriver)
+    {
+        return (OK);
+    }
 
     /* turn the instance into an orphan */
 
-    if (vxbDeviceDriverRelease (pDev) != OK)
-	{
-	pDrvDisconnect->status = ERROR;
-	return (ERROR);
-	}
-
-    return(OK);
+    if (vxbDeviceDriverRelease(pDev) != OK)
+    {
+        pDrvDisconnect->status = ERROR;
+        return (ERROR);
     }
+
+    return (OK);
+}
 
 /*********************************************************************
 *
@@ -978,15 +978,15 @@ LOCAL STATUS vxbDrvDisconnect
 */
 
 STATUS vxbDeviceDriverRelease
-    (
+(
     struct vxbDev *pDev
-    )
-    {
-    struct vxbBusPresent * pBus;
+)
+{
+    struct vxbBusPresent *pBus;
     FUNCPTR pMethod;
     STATUS status = OK;
 
-    VXB_ASSERT(pDev->pDriver!=NULL, ERROR)
+    VXB_ASSERT(pDev->pDriver != NULL, ERROR)
 
     /* retrieve the method for unlink id */
 
@@ -995,45 +995,45 @@ STATUS vxbDeviceDriverRelease
     /* if there is no such method, it is an ERROR */
 
     if (pMethod != NULL)
-        {
+    {
         /* execute the method */
 
         if (((*pMethod)(pDev, NULL)) != OK)
-            {
+        {
             return ERROR;
-            }
+        }
 
         /* deallocate the memory allocated for pInst->pParams */
 
         if (pDev->pParams != NULL)
-            {
-#ifndef _VXBUS_BASIC_HWMEMLIB                
-            hwMemFree((char *)(pDev->pParams));
-#endif /* !_VXBUS_BASIC_HWMEMLIB */            
-            pDev->pParams = NULL;
-            }
-        }
-    else
         {
-        return ERROR;
+#ifndef _VXBUS_BASIC_HWMEMLIB
+            hwMemFree((char *)(pDev->pParams));
+#endif /* !_VXBUS_BASIC_HWMEMLIB */
+            pDev->pParams = NULL;
         }
+    }
+    else
+    {
+        return ERROR;
+    }
 
     /* if bus controller with subordinate devices, remove those */
 
-    if (vxbSubordinateBusRemove (pDev) != OK)
-	return (ERROR);
+    if (vxbSubordinateBusRemove(pDev) != OK)
+        return (ERROR);
 
-#ifdef	_WRS_CONFIG_LP64
+#ifdef  _WRS_CONFIG_LP64
     /* unmap the BARs */
 
-    if (vxbRegUnmapAll (pDev) != OK)
-	return (ERROR);
-#endif	/* _WRS_CONFIG_LP64 */
+    if (vxbRegUnmapAll(pDev) != OK)
+        return (ERROR);
+#endif  /* _WRS_CONFIG_LP64 */
 
     /* Device no longer initialized */
 
     pDev->flags &=
-	~(VXB_INST_INIT_DONE | VXB_INST_INIT2_DONE | VXB_INST_CONNECT_DONE);
+        ~(VXB_INST_INIT_DONE | VXB_INST_INIT2_DONE | VXB_INST_CONNECT_DONE);
 
     /* get parent bus and instance list head */
 
@@ -1041,15 +1041,15 @@ STATUS vxbDeviceDriverRelease
 
     /* acquire the lock */
 
-    vxbLockTake (&pBus->listLock, VXB_LOCK_WRITER);
+    vxbLockTake(&pBus->listLock, VXB_LOCK_WRITER);
 
     /* remove from instance list */
 
-    status = vxbInstRemove (&pBus->instList, pDev);
+    status = vxbInstRemove(&pBus->instList, pDev);
 
     /* add to head of orphan list */
 
-    vxbInstInsert (&pBus->devList, pDev);
+    vxbInstInsert(&pBus->devList, pDev);
 
     /* release the lock */
 
@@ -1062,14 +1062,14 @@ STATUS vxbDeviceDriverRelease
     /* if the pName point to drvName, zero it */
 
     if (pDev->pDriver != NULL &&
-        pDev->pName == &pDev->pDriver->drvName[0])
+            pDev->pName == &pDev->pDriver->drvName[0])
         pDev->pName = NULL;
 
     pDev->pDriver = NULL;
 
     return status;
-    }
-#endif	/* _WRS_CONFIG_VXBUS_BASIC */
+}
+#endif  /* _WRS_CONFIG_VXBUS_BASIC */
 
 
 /******************************************************************************
@@ -1082,62 +1082,62 @@ STATUS vxbDeviceDriverRelease
 */
 
 LOCAL STATUS vxbBusPresentVerify
-    (
-    struct vxbBusPresent * pBus
-    )
-    {
-    struct vxbBusPresent *	pHead;
-    STATUS			stat = ERROR;
+(
+    struct vxbBusPresent *pBus
+)
+{
+    struct vxbBusPresent   *pHead;
+    STATUS          stat = ERROR;
 
     /* acquire the lock */
 
-    vxbLockTake (&vxbBusListLock, VXB_LOCK_READER);
+    vxbLockTake(&vxbBusListLock, VXB_LOCK_READER);
 
     /* search the bus from the chains start from the pPlbBus */
 
     pHead = pPlbBus;
 
     while (pHead != NULL)
-	{
-	if (pHead == pBus)
-	    {
-	    /* bus found in the registered bus list */
+    {
+        if (pHead == pBus)
+        {
+            /* bus found in the registered bus list */
 
-	    stat = OK;
-	    break;
-	    }
+            stat = OK;
+            break;
+        }
 
-	pHead = pHead->pNext;
-	}
+        pHead = pHead->pNext;
+    }
 
-#ifdef	VXB_PERFORM_SANITY_CHECKS
+#ifdef  VXB_PERFORM_SANITY_CHECKS
     if (stat != OK)
-	{
-	/* search the bus from the chains start from the pLostBusHead */
+    {
+        /* search the bus from the chains start from the pLostBusHead */
 
-	pHead = pLostBusHead;
+        pHead = pLostBusHead;
 
-	while (pHead != NULL)
-	    {
-	    if (pHead == pBus)
-		{
-		/* bus found in the lost bus list */
+        while (pHead != NULL)
+        {
+            if (pHead == pBus)
+            {
+                /* bus found in the lost bus list */
 
-		stat = OK;
-		break;
-		}
-	    }
-	}
-#endif	/* VXB_PERFORM_SANITY_CHECKS */
+                stat = OK;
+                break;
+            }
+        }
+    }
+#endif  /* VXB_PERFORM_SANITY_CHECKS */
 
     /* release the lock */
 
-    vxbLockGive (&vxbBusListLock, VXB_LOCK_READER);
+    vxbLockGive(&vxbBusListLock, VXB_LOCK_READER);
 
     return (stat);
-    }
+}
 
-#ifndef	_WRS_CONFIG_VXBUS_BASIC
+#ifndef _WRS_CONFIG_VXBUS_BASIC
 /*******************************************************************************
 *
 * vxbSubordinateBusRemove - remove subordinate bus
@@ -1146,131 +1146,131 @@ LOCAL STATUS vxbBusPresentVerify
 * routine removes the subordinate bus.
 *
 * RETURNS: OK if the subordinate bus and all the devices on the bus are removed
-* successfully or the device instance is not with a subordinate bus, otherwise 
+* successfully or the device instance is not with a subordinate bus, otherwise
 * ERROR.
 *
 */
 
 LOCAL STATUS vxbSubordinateBusRemove
-    (
+(
     VXB_DEVICE_ID pDev
-    )
-    {
-    struct vxbBusPresent *	pBus;
-    volatile VXB_DEVICE_ID	subordinateDev;
-    STATUS			stat = OK;
+)
+{
+    struct vxbBusPresent   *pBus;
+    volatile VXB_DEVICE_ID  subordinateDev;
+    STATUS          stat = OK;
 
     /* if bus controller with subordinate devices, remove those */
 
     pBus = pDev->u.pSubordinateBus;
 
     if (pBus != NULL)
-	{
-	struct vxbBusPresent * pParentBus;
+    {
+        struct vxbBusPresent *pParentBus;
 
-	/*
-	 * Verify the pDev->u.pSubordinateBus indicates the pSubordinateBus
-	 * or pDevPrivate.
-	 */
+        /*
+         * Verify the pDev->u.pSubordinateBus indicates the pSubordinateBus
+         * or pDevPrivate.
+         */
 
-	if (vxbBusPresentVerify (pBus) != OK)
-	    return (OK);
+        if (vxbBusPresentVerify(pBus) != OK)
+            return (OK);
 
-	/* release subordinate instances */
+        /* release subordinate instances */
 
-	subordinateDev = pBus->devList;
+        subordinateDev = pBus->devList;
 
-	/* if there are devices connected to this bus, remove the devices */
+        /* if there are devices connected to this bus, remove the devices */
 
-	while (subordinateDev != NULL)
-	    {
-	    if (vxbDevRemovalAnnounce (subordinateDev) != OK)
-		return ERROR;
+        while (subordinateDev != NULL)
+        {
+            if (vxbDevRemovalAnnounce(subordinateDev) != OK)
+                return ERROR;
 
-	    subordinateDev = pBus->devList;
-	    }
+            subordinateDev = pBus->devList;
+        }
 
-	/* if there are instances connected to this bus, remove them */
+        /* if there are instances connected to this bus, remove them */
 
-	subordinateDev = pBus->instList;
+        subordinateDev = pBus->instList;
 
-	while (subordinateDev != NULL)
-	    {
-	    if (vxbDevRemovalAnnounce (subordinateDev) != OK)
-		return ERROR;
+        while (subordinateDev != NULL)
+        {
+            if (vxbDevRemovalAnnounce(subordinateDev) != OK)
+                return ERROR;
 
-	    subordinateDev = pBus->instList;
-	    }
+            subordinateDev = pBus->instList;
+        }
 
-	/* Remove the bus from the list of busses */
+        /* Remove the bus from the list of busses */
 
-	pParentBus = pBus->pCtlr->pParentBus;
+        pParentBus = pBus->pCtlr->pParentBus;
 
-	if (pParentBus != NULL)	/* should always be true */
-	    {
-	    void * pHead;
+        if (pParentBus != NULL) /* should always be true */
+        {
+            void *pHead;
 
-	    /* acquire the lock */
+            /* acquire the lock */
 
-	    vxbLockTake (&vxbBusListLock, VXB_LOCK_WRITER);
+            vxbLockTake(&vxbBusListLock, VXB_LOCK_WRITER);
 
-	    /* remove from list */
+            /* remove from list */
 
-	   pHead = (void *) &pParentBus->pNext;
+            pHead = (void *) &pParentBus->pNext;
 
-	   stat = vxbInstRemove ((VXB_DEVICE_ID *)pHead, (VXB_DEVICE_ID)pBus);
+            stat = vxbInstRemove((VXB_DEVICE_ID *)pHead, (VXB_DEVICE_ID)pBus);
 
-	   /* release the lock */
+            /* release the lock */
 
-	   vxbLockGive (&vxbBusListLock, VXB_LOCK_WRITER);
-	   }
-	else
-	   {
-#ifdef	VXB_PERFORM_SANITY_CHECKS
-	    /* acquire the lock */
+            vxbLockGive(&vxbBusListLock, VXB_LOCK_WRITER);
+        }
+        else
+        {
+#ifdef  VXB_PERFORM_SANITY_CHECKS
+            /* acquire the lock */
 
-	     vxbLockTake (&vxbBusListLock, VXB_LOCK_WRITER);
+            vxbLockTake(&vxbBusListLock, VXB_LOCK_WRITER);
 
-	    if (pLostBusHead != NULL)
-		{
-		void * pHead = (void *) &pLostBusHead;
+            if (pLostBusHead != NULL)
+            {
+                void *pHead = (void *) &pLostBusHead;
 
-		/* remove from list */
+                /* remove from list */
 
-		(void)vxbInstRemove ((VXB_DEVICE_ID *)pHead, (VXB_DEVICE_ID)pBus);
-		}
+                (void)vxbInstRemove((VXB_DEVICE_ID *)pHead, (VXB_DEVICE_ID)pBus);
+            }
 
-	    /* release the lock */
+            /* release the lock */
 
-	    vxbLockGive (&vxbBusListLock, VXB_LOCK_WRITER);
-#endif	/* VXB_PERFORM_SANITY_CHECKS */
+            vxbLockGive(&vxbBusListLock, VXB_LOCK_WRITER);
+#endif  /* VXB_PERFORM_SANITY_CHECKS */
 
-	   stat = ERROR;
-	   }
+            stat = ERROR;
+        }
 
-	/* terminate the subordinate bus */
+        /* terminate the subordinate bus */
 
-	pDev->u.pSubordinateBus = NULL;
+        pDev->u.pSubordinateBus = NULL;
 
-	/* delete the lock for the bus information */
+        /* delete the lock for the bus information */
 
-	if (vxbLockDelete (&pBus->listLock) != OK)
-	    {
-	    /* restore the subordinate bus */
+        if (vxbLockDelete(&pBus->listLock) != OK)
+        {
+            /* restore the subordinate bus */
 
-	    pDev->u.pSubordinateBus = pBus;
+            pDev->u.pSubordinateBus = pBus;
 
-	    return (ERROR);
-	    }
+            return (ERROR);
+        }
 #ifndef _VXBUS_BASIC_HWMEMLIB
-	/* free up the memory allocated */
+        /* free up the memory allocated */
 
-	hwMemFree ((char *) pBus);
+        hwMemFree((char *) pBus);
 #endif /* !_VXBUS_BASIC_HWMEMLIB */
-	}
+    }
 
     return (stat);
-    }
+}
 
 /*********************************************************************
 *
@@ -1291,15 +1291,15 @@ LOCAL STATUS vxbSubordinateBusRemove
 */
 
 STATUS vxbDriverUnregister
-    (
-    struct vxbDevRegInfo * pDriver
-    )
-    {
-    struct vxbDevRegInfo * pDrvList = NULL;
+(
+    struct vxbDevRegInfo *pDriver
+)
+{
+    struct vxbDevRegInfo *pDrvList = NULL;
 
     struct vxbDrvDisconnectData driverData;
 
-    VXB_ASSERT(pDriver!=NULL, ERROR)
+    VXB_ASSERT(pDriver != NULL, ERROR)
 
     driverData.pDriver = pDriver;
     driverData.status = OK;
@@ -1321,17 +1321,17 @@ STATUS vxbDriverUnregister
 
     pDrvList = pDriverListHead;
 
-    if ( pDrvList == pDriver )
-        {
+    if (pDrvList == pDriver)
+    {
         pDriverListHead = pDrvList->pNext;
         pDrvList->pNext = NULL;
-        }
+    }
     else
+    {
+        while (pDrvList != NULL && pDrvList->pNext != NULL)
         {
-        while ( pDrvList != NULL && pDrvList->pNext != NULL )
+            if (pDrvList->pNext == pDriver)
             {
-            if ( pDrvList->pNext == pDriver )
-                {
                 pDrvList->pNext = pDriver->pNext;
                 pDriver->pNext = NULL;
 
@@ -1340,24 +1340,24 @@ STATUS vxbDriverUnregister
                 vxbLockGive(&vxbGlobalListsLock, VXB_LOCK_WRITER);
 
                 return OK;
-                }
+            }
 
             pDrvList = pDrvList->pNext;
-            }
+        }
         if ((pDrvList == NULL) || (pDrvList->pNext == NULL))
-            {
+        {
             vxbLockGive(&vxbGlobalListsLock, VXB_LOCK_WRITER);
             return ERROR;
-            }
         }
+    }
 
     /* release the lock */
 
     vxbLockGive(&vxbGlobalListsLock, VXB_LOCK_WRITER);
 
     return OK;
-    }
-#endif	/* _WRS_CONFIG_VXBUS_BASIC */
+}
+#endif  /* _WRS_CONFIG_VXBUS_BASIC */
 
 /*********************************************************************
 *
@@ -1371,13 +1371,13 @@ STATUS vxbDriverUnregister
 */
 
 STATUS vxbBusTypeRegister
-    (
-    struct vxbBusTypeInfo * pBusType
-    )
-    {
+(
+    struct vxbBusTypeInfo *pBusType
+)
+{
     struct vxbBusTypeInfo *pTempPtr;
 
-    VXB_ASSERT(pBusType!=NULL, ERROR)
+    VXB_ASSERT(pBusType != NULL, ERROR)
 
     /* acquire the lock */
 
@@ -1388,19 +1388,19 @@ STATUS vxbBusTypeRegister
     /* check if there is a duplicate entry for this bus type */
 
     if (pBusListHead != NULL)
-        {
+    {
 
         while (pTempPtr != NULL)
-            {
+        {
             if (pTempPtr->busID == pBusType->busID)
-                {
+            {
                 vxbLockGive(&vxbGlobalListsLock, VXB_LOCK_WRITER);
                 return ERROR;
-                }
+            }
 
             pTempPtr = pTempPtr->pNext;
-            }
         }
+    }
 
     /* update the list element */
 
@@ -1412,9 +1412,9 @@ STATUS vxbBusTypeRegister
     vxbLockGive(&vxbGlobalListsLock, VXB_LOCK_WRITER);
 
     return OK;
-    }
+}
 
-#ifndef	_WRS_CONFIG_VXBUS_BASIC
+#ifndef _WRS_CONFIG_VXBUS_BASIC
 
 /*********************************************************************
 *
@@ -1428,16 +1428,16 @@ STATUS vxbBusTypeRegister
 */
 
 STATUS vxbBusTypeUnregister
-    (
-    struct vxbBusTypeInfo * pBusType
-    )
-    {
-    STATUS	status = OK;
-    void * pBusListHeadDevId;
-    struct vxbBusPresent * pBusPres;
+(
+    struct vxbBusTypeInfo *pBusType
+)
+{
+    STATUS  status = OK;
+    void *pBusListHeadDevId;
+    struct vxbBusPresent *pBusPres;
 
-    VXB_ASSERT(pBusType!=NULL, ERROR);
-    VXB_ASSERT(pBusListHead!=NULL, ERROR);
+    VXB_ASSERT(pBusType != NULL, ERROR);
+    VXB_ASSERT(pBusListHead != NULL, ERROR);
 
     /* acquire the lock */
 
@@ -1451,20 +1451,20 @@ STATUS vxbBusTypeUnregister
     pBusPres = pPlbBus;
 
     while (pBusPres != NULL)
-        {
+    {
         if (pBusPres->pBusType == pBusType)
-            {
+        {
             vxbLockGive(&vxbBusListLock, VXB_LOCK_WRITER);
             return ERROR;
-            }
+        }
 
         pBusPres = pBusPres->pNext;
-        }
+    }
 
     pBusListHeadDevId = (void *) &pBusListHead;
 
-    if (vxbInstRemove ((VXB_DEVICE_ID *)pBusListHeadDevId,
-                       (VXB_DEVICE_ID)pBusType) != OK)
+    if (vxbInstRemove((VXB_DEVICE_ID *)pBusListHeadDevId,
+                      (VXB_DEVICE_ID)pBusType) != OK)
         status = ERROR;
 
     /* release the lock */
@@ -1472,8 +1472,8 @@ STATUS vxbBusTypeUnregister
     vxbLockGive(&vxbBusListLock, VXB_LOCK_WRITER);
 
     return status;
-    }
-#endif	/* _WRS_CONFIG_VXBUS_BASIC */
+}
+#endif  /* _WRS_CONFIG_VXBUS_BASIC */
 
 /*********************************************************************
 *
@@ -1499,30 +1499,30 @@ STATUS vxbBusTypeUnregister
 */
 
 STATUS vxbDeviceAnnounce
-    (
-    struct vxbDev * pDev  /* device information */
-    )
-    {
-    struct vxbBusTypeInfo * pBusEntry;
-    struct vxbBusTypeInfo * busMatch = NULL;
+(
+    struct vxbDev *pDev   /* device information */
+)
+{
+    struct vxbBusTypeInfo *pBusEntry;
+    struct vxbBusTypeInfo *busMatch = NULL;
     BOOL         drvFound = FALSE;
-    struct vxbDevRegInfo *  pDrv;
-    struct vxbBusPresent * pBus;
+    struct vxbDevRegInfo   *pDrv;
+    struct vxbBusPresent *pBus;
     FUNCPTR pMethod;
 
-    if ( pPlbDev == NULL && pDev->busID == VXB_BUSID_LOCAL )
-        {
+    if (pPlbDev == NULL && pDev->busID == VXB_BUSID_LOCAL)
+    {
         pPlbDev = pDev;
-        return(OK);
-        }
+        return (OK);
+    }
 
     VXB_DEBUG_MSG(1, "vxbDeviceAnnounce(%p: %s)\n", pDev,
                   pDev->pName, 3, 4, 5, 6);
 
-    /* 
-     * BSPs may want to exclude hardware from VxBus at runtime, rather 
-     * than by making modifications to hwconf.c on an image-by-image 
-     * basis.  If they want to, they can associate the sysBspDevFilter 
+    /*
+     * BSPs may want to exclude hardware from VxBus at runtime, rather
+     * than by making modifications to hwconf.c on an image-by-image
+     * basis.  If they want to, they can associate the sysBspDevFilter
      * with the PLB device prior to starting VxBus.  If VxBus finds
      * this method, it passes the 'vxbDev' structure to the filter.
      * The filter returns OK if the hardware should be used by VxBus,
@@ -1530,117 +1530,117 @@ STATUS vxbDeviceAnnounce
      */
 
     if (pPlbDev != NULL)
-	{
-	pMethod = vxbDevMethodGet(pPlbDev, DEVMETHOD_CALL(sysBspDevFilter));
-	if (pMethod != NULL)
-	    {
-	    if ((*pMethod)(pDev) != OK)
-		{
-		VXB_DEBUG_MSG(1,
-			      "vxbDeviceAnnounce(%p(%s)) excluded by BSP\n",
-			      pDev,
-			      pDev->pName, 3, 4, 5, 6);
+    {
+        pMethod = vxbDevMethodGet(pPlbDev, DEVMETHOD_CALL(sysBspDevFilter));
+        if (pMethod != NULL)
+        {
+            if ((*pMethod)(pDev) != OK)
+            {
+                VXB_DEBUG_MSG(1,
+                              "vxbDeviceAnnounce(%p(%s)) excluded by BSP\n",
+                              pDev,
+                              pDev->pName, 3, 4, 5, 6);
 
-		return ERROR;
-		}
-	    }  
-	}
+                return ERROR;
+            }
+        }
+    }
 
     if (pDev->pParentBus == NULL)
-        {
+    {
 #ifdef VXB_PERFORM_SANITY_CHECKS
         vxbLockTake(&vxbLostDevListLock, VXB_LOCK_WRITER);
 
-        vxbInstInsert (&pLostDevHead, pDev);
+        vxbInstInsert(&pLostDevHead, pDev);
 
         vxbLockGive(&vxbLostDevListLock, VXB_LOCK_WRITER);
 
 #endif /* VXB_PERFORM_SANITY_CHECKS */
 
         return ERROR;
-        }
+    }
 
     /* acquire global lock as reader */
 
     vxbLockTake(&vxbGlobalListsLock, VXB_LOCK_READER);
 
-    for ( pBusEntry = pBusListHead ; pBusEntry != NULL ;
-          pBusEntry = pBusEntry->pNext )
-        {
+    for (pBusEntry = pBusListHead ; pBusEntry != NULL ;
+            pBusEntry = pBusEntry->pNext)
+    {
 
         /* check for matching bus type */
 
-        if ( pBusEntry->busID != pDev->busID )
+        if (pBusEntry->busID != pDev->busID)
             continue;
 
-        for ( pDrv = pDriverListHead ; pDrv != NULL ;
-             pDrv = pDrv->pNext )
-            {
+        for (pDrv = pDriverListHead ; pDrv != NULL ;
+                pDrv = pDrv->pNext)
+        {
 
             VXB_DEBUG_MSG(1, "vxbDeviceAnnounce(): checking %p (%s) "
-                             "against %s\n",
+                          "against %s\n",
                           pDev, pDev->pName,
                           &pDrv->drvName[0], 4, 5, 6);
 
-            if ( pDrv->busID != pDev->busID )
-                {
+            if (pDrv->busID != pDev->busID)
+            {
                 VXB_DEBUG_MSG(1, "vxbDeviceAnnounce(): "
-                                 "%s@%p failed type check\n",
+                              "%s@%p failed type check\n",
                               pDev->pName, pDev, 3, 4, 5, 6);
                 continue;
-                }
+            }
 
             /* check bus-specific match routine */
 
             drvFound = (*(pBusEntry->vxbDevMatch))(pDrv, pDev);
 
-            if ( ! drvFound )
-                {
+            if (! drvFound)
+            {
                 VXB_DEBUG_MSG(1, "vxbDeviceAnnounce(): "
-                                 "%s@%p failed bus match\n",
+                              "%s@%p failed bus match\n",
                               pDev->pName, pDev, 3, 4, 5, 6);
                 continue;
-                }
+            }
 
             busMatch = pBusEntry;
 
             /* check driver-supplied probe routine */
 
-            if ( pDrv->devProbe == NULL )
-                {
+            if (pDrv->devProbe == NULL)
+            {
                 VXB_DEBUG_MSG(1, "vxbDeviceAnnounce(): "
-                                 "no driver probe available\n",
+                              "no driver probe available\n",
                               1, 2, 3, 4, 5, 6);
                 drvFound = TRUE;
-                }
+            }
             else
-                {
+            {
                 VXB_DEBUG_MSG(1, "vxbDeviceAnnounce(): "
-                                 "calling driver probe\n",
+                              "calling driver probe\n",
                               1, 2, 3, 4, 5, 6);
 
                 drvFound = (*(pDrv->devProbe))(pDev);
-                if ( drvFound == FALSE )
-                    {
+                if (drvFound == FALSE)
+                {
                     VXB_DEBUG_MSG(1, "vxbDeviceAnnounce(): "
-                                     "driver probe failed\n",
+                                  "driver probe failed\n",
                                   1, 2, 3, 4, 5, 6);
                     continue;
-                    }
                 }
+            }
 
             VXB_DEBUG_MSG(1, "vxbDeviceAnnounce(): "
-                             "found match, driver @ %p\n",
+                          "found match, driver @ %p\n",
                           pDrv, 2, 3, 4, 5, 6);
 
             /* attach driver registration info */
 
             pDev->pDriver = pDrv;
 
-            /* 
+            /*
              * Adjust name, if pDev->pName isn't NULL, the name was assigned
              * when the device was created by bus controller driver, just keep
-             * it. If the name is not assigned when the deivce was created, 
+             * it. If the name is not assigned when the deivce was created,
              * set the name to driver name.
              */
 
@@ -1657,7 +1657,7 @@ STATUS vxbDeviceAnnounce
 
             /* add this instance to bus device list */
 
-            vxbInstInsert (&pBus->instList, pDev);
+            vxbInstInsert(&pBus->instList, pDev);
 
             /* release the lock */
 
@@ -1668,15 +1668,15 @@ STATUS vxbDeviceAnnounce
             vxbDevInitRun(pDev, pDrv);
 
             break;
-            }
         }
+    }
 
     /* release global lock */
 
     vxbLockGive(&vxbGlobalListsLock, VXB_LOCK_READER);
 
-    if ( drvFound == FALSE )
-        {
+    if (drvFound == FALSE)
+    {
         /* get parent bus */
 
         pBus = (struct vxbBusPresent *)pDev->pParentBus;
@@ -1691,14 +1691,14 @@ STATUS vxbDeviceAnnounce
 
         /* keep track of unattached device */
 
-        vxbInstInsert (&pBus->devList, pDev);
+        vxbInstInsert(&pBus->devList, pDev);
 
         /* release the lock */
 
         vxbLockGive(&pBus->listLock, VXB_LOCK_WRITER);
-        }
+    }
 
-	VXB_DEBUG_MSG(1, "\n", 1, 2, 3, 4, 5, 6);
+    VXB_DEBUG_MSG(1, "\n", 1, 2, 3, 4, 5, 6);
     return OK;
 }
 
@@ -1718,40 +1718,40 @@ STATUS vxbDeviceAnnounce
 */
 
 LOCAL FUNCPTR vxbDevOnlyMethodGet
-    (
-    struct vxbDev * pDev,    /* Device information */
+(
+    struct vxbDev *pDev,     /* Device information */
     VXB_METHOD_ID   method   /* Specified method */
-    )
-    {
-    struct vxbDeviceMethod * pMethods;
+)
+{
+    struct vxbDeviceMethod *pMethods;
 
     pMethods = pDev->pMethods;
-    if ( pMethods != NULL )
+    if (pMethods != NULL)
+    {
+        while (pMethods->devMethodId != 0 && pMethods->handler != NULL)
         {
-        while ( pMethods->devMethodId != 0 && pMethods->handler != NULL )
-            {
-            if ( pMethods->devMethodId == method )
-                return(pMethods->handler);
+            if (pMethods->devMethodId == method)
+                return (pMethods->handler);
             pMethods++;
-            }
         }
-
-    return(NULL);
     }
 
-#ifndef	_WRS_CONFIG_VXBUS_BASIC
+    return (NULL);
+}
+
+#ifndef _WRS_CONFIG_VXBUS_BASIC
 /*********************************************************************
 *
 * vxbDevFromBusRemove - remove device from bus
 *
 * This routine removes the device from the bus to which it is
-* connected.  The caller must provide the parent.  This routine 
+* connected.  The caller must provide the parent.  This routine
 * does not handle bus controller devices.  If any bus controller
 * devices with subordinate devices is passed to this routine, the
 * subordinate devices will be lost.
 *
-* If the driver provides the {vxbDrvUnlink}() method, then it 
-* is called before any further action. 
+* If the driver provides the {vxbDrvUnlink}() method, then it
+* is called before any further action.
 *
 * RETURNS: OK, or ERROR
 *
@@ -1759,39 +1759,39 @@ LOCAL FUNCPTR vxbDevOnlyMethodGet
 */
 
 LOCAL STATUS vxbDevFromBusRemove
-    (
-    struct vxbDev *     devID,          /* device to be removed */
-    struct vxbDev *     parentID,       /* parent bus controller */
+(
+    struct vxbDev      *devID,          /* device to be removed */
+    struct vxbDev      *parentID,       /* parent bus controller */
     BOOL                remove          /* remove entirely? */
-    )
-    {
-    struct vxbBusPresent * pBus; 
+)
+{
+    struct vxbBusPresent *pBus;
     FUNCPTR             removalRtn;
     STATUS              status = OK;
 
-#ifdef	VXBUS_DEBUG_ON
+#ifdef  VXBUS_DEBUG_ON
     if (parentID != NULL)
-	{
-	VXB_DEBUG_MSG(10,
-		      "vxbDevFromBusRemove(%s%d, %s%d, %s), flags = 0x%x\n",
-		      devID->pName, devID->unitNumber,
-		      parentID->pName, parentID->unitNumber,
-		      remove ? "TRUE" : "FALSE",devID->flags);
-	}
+    {
+        VXB_DEBUG_MSG(10,
+                      "vxbDevFromBusRemove(%s%d, %s%d, %s), flags = 0x%x\n",
+                      devID->pName, devID->unitNumber,
+                      parentID->pName, parentID->unitNumber,
+                      remove ? "TRUE" : "FALSE", devID->flags);
+    }
     else
-	{
-	VXB_DEBUG_MSG(10,
+    {
+        VXB_DEBUG_MSG(10,
                       "vxbDevFromBusRemove(%s%d, %p, %s), flags = 0x%x\n",
-		      devID->pName, devID->unitNumber, parentID,
-		      remove ? "TRUE" : "FALSE", devID->flags, 6);
-	}
-#endif	/* VXBUS_DEBUG_ON */
-    
+                      devID->pName, devID->unitNumber, parentID,
+                      remove ? "TRUE" : "FALSE", devID->flags, 6);
+    }
+#endif  /* VXBUS_DEBUG_ON */
+
     /* take device lock */
-    vxbLockTake (&devID->devLock, VXB_LOCK_WRITER);
-    
-    if ( ( devID->flags & VXB_REMOVAL_MASK) == 0 )
-        {
+    vxbLockTake(&devID->devLock, VXB_LOCK_WRITER);
+
+    if ((devID->flags & VXB_REMOVAL_MASK) == 0)
+    {
 
         /* If the driver provides a removal routine, call it */
 
@@ -1800,43 +1800,43 @@ LOCAL STATUS vxbDevFromBusRemove
                       devID->pName, devID->unitNumber, removalRtn, 4, 5, 6);
 
         if (removalRtn != NULL)
-            {
+        {
             /* execute the method */
 
             if (((*removalRtn)(devID, NULL)) != OK)
-                {
+            {
                 VXB_DEBUG_MSG(10, "vxbDevFromBusRemove(): (%s%d) (*%p)(%p, 0) "
-                                  "returned ERROR\n",
+                              "returned ERROR\n",
                               devID->pName, devID->unitNumber,
                               removalRtn, devID, 5, 6);
 
                 status = ERROR;
                 goto vxbDevFromBusRemoveExit;
-                }
             }
+        }
 
-        if ( devID->pDriver != NULL )
+        if (devID->pDriver != NULL)
+        {
+#ifdef  _WRS_CONFIG_LP64
+            /* unmap the BARs */
+
+            if (vxbRegUnmapAll(devID) != OK)
             {
-#ifdef	_WRS_CONFIG_LP64
-	    /* unmap the BARs */
-
-	    if (vxbRegUnmapAll (devID) != OK)
-                {
                 VXB_DEBUG_MSG(10, "vxbDevFromBusRemove(): (%s%d) "
-                                  "vxbRegUnmapAll failed \n",
+                              "vxbRegUnmapAll failed \n",
                               devID->pName, devID->unitNumber,
                               3, 4, 5, 6);
 
                 status = ERROR;
                 goto vxbDevFromBusRemoveExit;
-                }
+            }
 
-#endif	/* _WRS_CONFIG_LP64 */
+#endif  /* _WRS_CONFIG_LP64 */
 
             /* clean up driver-specific parts of device structure */
 
-            devID->flags &= ~( VXB_INST_INIT_DONE | VXB_INST_INIT2_DONE |
-                               VXB_INST_CONNECT_DONE );
+            devID->flags &= ~(VXB_INST_INIT_DONE | VXB_INST_INIT2_DONE |
+                              VXB_INST_CONNECT_DONE);
             devID->flags |= VXB_REMOVAL_INSTANCE;
 
             /* if the pName point to drvName, zero it */
@@ -1849,45 +1849,45 @@ LOCAL STATUS vxbDevFromBusRemove
             devID->pDrvCtrl = NULL;
 
             if (devID->pParams != NULL)
-#ifndef _VXBUS_BASIC_HWMEMLIB                
+#ifndef _VXBUS_BASIC_HWMEMLIB
                 hwMemFree((char *)(devID->pParams));
 #endif /* !_VXBUS_BASIC_HWMEMLIB */
             devID->pParams = NULL;
-            }
+        }
         else
-            {
-            devID->flags |= VXB_REMOVAL_ORPHAN;
-            }
-        }
-
-    if ( ! remove )
         {
-		status = OK;
-        goto vxbDevFromBusRemoveExit;
+            devID->flags |= VXB_REMOVAL_ORPHAN;
         }
+    }
+
+    if (! remove)
+    {
+        status = OK;
+        goto vxbDevFromBusRemoveExit;
+    }
 
     /* if the parent bus is NULL, remove the device from lost device list */
 
     if (parentID == NULL)
-        {
-#ifdef	VXB_PERFORM_SANITY_CHECKS
+    {
+#ifdef  VXB_PERFORM_SANITY_CHECKS
         vxbLockTake(&vxbLostDevListLock, VXB_LOCK_WRITER);
 
-        if (vxbInstRemove (&pLostDevHead, devID) != OK)
-            {
+        if (vxbInstRemove(&pLostDevHead, devID) != OK)
+        {
             VXB_DEBUG_MSG(10, "vxbDevFromBusRemove(): vxbInstRemove "
-                              "(&pLostDevHead, devID) returned ERROR\n",
+                          "(&pLostDevHead, devID) returned ERROR\n",
                           1, 2, 3, 4, 5, 6);
-            }
+        }
 
         vxbLockGive(&vxbLostDevListLock, VXB_LOCK_WRITER);
         status = ERROR;
-        goto vxbDevFromBusRemoveExit; 
+        goto vxbDevFromBusRemoveExit;
 #else
         status = ERROR;
         goto vxbDevFromBusRemoveExit;
 #endif  /* VXB_PERFORM_SANITY_CHECKS */
-        }
+    }
 
     pBus = parentID->u.pSubordinateBus;
 
@@ -1895,37 +1895,37 @@ LOCAL STATUS vxbDevFromBusRemove
 
     vxbLockTake(&pBus->listLock, VXB_LOCK_WRITER);
 
-    if ( ( devID->flags & VXB_REMOVAL_MASK ) == VXB_REMOVAL_INSTANCE )
+    if ((devID->flags & VXB_REMOVAL_MASK) == VXB_REMOVAL_INSTANCE)
+    {
+        if (vxbInstRemove(&pBus->instList, devID) != OK)
         {
-        if (vxbInstRemove (&pBus->instList, devID) != OK)
-            {
             VXB_DEBUG_MSG(10, "vxbDevFromBusRemove(): vxbInstRemove "
-                              "(&pBus->instList, devID) returned ERROR\n",
+                          "(&pBus->instList, devID) returned ERROR\n",
                           1, 2, 3, 4, 5, 6);
             status = ERROR;
-            }
         }
+    }
     else
+    {
+        if (vxbInstRemove(&pBus->devList, devID) != OK)
         {
-        if (vxbInstRemove (&pBus->devList, devID) != OK)
-            {
             VXB_DEBUG_MSG(10, "vxbDevFromBusRemove(): vxbInstRemove "
-                              "(&pBus->devList, devID) returned ERROR\n",
+                          "(&pBus->devList, devID) returned ERROR\n",
                           1, 2, 3, 4, 5, 6);
             status = ERROR;
-            }
         }
+    }
 
     vxbLockGive(&pBus->listLock, VXB_LOCK_WRITER);
-	
+
 vxbDevFromBusRemoveExit:
-	
+
     /* release device lock */
 
-    vxbLockGive (&devID->devLock, VXB_LOCK_WRITER);
-	
-    return(status);
-    }
+    vxbLockGive(&devID->devLock, VXB_LOCK_WRITER);
+
+    return (status);
+}
 
 /*********************************************************************
 *
@@ -1946,10 +1946,10 @@ vxbDevFromBusRemoveExit:
 */
 
 STATUS vxbDevRemovalAnnounce
-    (
+(
     VXB_DEVICE_ID devID
-    )
-    {
+)
+{
     VXB_DEVICE_ID parent;
     STATUS                      stat;
 
@@ -1962,43 +1962,43 @@ STATUS vxbDevRemovalAnnounce
     /* call remove method for device */
 
     stat = vxbDevFromBusRemove(devID, parent, FALSE);
-    if ( stat != OK )
-        {
+    if (stat != OK)
+    {
         VXB_DEBUG_MSG(1, "vxbDevFromBusRemove(%p, %p, FALSE) returned %d\n",
                       devID, parent, (int)stat, 4, 5, 6);
 
-        return(ERROR);
-        }
+        return (ERROR);
+    }
 
     /* if bus controller with subordinate devices, remove those */
 
-    stat = vxbSubordinateBusRemove (devID);
+    stat = vxbSubordinateBusRemove(devID);
     if (stat != OK)
-        {
+    {
         VXB_DEBUG_MSG(1, "vxbSubordinateBusRemove(%p) returned %d\n",
                       devID, (int)stat, 3, 4, 5, 6);
 
         return (ERROR);
-        }
+    }
 
     /* unlink this device from it's parent */
 
-    stat = vxbDevFromBusRemove (devID, parent, TRUE);
+    stat = vxbDevFromBusRemove(devID, parent, TRUE);
     if (stat != OK)
-        {
+    {
         VXB_DEBUG_MSG(1, "vxbDevFromBusRemove(%p, %p, TRUE) returned %d\n",
                       devID, parent, (int)stat, 4, 5, 6);
 
         return (ERROR);
-        }
+    }
 
     /* return this device to the pool */
 
     vxbDevStructFree(devID);
 
     return (OK);
-    }
-#endif	/* _WRS_CONFIG_VXBUS_BASIC */
+}
+#endif  /* _WRS_CONFIG_VXBUS_BASIC */
 
 /*********************************************************************
 *
@@ -2017,17 +2017,17 @@ STATUS vxbDevRemovalAnnounce
 */
 
 STATUS vxbBusAnnounce
-    (
-    struct vxbDev *     pBusDev,    /* bus controller */
+(
+    struct vxbDev      *pBusDev,    /* bus controller */
     UINT32              busID       /* bus type */
-    )
-    {
-    struct vxbBusPresent * pBusEnt;
-    struct vxbBusPresent * pParent;
-    struct vxbBusTypeInfo * pType;
-    struct vxbDev * pTempDev;
+)
+{
+    struct vxbBusPresent *pBusEnt;
+    struct vxbBusPresent *pParent;
+    struct vxbBusTypeInfo *pType;
+    struct vxbDev *pTempDev;
 
-    VXB_ASSERT(pBusDev!=NULL, ERROR)
+    VXB_ASSERT(pBusDev != NULL, ERROR)
 
     /* retrieve the parent device information */
 
@@ -2039,7 +2039,7 @@ STATUS vxbBusAnnounce
      */
 
     if (pParent != NULL)
-        {
+    {
 
         /* acquire the lock */
 
@@ -2055,12 +2055,12 @@ STATUS vxbBusAnnounce
         /* verify whether the device has been announced already */
 
         while (pTempDev != NULL)
-            {
+        {
             if (pTempDev == pBusDev)
                 break;
 
             pTempDev = pTempDev->pNext;
-            }
+        }
 
         /* release the lock */
 
@@ -2068,26 +2068,26 @@ STATUS vxbBusAnnounce
 
         if (pTempDev == NULL)
             return ERROR;
-        }
+    }
 
     /* allocate bus entry */
 
     pBusEnt = (struct vxbBusPresent *)hwMemAlloc(sizeof(*pBusEnt));
-    if ( pBusEnt == NULL )
-        return(ERROR);
+    if (pBusEnt == NULL)
+        return (ERROR);
 
-    if ( pPlbBus == NULL && busID == VXB_BUSID_LOCAL )
-        {
+    if (pPlbBus == NULL && busID == VXB_BUSID_LOCAL)
+    {
         pPlbBus = pBusEnt;
         pPlbDev->pParentBus = NULL;
-        }
+    }
 
     /*
      * initialize the lock used for protecting updations
      * to the instances and orphans lists
      */
 
-    if ( vxbInitPhase > 1 )
+    if (vxbInitPhase > 1)
         vxbLockInit(&pBusEnt->listLock);
 
     /* find bus type record */
@@ -2098,12 +2098,12 @@ STATUS vxbBusAnnounce
 
     vxbLockTake(&vxbGlobalListsLock, VXB_LOCK_READER);
 
-    for ( pType = pBusListHead ; pType != NULL ; pType = pType->pNext )
-        if ( pType->busID == busID )
-            {
+    for (pType = pBusListHead ; pType != NULL ; pType = pType->pNext)
+        if (pType->busID == busID)
+        {
             pBusEnt->pBusType = pType;
             break;
-            }
+        }
 
     /* release the lock */
 
@@ -2112,17 +2112,17 @@ STATUS vxbBusAnnounce
     /* if the bus type is not located, return error */
 
     if (pType == NULL)
-        {
+    {
         if (pPlbBus == pBusEnt)
             pPlbBus = NULL;
 
 #ifndef _VXBUS_BASIC_HWMEMLIB
         hwMemFree((char *)pBusEnt);
 
-#endif /* !_VXBUS_BASIC_HWMEMLIB */   
-     
+#endif /* !_VXBUS_BASIC_HWMEMLIB */
+
         return ERROR;
-        }
+    }
 
     /* fill in controller record */
 
@@ -2137,9 +2137,9 @@ STATUS vxbBusAnnounce
 
     pParent = pBusEnt->pCtlr->pParentBus;
 
-    if ( pParent != NULL )
-        {
-	void * pParentDevId = (void *) &pParent;
+    if (pParent != NULL)
+    {
+        void *pParentDevId = (void *) &pParent;
 
         /* acquire the lock */
 
@@ -2147,12 +2147,12 @@ STATUS vxbBusAnnounce
 
         /* link into list */
 
-        vxbInstInsert ((VXB_DEVICE_ID *)pParentDevId, (VXB_DEVICE_ID)pBusEnt);
+        vxbInstInsert((VXB_DEVICE_ID *)pParentDevId, (VXB_DEVICE_ID)pBusEnt);
 
         /* release the lock */
 
         vxbLockGive(&vxbBusListLock, VXB_LOCK_WRITER);
-        }
+    }
 
     /* update busInfo field of pBusDev */
 
@@ -2165,9 +2165,9 @@ STATUS vxbBusAnnounce
      */
 
     if ((pParent == NULL) && (pPlbDev != pBusDev))
-        {
+    {
 
-#ifdef	VXB_PERFORM_SANITY_CHECKS
+#ifdef  VXB_PERFORM_SANITY_CHECKS
 
         /* acquire the lock */
 
@@ -2180,12 +2180,12 @@ STATUS vxbBusAnnounce
 
         vxbLockGive(&vxbLostDevListLock, VXB_LOCK_WRITER);
 
-#endif	/* VXB_PERFORM_SANITY_CHECKS */
+#endif  /* VXB_PERFORM_SANITY_CHECKS */
         return ERROR;
-        }
-
-    return(OK);
     }
+
+    return (OK);
+}
 
 /*********************************************************************
 *
@@ -2198,26 +2198,26 @@ STATUS vxbBusAnnounce
 * ERRNO: N/A
 */
 
-struct vxbDev * vxbDevParent
-    (
-    struct vxbDev * pDev    /* Device Information */
-    )
-    {
-    struct vxbBusPresent * pBusPres;
-    struct vxbDev * pParentDev;
+struct vxbDev *vxbDevParent
+(
+    struct vxbDev *pDev     /* Device Information */
+)
+{
+    struct vxbBusPresent *pBusPres;
+    struct vxbDev *pParentDev;
 
     if (pDev == NULL)
-	return (NULL);
+        return (NULL);
 
     pBusPres = (struct vxbBusPresent *)pDev->pParentBus;
 
-    if ( pBusPres == NULL )
-        return(NULL);
+    if (pBusPres == NULL)
+        return (NULL);
 
     pParentDev = pBusPres->pCtlr;
 
-    return(pParentDev);
-    }
+    return (pParentDev);
+}
 
 /*********************************************************************
 *
@@ -2231,29 +2231,29 @@ struct vxbDev * vxbDevParent
 */
 
 STATUS vxbDevPath
-    (
-    struct vxbDev * pDev,    /* device */
-    BOOL (*func)(struct vxbDev * pDev, void * pArg), /* func @ each ctlr */
-    void *      pArg        /* 2nd arg to func */
-    )
-    {
-    struct vxbDev * pParentDev;
+(
+    struct vxbDev *pDev,     /* device */
+    BOOL (*func)(struct vxbDev *pDev, void *pArg),   /* func @ each ctlr */
+    void       *pArg        /* 2nd arg to func */
+)
+{
+    struct vxbDev *pParentDev;
     BOOL        retVal;
 
-    VXB_ASSERT(pDev!=NULL, ERROR)
-    VXB_ASSERT(func!=NULL, ERROR)
+    VXB_ASSERT(pDev != NULL, ERROR)
+    VXB_ASSERT(func != NULL, ERROR)
 
     retVal = (*func)(pDev, pArg);
-    if ( retVal )
-        return(OK);
+    if (retVal)
+        return (OK);
 
     pParentDev = vxbDevParent(pDev);
 
-    if ( pParentDev == NULL )
-        return(OK);
+    if (pParentDev == NULL)
+        return (OK);
 
-    return(vxbDevPath(pParentDev, func, pArg));
-    }
+    return (vxbDevPath(pParentDev, func, pArg));
+}
 
 /*********************************************************************
 *
@@ -2269,15 +2269,15 @@ STATUS vxbDevPath
 */
 
 FUNCPTR vxbDevMethodGet
-    (
-    struct vxbDev * pDev,    /* Device information */
+(
+    struct vxbDev *pDev,     /* Device information */
     VXB_METHOD_ID   method   /* Specified method */
-    )
-    {
-    struct vxbDeviceMethod * pMethods;
+)
+{
+    struct vxbDeviceMethod *pMethods;
     FUNCPTR methodRoutine;
 
-    VXB_ASSERT(method!=0, NULL)
+    VXB_ASSERT(method != 0, NULL)
 
     /*
      * sanity check must be done
@@ -2288,41 +2288,41 @@ FUNCPTR vxbDevMethodGet
      *       information pointer.
      */
 
-    if ( pDev == NULL )
-        return(NULL);
+    if (pDev == NULL)
+        return (NULL);
 
 
     /* first check instance-specific methods */
 
     methodRoutine = vxbDevOnlyMethodGet(pDev, method);
-    if ( methodRoutine != NULL )
-        return(methodRoutine);
+    if (methodRoutine != NULL)
+        return (methodRoutine);
 
     /* next check driver-specific methods */
 
     /* driver registration info present? */
 
-    if ( pDev->pDriver == NULL )
-        return(NULL);
+    if (pDev->pDriver == NULL)
+        return (NULL);
 
     /* get methods list */
 
     pMethods = pDev->pDriver->pMethods;
-    if ( pMethods == NULL )
-        return(NULL);
+    if (pMethods == NULL)
+        return (NULL);
 
-    while ( pMethods->devMethodId != 0 && pMethods->handler != NULL )
-        {
-        if ( pMethods->devMethodId == method )
-            return(pMethods->handler);
+    while (pMethods->devMethodId != 0 && pMethods->handler != NULL)
+    {
+        if (pMethods->devMethodId == method)
+            return (pMethods->handler);
         pMethods++;
-        }
+    }
 
     /* method not available.  Return NULL */
 
-    return(NULL);
+    return (NULL);
 
-    }
+}
 
 
 /*********************************************************************
@@ -2333,8 +2333,8 @@ FUNCPTR vxbDevMethodGet
 * <func> with argument <pArg>. Which VxBus device list to walk through
 * is determinted by <flags>.
 *
-* The return value of <func> is not checked internally in this routine, 
-* which means even it meets EEROR, it still goes on to perform the <func> 
+* The return value of <func> is not checked internally in this routine,
+* which means even it meets EEROR, it still goes on to perform the <func>
 * for the remaining devices on that list.
 *
 * <flags> can be either of the following and cannot be ORed.
@@ -2351,21 +2351,21 @@ FUNCPTR vxbDevMethodGet
 */
 
 STATUS vxbDevIterate
-    (
+(
     FUNCPTR func,       /* function to call */
-    void *  pArg,       /* 2nd argument to func */
+    void   *pArg,       /* 2nd argument to func */
     UINT32  flags       /* flags to determine what to do */
-    )
-    {
-    struct vxbBusPresent * pBusPres;
-    struct vxbDev * pInst, * pNext;
+)
+{
+    struct vxbBusPresent *pBusPres;
+    struct vxbDev *pInst, * pNext;
 
-    VXB_ASSERT(func!=NULL, ERROR)
+    VXB_ASSERT(func != NULL, ERROR)
 
     /* if PLB bus is not initialized, return ERROR */
 
     if (pPlbBus == NULL)
-	return (ERROR);
+        return (ERROR);
 
     pBusPres = pPlbBus;
 
@@ -2373,11 +2373,11 @@ STATUS vxbDevIterate
 
     (*func)(pBusPres->pCtlr, pArg);
 
-    while ( pBusPres != NULL )
-        {
+    while (pBusPres != NULL)
+    {
 
-        if ( ( flags & VXB_ITERATE_INSTANCES ) == VXB_ITERATE_INSTANCES )
-            {
+        if ((flags & VXB_ITERATE_INSTANCES) == VXB_ITERATE_INSTANCES)
+        {
 
 #ifndef IA32_LOCK_REMOVAL
 
@@ -2397,8 +2397,8 @@ STATUS vxbDevIterate
 
 #endif /* IA32_LOCK_REMOVAL */
 
-            for ( ; pInst != NULL ; pInst = pNext )
-                {
+            for (; pInst != NULL ; pInst = pNext)
+            {
 #ifndef IA32_LOCK_REMOVAL
 
                 /* acquire the lock */
@@ -2411,8 +2411,8 @@ STATUS vxbDevIterate
 
 #ifndef IA32_LOCK_REMOVAL
 
-                /* 
-                 * release the lock to prevent recursive take 
+                /*
+                 * release the lock to prevent recursive take
                  * of the same lock
                  */
 
@@ -2420,11 +2420,11 @@ STATUS vxbDevIterate
 #endif /* IA32_LOCK_REMOVAL */
 
                 (*func)(pInst, pArg);
-                }
             }
+        }
 
-        if ( ( flags & VXB_ITERATE_ORPHANS ) == VXB_ITERATE_ORPHANS )
-            {
+        if ((flags & VXB_ITERATE_ORPHANS) == VXB_ITERATE_ORPHANS)
+        {
 
 #ifndef IA32_LOCK_REMOVAL
 
@@ -2444,8 +2444,8 @@ STATUS vxbDevIterate
 
 #endif /* IA32_LOCK_REMOVAL */
 
-            for ( ; pInst != NULL ; pInst = pNext )
-                {
+            for (; pInst != NULL ; pInst = pNext)
+            {
 #ifndef IA32_LOCK_REMOVAL
 
                 /* acquire the lock */
@@ -2458,9 +2458,9 @@ STATUS vxbDevIterate
 
 #ifndef IA32_LOCK_REMOVAL
 
-                /* 
-                 * release lock to prevent recursive take of 
-                 * the same lock 
+                /*
+                 * release lock to prevent recursive take of
+                 * the same lock
                  */
 
                 vxbLockGive(&pBusPres->listLock, VXB_LOCK_WRITER);
@@ -2468,8 +2468,8 @@ STATUS vxbDevIterate
 #endif /* IA32_LOCK_REMOVAL */
 
                 (*func)(pInst, pArg);
-                }
             }
+        }
 
 #ifndef IA32_LOCK_REMOVAL
 
@@ -2489,10 +2489,10 @@ STATUS vxbDevIterate
 
 #endif /* IA32_LOCK_REMOVAL */
 
-        }
-
-    return(OK);
     }
+
+    return (OK);
+}
 
 /*********************************************************************
 *
@@ -2507,15 +2507,15 @@ STATUS vxbDevIterate
 */
 
 STATUS vxbDeviceMethodRun
-    (
-    struct vxbDev * pDev,    /* Device Information */
-    void *      pArg         /* Parameter to method */
-    )
-    {
-    struct vxbMethodRunInfo * pBMRI = (struct vxbMethodRunInfo *)pArg;
+(
+    struct vxbDev *pDev,     /* Device Information */
+    void       *pArg         /* Parameter to method */
+)
+{
+    struct vxbMethodRunInfo *pBMRI = (struct vxbMethodRunInfo *)pArg;
     FUNCPTR     handler;
 
-    VXB_ASSERT(pArg!=NULL, ERROR)
+    VXB_ASSERT(pArg != NULL, ERROR)
 
     /* find handler */
 
@@ -2523,14 +2523,14 @@ STATUS vxbDeviceMethodRun
 
     /* if no method handler, vxbIterate() should continue */
 
-    if ( handler == NULL )
-        return(ERROR);
+    if (handler == NULL)
+        return (ERROR);
 
     /* call method handler */
 
     return ((*handler)(pDev, pBMRI->pArg));
 
-    }
+}
 
 /*********************************************************************
 *
@@ -2545,11 +2545,11 @@ STATUS vxbDeviceMethodRun
 */
 
 STATUS vxbDevMethodRun
-    (
-    VXB_METHOD_ID	method,	/* Method to run */
-    void * pArg      /* Argument to routine */
-    )
-    {
+(
+    VXB_METHOD_ID   method, /* Method to run */
+    void *pArg       /* Argument to routine */
+)
+{
     struct vxbMethodRunInfo m;
 
     m.method = method;
@@ -2557,8 +2557,8 @@ STATUS vxbDevMethodRun
 
     vxbDevIterate(vxbDeviceMethodRun, &m, VXB_ITERATE_INSTANCES);
 
-    return(OK);
-    }
+    return (OK);
+}
 
 /*********************************************************************
 *
@@ -2574,30 +2574,30 @@ STATUS vxbDevMethodRun
 */
 
 STATUS vxbSubDevAction
-    (
-    struct vxbDev *		pBusCtlr,
-    VXB_SUBDEV_ACTION_FUNC	actionFunc,
-    char *			pArg,
-    UINT32			flags
-    )
-    {
-    struct vxbBusPresent *      pBus;
+(
+    struct vxbDev      *pBusCtlr,
+    VXB_SUBDEV_ACTION_FUNC  actionFunc,
+    char           *pArg,
+    UINT32          flags
+)
+{
+    struct vxbBusPresent       *pBus;
     VXB_DEVICE_ID               pDevOnBus;
     VXB_DEVICE_ID               pNextDevOnBus;
     STATUS                      status;
     STATUS                      retStat = OK;
 
-    VXB_ASSERT(pBusCtlr!=NULL, ERROR)
-    VXB_ASSERT(actionFunc!=NULL, ERROR)
+    VXB_ASSERT(pBusCtlr != NULL, ERROR)
+    VXB_ASSERT(actionFunc != NULL, ERROR)
 
     pBus = pBusCtlr->u.pSubordinateBus;
 
-    VXB_ASSERT(pBus!=NULL, ERROR)
+    VXB_ASSERT(pBus != NULL, ERROR)
 
     /* iterate through all the instances connected to the bus */
 
-    if ( ( flags & VXB_ITERATE_INSTANCES ) == VXB_ITERATE_INSTANCES )
-        {
+    if ((flags & VXB_ITERATE_INSTANCES) == VXB_ITERATE_INSTANCES)
+    {
 
         /* acquire the lock */
 
@@ -2609,8 +2609,8 @@ STATUS vxbSubDevAction
 
         vxbLockGive(&pBus->listLock, VXB_LOCK_WRITER);
 
-        while ( pDevOnBus != NULL )
-            {
+        while (pDevOnBus != NULL)
+        {
 
             /* acquire the lock */
 
@@ -2631,23 +2631,23 @@ STATUS vxbSubDevAction
              * return status of vxbSubDevAction () will be ERROR.
              */
 
-            if ( status != OK )
+            if (status != OK)
                 retStat = ERROR;
 
-            /* 
-             * move on to the next instance in the list 
-             * of instances 
+            /*
+             * move on to the next instance in the list
+             * of instances
              */
 
             pDevOnBus = pNextDevOnBus;
 
-            }
         }
+    }
 
     /* iterate through all the orphans connected to the bus */
 
-    if ( ( flags & VXB_ITERATE_ORPHANS ) == VXB_ITERATE_ORPHANS )
-        {
+    if ((flags & VXB_ITERATE_ORPHANS) == VXB_ITERATE_ORPHANS)
+    {
 
         /* acquire the lock */
 
@@ -2659,8 +2659,8 @@ STATUS vxbSubDevAction
 
         vxbLockGive(&pBus->listLock, VXB_LOCK_WRITER);
 
-        while ( pDevOnBus != NULL )
-            {
+        while (pDevOnBus != NULL)
+        {
 
             /* acquire the lock */
 
@@ -2681,18 +2681,18 @@ STATUS vxbSubDevAction
              * return status of vxbSubDevAction () will be ERROR
              */
 
-            if ( status != OK )
+            if (status != OK)
                 retStat = ERROR;
 
             /* move on to the next orphan in the list of orphans */
 
             pDevOnBus = pNextDevOnBus;
 
-            }
         }
-
-    return(retStat);
     }
+
+    return (retStat);
+}
 
 /*********************************************************************
 *
@@ -2710,22 +2710,22 @@ STATUS vxbSubDevAction
 */
 
 LOCAL STATUS vxbResourceSearch
-    (
-    struct vxbDev *     instance,
-    struct vxbDev *     pParentDev,
+(
+    struct vxbDev      *instance,
+    struct vxbDev      *pParentDev,
     VXB_METHOD_ID       method,
-    char *           pArg
-    )
-    {
-    struct vxbDev *     pDevOnBus;
-    struct vxbBusPresent *  pBus;
-    STATUS          (*methodHandler)(VXB_DEVICE_ID, VXB_DEVICE_ID, char *);
+    char            *pArg
+)
+{
+    struct vxbDev      *pDevOnBus;
+    struct vxbBusPresent   *pBus;
+    STATUS(*methodHandler)(VXB_DEVICE_ID, VXB_DEVICE_ID, char *);
     STATUS          status;
 
-    VXB_ASSERT(instance!=NULL, ERROR)
+    VXB_ASSERT(instance != NULL, ERROR)
 
     if (pParentDev == NULL)
-	return (ERROR);
+        return (ERROR);
 
     /* iterate through devices directly connected to the parent bus */
 
@@ -2741,15 +2741,15 @@ LOCAL STATUS vxbResourceSearch
 
     vxbLockGive(&pBus->listLock, VXB_LOCK_WRITER);
 
-    while ( pDevOnBus != NULL )
-        {
+    while (pDevOnBus != NULL)
+    {
         methodHandler = vxbDevMethodGet(pDevOnBus, method);
-        if ( methodHandler != NULL )
-            {
+        if (methodHandler != NULL)
+        {
             status = (*methodHandler)(pDevOnBus, instance, pArg);
-            if ( status == OK )
-                return(OK);
-            }
+            if (status == OK)
+                return (OK);
+        }
 
         /* acquire the lock */
 
@@ -2760,14 +2760,14 @@ LOCAL STATUS vxbResourceSearch
         /* release the lock */
 
         vxbLockGive(&pBus->listLock, VXB_LOCK_WRITER);
-        }
+    }
 
     pParentDev = vxbDevParent(pParentDev);
 
     /* if no resource available on this bus, check upstream bus */
 
-    return(vxbResourceSearch(instance, pParentDev, method, pArg));
-    }
+    return (vxbResourceSearch(instance, pParentDev, method, pArg));
+}
 
 /*********************************************************************
 *
@@ -2792,14 +2792,14 @@ LOCAL STATUS vxbResourceSearch
 */
 
 STATUS vxbResourceFind
-    (
-    struct vxbDev * instance,
+(
+    struct vxbDev *instance,
     VXB_METHOD_ID   method,
-    char * pArg,
+    char *pArg,
     UINT flags
-    )
-    {
-    struct vxbDev *     pParentDev;
+)
+{
+    struct vxbDev      *pParentDev;
 
     /* find parent bus controller instance */
 
@@ -2807,11 +2807,11 @@ STATUS vxbResourceFind
 
     /* if no parent, terminate processing with ERROR */
 
-    if ( pParentDev == NULL )
-        return(ERROR);
+    if (pParentDev == NULL)
+        return (ERROR);
 
-    return(vxbResourceSearch(instance, pParentDev, method, pArg));
-    }
+    return (vxbResourceSearch(instance, pParentDev, method, pArg));
+}
 
 /*********************************************************************
 *
@@ -2826,9 +2826,9 @@ STATUS vxbResourceFind
 */
 
 BOOL noDev(void)
-    {
-    return(FALSE);
-    }
+{
+    return (FALSE);
+}
 
 /*********************************************************************
 *
@@ -2842,79 +2842,79 @@ BOOL noDev(void)
 * ERRNO: N/A
 */
 
-char * vxbBusTypeString
-    (
+char *vxbBusTypeString
+(
     int busType
-    )
-    {
-    static char * lcl = "PLB_Bus";
-    static char * vme = "VME_Bus";
-    static char * pci = "PCI_Bus";
-    static char * pcix = "PCI-X_Bus";
-    static char * pcixp = "PCI-Express_Bus";
-    static char * i2c = "I2C_Bus";
-    static char * htrans = "HyperTransport_Bus";
-    static char * rio = "RapidIO_Bus";
-    static char * mii = "MII_Bus";
-    static char * spi = "SPI_Bus";
-    static char * virtual = "Virtual_Bus";
-    static char * unkn = "UnknownType_Bus";
-    static char * usbEhci = "USB-EHCI_Bus";
-    static char * usbOhci = "USB-OHCI_Bus";
-    static char * usbUhci = "USB-UHCI_Bus";
-    static char * usbSynopsysHci = "USB-SYNOPSYSHCI_Bus";
-    static char * usbMhci = "USB-MHCI_Bus";
-    static char * usbHost  = "USB-Host_Bus";
-    static char * usbHub  = "USB-HUB_Bus";
-    static char * pMf = "MF_Bus";
-    static char * sdMmc = "SDMMC_BUS";
+)
+{
+    static char *lcl = "PLB_Bus";
+    static char *vme = "VME_Bus";
+    static char *pci = "PCI_Bus";
+    static char *pcix = "PCI-X_Bus";
+    static char *pcixp = "PCI-Express_Bus";
+    static char *i2c = "I2C_Bus";
+    static char *htrans = "HyperTransport_Bus";
+    static char *rio = "RapidIO_Bus";
+    static char *mii = "MII_Bus";
+    static char *spi = "SPI_Bus";
+    static char *virtual = "Virtual_Bus";
+    static char *unkn = "UnknownType_Bus";
+    static char *usbEhci = "USB-EHCI_Bus";
+    static char *usbOhci = "USB-OHCI_Bus";
+    static char *usbUhci = "USB-UHCI_Bus";
+    static char *usbSynopsysHci = "USB-SYNOPSYSHCI_Bus";
+    static char *usbMhci = "USB-MHCI_Bus";
+    static char *usbHost  = "USB-Host_Bus";
+    static char *usbHub  = "USB-HUB_Bus";
+    static char *pMf = "MF_Bus";
+    static char *sdMmc = "SDMMC_BUS";
 
     switch (busType)
-        {
+    {
         case VXB_BUSID_LOCAL:
-            return(lcl);
+            return (lcl);
         case VXB_BUSID_VME:
-            return(vme);
+            return (vme);
         case VXB_BUSID_PCI:
-            return(pci);
+            return (pci);
         case VXB_BUSID_PCIX:
-            return(pcix);
+            return (pcix);
         case VXB_BUSID_PCIEXPRESS:
-            return(pcixp);
+            return (pcixp);
         case VXB_BUSID_HYPERTRANSPORT:
-            return(htrans);
+            return (htrans);
         case VXB_BUSID_I2C:
-            return(i2c);
+            return (i2c);
         case VXB_BUSID_SPI:
-            return(spi);
+            return (spi);
         case VXB_BUSID_RAPIDIO:
-            return(rio);
+            return (rio);
         case VXB_BUSID_MII:
-            return(mii);
+            return (mii);
         case VXB_BUSID_VIRTUAL:
-            return(virtual);
+            return (virtual);
         case VXB_BUSID_USB_HOST_EHCI:
-            return(usbEhci);
+            return (usbEhci);
         case VXB_BUSID_USB_HOST_OHCI:
-            return(usbOhci);
+            return (usbOhci);
         case VXB_BUSID_USB_HOST_UHCI:
-            return(usbUhci);
+            return (usbUhci);
         case VXB_BUSID_USB_HOST_SYNOPSYSHCI:
-            return(usbSynopsysHci);
+            return (usbSynopsysHci);
         case VXB_BUSID_USB_HOST_MHCI:
-            return(usbMhci);
+            return (usbMhci);
         case VXB_BUSID_USB_HOST:
             return usbHost;
         case VXB_BUSID_USB_HUB:
-            return(usbHub);
+            return (usbHub);
         case VXB_BUSID_MF:
-            return(pMf);
+            return (pMf);
         case VXB_BUSID_SD:
-            return(sdMmc);
+            return (sdMmc);
         default:
-            return(unkn);
-        }
+            return (unkn);
     }
+}
 
 #ifdef VXB_LEGACY_ACCESS
 
@@ -2931,78 +2931,78 @@ char * vxbBusTypeString
 */
 
 FUNCPTR vxbAccessMethodGet
-    (
-    struct vxbDev * pDev,    /* Device Information */
+(
+    struct vxbDev *pDev,     /* Device Information */
     VXB_METHOD_ID   accessType   /* Access method to find */
-    )
-    {
+)
+{
     FUNCPTR     func = NULL;
 
-    VXB_ASSERT(pDev->pAccess!=NULL, NULL)
+    VXB_ASSERT(pDev->pAccess != NULL, NULL)
 
-    if ( accessType < FIRST_CUSTOM_BUS_ACCESS_METHOD )
+    if (accessType < FIRST_CUSTOM_BUS_ACCESS_METHOD)
     {
-    switch (accessType)
+        switch (accessType)
         {
-        case VXB_ACCESS_PROBE:
-            func = pDev->pAccess->vxbRegisterProbe;
-        break;
-        case VXB_ACCESS_REG_READ8:
-            func = pDev->pAccess->registerRead8;
-        break;
-        case VXB_ACCESS_REG_READ16:
-            func = pDev->pAccess->registerRead16;
-        break;
-        case VXB_ACCESS_REG_READ32:
-            func = pDev->pAccess->registerRead32;
-        break;
-        case VXB_ACCESS_REG_READ64:
-            func = pDev->pAccess->registerRead64;
-        break;
-        case VXB_ACCESS_REG_WRITE8:
-            func = pDev->pAccess->registerWrite8;
-        break;
-        case VXB_ACCESS_REG_WRITE16:
-            func = pDev->pAccess->registerWrite16;
-        break;
-        case VXB_ACCESS_REG_WRITE32:
-            func = pDev->pAccess->registerWrite32;
-        break;
-        case VXB_ACCESS_REG_WRITE64:
-            func = pDev->pAccess->registerWrite64;
-        break;
-        case VXB_ACCESS_VOLREG_WRITE:
-            func = pDev->pAccess->volRegWrite;
-        break;
-        case VXB_ACCESS_VOLREG_READ:
-            func = pDev->pAccess->volRegRead;
-        break;
-        case VXB_ACCESS_INT_CONNECT:
-        case VXB_ACCESS_INT_DISCONN:
-        case VXB_ACCESS_INT_VEC_GET:
-        case VXB_ACCESS_INT_ENABLE:
-        case VXB_ACCESS_INT_DISABLE:
-        case VXB_ACCESS_INT_ACKNOWLEDGE:
-            func = pDev->pAccess->vxbDevControl;
-        break;
+            case VXB_ACCESS_PROBE:
+                func = pDev->pAccess->vxbRegisterProbe;
+                break;
+            case VXB_ACCESS_REG_READ8:
+                func = pDev->pAccess->registerRead8;
+                break;
+            case VXB_ACCESS_REG_READ16:
+                func = pDev->pAccess->registerRead16;
+                break;
+            case VXB_ACCESS_REG_READ32:
+                func = pDev->pAccess->registerRead32;
+                break;
+            case VXB_ACCESS_REG_READ64:
+                func = pDev->pAccess->registerRead64;
+                break;
+            case VXB_ACCESS_REG_WRITE8:
+                func = pDev->pAccess->registerWrite8;
+                break;
+            case VXB_ACCESS_REG_WRITE16:
+                func = pDev->pAccess->registerWrite16;
+                break;
+            case VXB_ACCESS_REG_WRITE32:
+                func = pDev->pAccess->registerWrite32;
+                break;
+            case VXB_ACCESS_REG_WRITE64:
+                func = pDev->pAccess->registerWrite64;
+                break;
+            case VXB_ACCESS_VOLREG_WRITE:
+                func = pDev->pAccess->volRegWrite;
+                break;
+            case VXB_ACCESS_VOLREG_READ:
+                func = pDev->pAccess->volRegRead;
+                break;
+            case VXB_ACCESS_INT_CONNECT:
+            case VXB_ACCESS_INT_DISCONN:
+            case VXB_ACCESS_INT_VEC_GET:
+            case VXB_ACCESS_INT_ENABLE:
+            case VXB_ACCESS_INT_DISABLE:
+            case VXB_ACCESS_INT_ACKNOWLEDGE:
+                func = pDev->pAccess->vxbDevControl;
+                break;
 
-        case VXB_ACCESS_CFG_READ:
-            func = pDev->pAccess->busCfgRead;
-        break;
-        case VXB_ACCESS_CFG_WRITE:
-            func = pDev->pAccess->busCfgWrite;
-        break;
-        default:
-            return(NULL);
+            case VXB_ACCESS_CFG_READ:
+                func = pDev->pAccess->busCfgRead;
+                break;
+            case VXB_ACCESS_CFG_WRITE:
+                func = pDev->pAccess->busCfgWrite;
+                break;
+            default:
+                return (NULL);
         }
 
-    if ( func != NULL )
-        return(func);
+        if (func != NULL)
+            return (func);
     }
 
     return NULL;
 
-    }
+}
 
 /*********************************************************************
 *
@@ -3018,14 +3018,14 @@ FUNCPTR vxbAccessMethodGet
 */
 
 LOCAL void writeConvertData
-    (
-    struct vxbDev * pDev,
-    void *      pDataBuf,
+(
+    struct vxbDev *pDev,
+    void       *pDataBuf,
     UINT32      transactionSize,
-    UINT32 *        pFlags
-    )
-    {
-    }
+    UINT32         *pFlags
+)
+{
+}
 
 /*********************************************************************
 *
@@ -3040,21 +3040,21 @@ LOCAL void writeConvertData
 */
 
 STATUS vxbVolRegWrite
-    (
-    struct vxbDev * pDev,            /* Device Information */
+(
+    struct vxbDev *pDev,             /* Device Information */
     UINT32          regBaseIndex,    /* which pRegBase to use */
     UINT32          byteOffset,      /* offset, in bytes, of register */
     UINT32          transactionSize, /* transaction size, in bytes */
-    void *          pDataBuf,        /* buffer to read-from/write-to */
-    UINT32 *        pFlags           /* flags */
-    )
-    {
+    void           *pDataBuf,        /* buffer to read-from/write-to */
+    UINT32         *pFlags           /* flags */
+)
+{
     STATUS retVal;
     FUNCPTR readFunc;
     FUNCPTR writeFunc;
 
-    switch ( transactionSize )
-        {
+    switch (transactionSize)
+    {
         case 1:
             readFunc = pDev->pAccess->registerRead8;
             writeFunc = pDev->pAccess->registerWrite8;
@@ -3072,29 +3072,29 @@ STATUS vxbVolRegWrite
             writeFunc = pDev->pAccess->registerWrite64;
             break;
         default:
-            return(ERROR);
-        }
+            return (ERROR);
+    }
 
-    if ( ( *pFlags & VXB_ENDIAN_MASK ) != VXB_ENDIAN_FLAG(pDev) )
+    if ((*pFlags & VXB_ENDIAN_MASK) != VXB_ENDIAN_FLAG(pDev))
         writeConvertData(pDev, pDataBuf, transactionSize, pFlags);
 
     retVal = (*writeFunc)(regBaseIndex, byteOffset,
                           pDataBuf, pFlags);
 
-    if ( retVal != OK )
-        return(retVal);
+    if (retVal != OK)
+        return (retVal);
 
     retVal = (*readFunc)(regBaseIndex, byteOffset,
                          pDataBuf, pFlags);
 
-    if ( retVal != OK )
-        return(retVal);
+    if (retVal != OK)
+        return (retVal);
 
-    if ( ( *pFlags & VXB_ENDIAN_MASK ) != VXB_ENDIAN_FLAG(pDev) )
+    if ((*pFlags & VXB_ENDIAN_MASK) != VXB_ENDIAN_FLAG(pDev))
         writeConvertData(pDev, pDataBuf, transactionSize, pFlags);
 
-    return(retVal);
-    }
+    return (retVal);
+}
 #endif /* VXB_LEGACY_ACCESS */
 
 /*********************************************************************
@@ -3110,92 +3110,92 @@ STATUS vxbVolRegWrite
 */
 
 LOCAL STATUS vxbIntCtlrMatch
-    (
-    struct vxbDev * pInst,
-    void * pArg
-    )
-    {
-    struct vxbintCtlrMgmt * pInfo = (struct vxbintCtlrMgmt *)pArg;
+(
+    struct vxbDev *pInst,
+    void *pArg
+)
+{
+    struct vxbintCtlrMgmt *pInfo = (struct vxbintCtlrMgmt *)pArg;
     FUNCPTR   func;
     STATUS    stat;
-    struct plbIntrEntry * pIntrEntry;
-    int			inputPin;
-    struct pIntCtlrTable * pICTab;
-    struct plbIntCtlrTable * pICTab2;
-    int		x;
-    int		y;
-    struct plbIntCtlrEntry * pEnt;
+    struct plbIntrEntry *pIntrEntry;
+    int         inputPin;
+    struct pIntCtlrTable *pICTab;
+    struct plbIntCtlrTable *pICTab2;
+    int     x;
+    int     y;
+    struct plbIntCtlrEntry *pEnt;
     BOOL pICTabAllocFlag = FALSE;
 
-    if ( pInfo->found )
-        return(OK);
+    if (pInfo->found)
+        return (OK);
 
     func = vxbDevMethodGet(pInst, DEVMETHOD_CALL(vxbIntCtlrConnect));
-    if ( func == NULL )
-        return(OK);
+    if (func == NULL)
+        return (OK);
 
     VXB_DEBUG_MSG(1, "vxbIntCtlrMatch(): intCtlr %p\n", pInst, 2, 3, 4, 5, 6);
 
     /* call method to determine whether valid connect and to actually connect */
 
-    stat = (*func)(pInst, pInfo->pDev, pInfo->index, pInfo->pIsr, 
+    stat = (*func)(pInst, pInfo->pDev, pInfo->index, pInfo->pIsr,
                    pInfo->pArg, &inputPin);
-    if ( stat != OK )
+    if (stat != OK)
         return (ERROR);
 
     VXB_DEBUG_MSG(10, "vxbIntCtlrMatch(): intCtlr %p inPin %d matches\n",
-        pInst, inputPin, 3, 4, 5, 6);
+                  pInst, inputPin, 3, 4, 5, 6);
 
     pInfo->found = TRUE;
 
     /*
-     * Update the device with the information to point to the 
-     * correct interrupt source of the interrupt table based on 
-     * the index passed from caller 
+     * Update the device with the information to point to the
+     * correct interrupt source of the interrupt table based on
+     * the index passed from caller
      */
 
     pIntrEntry = pInfo->pDev->pIntrInfo;
     pICTab = pIntrEntry->pIntCtlrTable;
 
-    if ( pICTab == NULL )
-        {
+    if (pICTab == NULL)
+    {
         pICTab = (struct pIntCtlrTable *)
                  hwMemAlloc(sizeof(struct pIntCtlrTable));
 
-        if ( pICTab != NULL )
+        if (pICTab != NULL)
             pICTabAllocFlag = TRUE;
         else
             return (ERROR);
 
         pIntrEntry->pIntCtlrTable = pICTab;
-        }
+    }
 
     x = pInfo->index / VXB_INTR_ENTSZ;
     y = pInfo->index % VXB_INTR_ENTSZ;
 
     pICTab2 = pICTab->pList[x];
-    if ( pICTab2 == NULL )
-        {
+    if (pICTab2 == NULL)
+    {
         pICTab2 = (struct plbIntCtlrTable *)
                   hwMemAlloc(sizeof(struct plbIntCtlrTable));
 
-        if ( pICTab2 == NULL )
-            {
+        if (pICTab2 == NULL)
+        {
             if (pICTabAllocFlag == TRUE)
-                {
+            {
 #ifndef _VXBUS_BASIC_HWMEMLIB
-                hwMemFree ((char *)pICTab);
+                hwMemFree((char *)pICTab);
 #endif /* !_VXBUS_BASIC_HWMEMLIB */
-                }
-
-            return (ERROR);
             }
 
-        pICTab->pList[x] = pICTab2;
+            return (ERROR);
         }
 
-    /* 
-     * Update entry in device interrupt output table to point to 
+        pICTab->pList[x] = pICTab2;
+    }
+
+    /*
+     * Update entry in device interrupt output table to point to
      * interrupt controller input pin.
      */
 
@@ -3204,10 +3204,10 @@ LOCAL STATUS vxbIntCtlrMatch
     pEnt->intCtlrPin = inputPin;
 
     VXB_DEBUG_MSG(10, "vxbIntCtlrMatch(): saved record @ %p\n",
-    		  pEnt, 2, 3, 4, 5, 6);
+                  pEnt, 2, 3, 4, 5, 6);
 
-    return(OK);
-    }
+    return (OK);
+}
 
 /*********************************************************************
 *
@@ -3223,34 +3223,34 @@ LOCAL STATUS vxbIntCtlrMatch
 */
 
 LOCAL STATUS vxbDevControl
-    (
-    VXB_DEVICE_ID	pDev,
-    pVXB_DEVCTL_HDR	pBusDevControl
-    )
-    {
-    PLB_DEV_CTRL_FUNCPTR	func;
+(
+    VXB_DEVICE_ID   pDev,
+    pVXB_DEVCTL_HDR pBusDevControl
+)
+{
+    PLB_DEV_CTRL_FUNCPTR    func;
 #ifdef  VXB_LEGACY_ACCESS
 
-    VXB_ASSERT(pDev->pAccess!=NULL && pDev->pAccess->vxbDevControl!=NULL,
+    VXB_ASSERT(pDev->pAccess != NULL && pDev->pAccess->vxbDevControl != NULL,
                ERROR)
 
     func = (PLB_DEV_CTRL_FUNCPTR) pDev->pAccess->vxbDevControl;
-#else	/* VXB_LEGACY_ACCESS */
-    VXB_DEVICE_ID		pParent;
+#else   /* VXB_LEGACY_ACCESS */
+    VXB_DEVICE_ID       pParent;
 
     func = NULL;
 
     /* find busCtlrDevControl method set in the closest upstream parent bus */
 
-    for (pParent = vxbDevParent (pDev);
-	   pParent != NULL;
-	   pParent = vxbDevParent (pParent))
-	{
-	func = vxbDevMethodGet (pParent, DEVMETHOD_CALL(busCtlrDevCtlr));
+    for (pParent = vxbDevParent(pDev);
+            pParent != NULL;
+            pParent = vxbDevParent(pParent))
+    {
+        func = vxbDevMethodGet(pParent, DEVMETHOD_CALL(busCtlrDevCtlr));
 
-	if (func != NULL)
-	    break;
-	}
+        if (func != NULL)
+            break;
+    }
 
     /*
      * If no parent bus sets busCtlrDevControl method,
@@ -3258,13 +3258,13 @@ LOCAL STATUS vxbDevControl
      */
 
     if (func == NULL)
-	func = (PLB_DEV_CTRL_FUNCPTR) pPlbDevControl;
+        func = (PLB_DEV_CTRL_FUNCPTR) pPlbDevControl;
 #endif  /* VXB_LEGACY_ACCESS */
 
     /* manipulate downstream devices */
 
-    return ((*func) (pDev, pBusDevControl));
-    }
+    return ((*func)(pDev, pBusDevControl));
+}
 
 /*********************************************************************
 *
@@ -3279,15 +3279,15 @@ LOCAL STATUS vxbDevControl
 */
 
 LOCAL STATUS vxbIntAllocMatch
-    (
-    struct vxbDev * pInst,
-    void * pArg
-    )
-    {
-    struct vxbIntPropertyMgmt * pInfo = (struct vxbIntPropertyMgmt *)pArg;
+(
+    struct vxbDev *pInst,
+    void *pArg
+)
+{
+    struct vxbIntPropertyMgmt *pInfo = (struct vxbIntPropertyMgmt *)pArg;
     FUNCPTR   func;
 
-    if ( pInfo->found )
+    if (pInfo->found)
         return ERROR;
 
     func = vxbDevMethodGet(pInst, DEVMETHOD_CALL(vxbIntCtlrAlloc));
@@ -3301,7 +3301,7 @@ LOCAL STATUS vxbIntAllocMatch
     if (pInfo->retValue > 0)
         pInfo->found = TRUE;
     return OK;
-    }
+}
 
 /*********************************************************************
 *
@@ -3317,48 +3317,48 @@ LOCAL STATUS vxbIntAllocMatch
 */
 
 int vxbIntAlloc
-    (
-    struct vxbDev * pDev,       /* Device Information */
+(
+    struct vxbDev *pDev,        /* Device Information */
     UINT32          type,       /* interrupt type VXB_INT_PCI_MSI/VXB_INT_PCI_MSIX*/
     UINT32          count       /* number of interrupt to request */
-    )
-    {
+)
+{
     struct vxbIntPropertyMgmt intProperty;
-    VXB_INTR_ENTRY * pIntInfo;
+    VXB_INTR_ENTRY *pIntInfo;
     VXB_INTR_ENTRY   saveIntInfo;
-    void           * tempPar;
+    void            *tempPar;
     int              i;
-    STATUS           (*pMethod) (VXB_DEVICE_ID, UINT32, UINT32);
+    STATUS(*pMethod)(VXB_DEVICE_ID, UINT32, UINT32);
 
     VXB_ASSERT(pDev != NULL, ERROR)
 
-    pMethod = vxbDevMethodGet (pDev,
-        DEVMETHOD_CALL(vxbDevIntCapabCheck));
+    pMethod = vxbDevMethodGet(pDev,
+                              DEVMETHOD_CALL(vxbDevIntCapabCheck));
 
-    if(pMethod == NULL)
-        pMethod = vxbDevMethodGet (vxbDevParent (pDev),
-            DEVMETHOD_CALL(vxbDevIntCapabCheck));
+    if (pMethod == NULL)
+        pMethod = vxbDevMethodGet(vxbDevParent(pDev),
+                                  DEVMETHOD_CALL(vxbDevIntCapabCheck));
 
     if (pMethod != NULL)
+    {
+        if (pMethod(pDev, VXB_INT_TYPE(type), count) != OK)
         {
-        if (pMethod (pDev, VXB_INT_TYPE(type), count) != OK)
-            {
             VXB_DEBUG_MSG(1, "vxbDevIntCapabCheck ERROR %s%d\n",
-                pDev->pName,pDev->unitNumber,3,4,5,6);
+                          pDev->pName, pDev->unitNumber, 3, 4, 5, 6);
             return ERROR;
-            }
         }
+    }
 
     pIntInfo = (VXB_INTR_ENTRY *)pDev->pIntrInfo;
 
     /* save previous interrupt information */
 
-    bcopy ((char *) pIntInfo, (char *)&saveIntInfo, sizeof (VXB_INTR_ENTRY));
+    bcopy((char *) pIntInfo, (char *)&saveIntInfo, sizeof(VXB_INTR_ENTRY));
 
-    tempPar = hwMemAlloc (sizeof(VOIDFUNCPTR) * count +
-        sizeof(VXB_INTR_ENTRY));
+    tempPar = hwMemAlloc(sizeof(VOIDFUNCPTR) * count +
+                         sizeof(VXB_INTR_ENTRY));
 
-    if ( tempPar == NULL)
+    if (tempPar == NULL)
         return ERROR;
 
     pIntInfo->intVecList = tempPar;
@@ -3374,21 +3374,21 @@ int vxbIntAlloc
 
     /* find a match and call the allocate routine */
 
-    vxbDevIterate (vxbIntAllocMatch, (void *)&intProperty, VXB_ITERATE_INSTANCES);
+    vxbDevIterate(vxbIntAllocMatch, (void *)&intProperty, VXB_ITERATE_INSTANCES);
 
     if (intProperty.retValue <= 0)
-        {
-        bcopy ((char *)&saveIntInfo, (char *) pIntInfo, sizeof (VXB_INTR_ENTRY));
+    {
+        bcopy((char *)&saveIntInfo, (char *) pIntInfo, sizeof(VXB_INTR_ENTRY));
         return ERROR;
-        }
+    }
 
     pIntInfo->numVectors = intProperty.retValue;
 
-    bcopy ((char *) &saveIntInfo, (char *)((ULONG)pIntInfo->intVecList +
-        sizeof(VOIDFUNCPTR)* pIntInfo->numVectors), sizeof (VXB_INTR_ENTRY));
+    bcopy((char *) &saveIntInfo, (char *)((ULONG)pIntInfo->intVecList +
+                                          sizeof(VOIDFUNCPTR)* pIntInfo->numVectors), sizeof(VXB_INTR_ENTRY));
 
     return intProperty.retValue;
-    }
+}
 
 /*********************************************************************
 *
@@ -3403,12 +3403,12 @@ int vxbIntAlloc
 */
 
 LOCAL STATUS vxbIntFreeMatch
-    (
-    struct vxbDev * pInst,
-    void * pArg
-    )
-    {
-    struct vxbIntPropertyMgmt * pInfo = (struct vxbIntPropertyMgmt *)pArg;
+(
+    struct vxbDev *pInst,
+    void *pArg
+)
+{
+    struct vxbIntPropertyMgmt *pInfo = (struct vxbIntPropertyMgmt *)pArg;
     FUNCPTR   func;
 
     if (pInfo->found)
@@ -3423,7 +3423,7 @@ LOCAL STATUS vxbIntFreeMatch
     (*func)(pInfo->pDev);
 
     return OK;
-    }
+}
 
 /*********************************************************************
 *
@@ -3438,12 +3438,12 @@ LOCAL STATUS vxbIntFreeMatch
 */
 
 void vxbIntFree
-    (
-    struct vxbDev * pDev
-    )
-    {
+(
+    struct vxbDev *pDev
+)
+{
     struct vxbIntPropertyMgmt intProperty;
-    VXB_INTR_ENTRY      *     pIntInfo;
+    VXB_INTR_ENTRY           *pIntInfo;
     VXB_INTR_ENTRY            saveIntInfo;
     UINT32                    i;
     FUNCPTR                   pMethod;
@@ -3457,22 +3457,22 @@ void vxbIntFree
     if (pIntInfo->intrFlag == 0)
         return ;
 
-    bcopy ((char *)((ULONG)pIntInfo->intVecList +
-        sizeof(VOIDFUNCPTR)* pIntInfo->numVectors),
-        (char *) &saveIntInfo, sizeof (VXB_INTR_ENTRY));
+    bcopy((char *)((ULONG)pIntInfo->intVecList +
+                   sizeof(VOIDFUNCPTR)* pIntInfo->numVectors),
+          (char *) &saveIntInfo, sizeof(VXB_INTR_ENTRY));
 
     /* find a match and call the free routine */
 
-    vxbDevIterate (vxbIntFreeMatch, (void *)&intProperty, VXB_ITERATE_INSTANCES);
+    vxbDevIterate(vxbIntFreeMatch, (void *)&intProperty, VXB_ITERATE_INSTANCES);
 
 #ifndef _VXBUS_BASIC_HWMEMLIB
-    hwMemFree ((char *)pIntInfo->intVecList);
+    hwMemFree((char *)pIntInfo->intVecList);
 #endif /* _VXBUS_BASIC_HWMEMLIB */
 
     /* recover interrupt information */
 
-    bcopy ((char *) &saveIntInfo, (char *)pIntInfo, sizeof (VXB_INTR_ENTRY));
-    }
+    bcopy((char *) &saveIntInfo, (char *)pIntInfo, sizeof(VXB_INTR_ENTRY));
+}
 
 /*********************************************************************
 *
@@ -3487,17 +3487,17 @@ void vxbIntFree
 */
 
 STATUS vxbIntConnect
-    (
-    struct vxbDev * pDev,       /* Device Information */
+(
+    struct vxbDev *pDev,        /* Device Information */
     int             index,      /* index of interrupt vector */
     VOIDFUNCPTR     pIsr,       /* ISR */
-    void *          pArg        /* parameter */
-    )
-    {
+    void           *pArg        /* parameter */
+)
+{
     VXB_ACCESS_INTERRUPT_INFO   accessIntrInfo;
     struct vxbintCtlrMgmt info;
 
-    VXB_ASSERT(pDev!=NULL, ERROR)
+    VXB_ASSERT(pDev != NULL, ERROR)
 
     VXB_DEBUG_MSG(1, "vxbIntConnect(%p,%d,%p,%p)\n",
                   pDev, index, pIsr, pArg, 5, 6);
@@ -3514,8 +3514,8 @@ STATUS vxbIntConnect
 
     vxbDevIterate(vxbIntCtlrMatch, &info, VXB_ITERATE_INSTANCES);
 
-    if ( info.found == TRUE )
-        return(OK);
+    if (info.found == TRUE)
+        return (OK);
 
     /*
      * If no match drop through to device control function for specific
@@ -3527,8 +3527,8 @@ STATUS vxbIntConnect
     accessIntrInfo.pISR =  pIsr;
     accessIntrInfo.pParameter = pArg;
 
-    return (vxbDevControl (pDev, (pVXB_DEVCTL_HDR)&accessIntrInfo));
-    }
+    return (vxbDevControl(pDev, (pVXB_DEVCTL_HDR)&accessIntrInfo));
+}
 
 /*********************************************************************
 *
@@ -3542,51 +3542,51 @@ STATUS vxbIntConnect
 */
 
 STATUS vxbIntDisconnect
-    (
-    struct vxbDev * pDev,       /* Device Information */
+(
+    struct vxbDev *pDev,        /* Device Information */
     int         index,          /* index of interrupt vector */
     VOIDFUNCPTR     pIsr,       /* ISR */
-    void *      pArg            /* parameter */
-    )
-    {
+    void       *pArg            /* parameter */
+)
+{
     VXB_ACCESS_INTERRUPT_INFO   accessIntrInfo;
-    struct plbIntrEntry * pIntrEntry;
+    struct plbIntrEntry *pIntrEntry;
     VXB_DEVICE_ID       pIntCtlr;
     FUNCPTR   func;
     BOOL      stat;
-    int				x;
-    int				y;
+    int             x;
+    int             y;
 
-    VXB_ASSERT(pDev!=NULL, ERROR)
+    VXB_ASSERT(pDev != NULL, ERROR)
 
     pIntrEntry = pDev->pIntrInfo;
-    if ( pIntrEntry == NULL )
+    if (pIntrEntry == NULL)
         goto skipIntCtlr;
 
     x = index / VXB_INTR_ENTSZ;
     y = index % VXB_INTR_ENTSZ;
 
-    if ( pIntrEntry->pIntCtlrTable == NULL )
+    if (pIntrEntry->pIntCtlrTable == NULL)
         goto skipIntCtlr;
-    if ( pIntrEntry->pIntCtlrTable->pList[x] == NULL )
+    if (pIntrEntry->pIntCtlrTable->pList[x] == NULL)
         goto skipIntCtlr;
-    if ( pIntrEntry->pIntCtlrTable->pList[x]->intCtlr[y].intCtlr == NULL )
+    if (pIntrEntry->pIntCtlrTable->pList[x]->intCtlr[y].intCtlr == NULL)
         goto skipIntCtlr;
 
     pIntCtlr = pIntrEntry->pIntCtlrTable->pList[x]->intCtlr[y].intCtlr;
 
     func = vxbDevMethodGet(pIntCtlr, DEVMETHOD_CALL(vxbIntCtlrDisconnect));
-    if ( func != NULL )
-        {
+    if (func != NULL)
+    {
 
         /* use interrupt controller mechanism */
 
         stat = (*func)(pIntCtlr, pDev, index, pIsr, pArg);
-        if ( stat != OK )
-          return(ERROR);
+        if (stat != OK)
+            return (ERROR);
 
-        return(OK);
-        }
+        return (OK);
+    }
 
 skipIntCtlr:
 
@@ -3595,8 +3595,8 @@ skipIntCtlr:
     accessIntrInfo.pISR =  pIsr;
     accessIntrInfo.pParameter = pArg;
 
-    return (vxbDevControl (pDev, (pVXB_DEVCTL_HDR)&accessIntrInfo));
-    }
+    return (vxbDevControl(pDev, (pVXB_DEVCTL_HDR)&accessIntrInfo));
+}
 
 /*********************************************************************
 *
@@ -3613,51 +3613,51 @@ skipIntCtlr:
 */
 
 STATUS vxbIntAcknowledge
-    (
-    struct vxbDev * pDev,       /* Device Information */
+(
+    struct vxbDev *pDev,        /* Device Information */
     int             index,      /* index of interrupt vector */
     VOIDFUNCPTR     pIsr,       /* ISR */
-    void *          pArg        /* parameter */
-    )
-    {
+    void           *pArg        /* parameter */
+)
+{
     VXB_ACCESS_INTERRUPT_INFO   accessIntrInfo;
-    struct plbIntrEntry * pIntrEntry;
+    struct plbIntrEntry *pIntrEntry;
     VXB_DEVICE_ID       pIntCtlr;
     FUNCPTR   func;
     BOOL      stat;
-    int				x;
-    int				y;
+    int             x;
+    int             y;
 
-    VXB_ASSERT(pDev!=NULL, ERROR)
+    VXB_ASSERT(pDev != NULL, ERROR)
 
     pIntrEntry = pDev->pIntrInfo;
-    if ( pIntrEntry == NULL )
+    if (pIntrEntry == NULL)
         goto skipIntCtlr;
 
     x = index / VXB_INTR_ENTSZ;
     y = index % VXB_INTR_ENTSZ;
 
-    if ( pIntrEntry->pIntCtlrTable == NULL )
+    if (pIntrEntry->pIntCtlrTable == NULL)
         goto skipIntCtlr;
-    if ( pIntrEntry->pIntCtlrTable->pList[x] == NULL )
+    if (pIntrEntry->pIntCtlrTable->pList[x] == NULL)
         goto skipIntCtlr;
-    if ( pIntrEntry->pIntCtlrTable->pList[x]->intCtlr[y].intCtlr == NULL )
+    if (pIntrEntry->pIntCtlrTable->pList[x]->intCtlr[y].intCtlr == NULL)
         goto skipIntCtlr;
 
     pIntCtlr = pIntrEntry->pIntCtlrTable->pList[x]->intCtlr[y].intCtlr;
 
     func = vxbDevMethodGet(pIntCtlr, DEVMETHOD_CALL(vxbIntCtlrAck));
-    if ( func != NULL )
-        {
+    if (func != NULL)
+    {
 
         /* use interrupt controller mechanism */
 
         stat = (*func)(pIntCtlr, pDev, index, pIsr, pArg);
-        if ( stat != OK )
-          return(ERROR);
+        if (stat != OK)
+            return (ERROR);
 
-        return(OK);
-        }
+        return (OK);
+    }
 
 skipIntCtlr:
 
@@ -3666,8 +3666,8 @@ skipIntCtlr:
     accessIntrInfo.pISR =  pIsr;
     accessIntrInfo.pParameter = pArg;
 
-    return (vxbDevControl (pDev, (pVXB_DEVCTL_HDR)&accessIntrInfo));
-    }
+    return (vxbDevControl(pDev, (pVXB_DEVCTL_HDR)&accessIntrInfo));
+}
 
 /*********************************************************************
 *
@@ -3683,50 +3683,50 @@ skipIntCtlr:
 */
 
 STATUS vxbIntEnable
-    (
-    struct vxbDev *	pDev,  /* Device Information */
+(
+    struct vxbDev  *pDev,  /* Device Information */
     int             index, /* index of interrupt vector */
     VOIDFUNCPTR     pIsr,  /* ISR */
-    void *          pArg   /* parameter */
-    )
-    {
+    void           *pArg   /* parameter */
+)
+{
     VXB_ACCESS_INTERRUPT_INFO   accessIntrInfo;
-    struct plbIntrEntry *	pIntrEntry;
-    VXB_DEVICE_ID       	pIntCtlr;
-    FUNCPTR   			func;
-    BOOL      			stat;
-    int				x;
-    int				y;
+    struct plbIntrEntry    *pIntrEntry;
+    VXB_DEVICE_ID           pIntCtlr;
+    FUNCPTR             func;
+    BOOL                stat;
+    int             x;
+    int             y;
 
-    VXB_ASSERT(pDev!=NULL, ERROR)
+    VXB_ASSERT(pDev != NULL, ERROR)
 
     pIntrEntry = pDev->pIntrInfo;
-    if ( pIntrEntry == NULL )
+    if (pIntrEntry == NULL)
         goto skipIntCtlr;
 
     x = index / VXB_INTR_ENTSZ;
     y = index % VXB_INTR_ENTSZ;
 
-    if ( pIntrEntry->pIntCtlrTable == NULL )
+    if (pIntrEntry->pIntCtlrTable == NULL)
         goto skipIntCtlr;
-    if ( pIntrEntry->pIntCtlrTable->pList[x] == NULL )
+    if (pIntrEntry->pIntCtlrTable->pList[x] == NULL)
         goto skipIntCtlr;
-    if ( pIntrEntry->pIntCtlrTable->pList[x]->intCtlr[y].intCtlr == NULL )
+    if (pIntrEntry->pIntCtlrTable->pList[x]->intCtlr[y].intCtlr == NULL)
         goto skipIntCtlr;
 
     pIntCtlr = pIntrEntry->pIntCtlrTable->pList[x]->intCtlr[y].intCtlr;
 
     func = vxbDevMethodGet(pIntCtlr, DEVMETHOD_CALL(vxbIntCtlrEnable));
-    if ( func != NULL )
-        {
+    if (func != NULL)
+    {
 
         /* use interrupt controller mechanism */
 
         stat = (*func)(pIntCtlr, pDev, index, pIsr, pArg);
-        
+
         if (stat == OK)
             return OK;
-        }
+    }
 
 skipIntCtlr:
 
@@ -3740,8 +3740,8 @@ skipIntCtlr:
     accessIntrInfo.pISR =  pIsr;
     accessIntrInfo.pParameter = pArg;
 
-    return (vxbDevControl (pDev, (pVXB_DEVCTL_HDR)&accessIntrInfo));
-    }
+    return (vxbDevControl(pDev, (pVXB_DEVCTL_HDR)&accessIntrInfo));
+}
 
 /*********************************************************************
 *
@@ -3757,51 +3757,51 @@ skipIntCtlr:
 */
 
 STATUS vxbIntDisable
-    (
-    struct vxbDev * pDev,      /* Device Information */
+(
+    struct vxbDev *pDev,       /* Device Information */
     int            index,      /* index of interrupt vector */
     VOIDFUNCPTR     pIsr,      /* ISR */
-    void *          pArg       /* parameter */
-    )
-    {
+    void           *pArg       /* parameter */
+)
+{
     VXB_ACCESS_INTERRUPT_INFO   accessIntrInfo;
-    struct plbIntrEntry * pIntrEntry;
+    struct plbIntrEntry *pIntrEntry;
     VXB_DEVICE_ID       pIntCtlr;
     FUNCPTR   func;
     BOOL      stat;
-    int				x;
-    int				y;
+    int             x;
+    int             y;
 
-    VXB_ASSERT(pDev!=NULL, ERROR)
+    VXB_ASSERT(pDev != NULL, ERROR)
 
     pIntrEntry = pDev->pIntrInfo;
-    if ( pIntrEntry == NULL )
+    if (pIntrEntry == NULL)
         goto skipIntCtlr;
 
     x = index / VXB_INTR_ENTSZ;
     y = index % VXB_INTR_ENTSZ;
 
-    if ( pIntrEntry->pIntCtlrTable == NULL )
+    if (pIntrEntry->pIntCtlrTable == NULL)
         goto skipIntCtlr;
-    if ( pIntrEntry->pIntCtlrTable->pList[x] == NULL )
+    if (pIntrEntry->pIntCtlrTable->pList[x] == NULL)
         goto skipIntCtlr;
-    if ( pIntrEntry->pIntCtlrTable->pList[x]->intCtlr[y].intCtlr == NULL )
+    if (pIntrEntry->pIntCtlrTable->pList[x]->intCtlr[y].intCtlr == NULL)
         goto skipIntCtlr;
 
     pIntCtlr = pIntrEntry->pIntCtlrTable->pList[x]->intCtlr[y].intCtlr;
 
     func = vxbDevMethodGet(pIntCtlr, DEVMETHOD_CALL(vxbIntCtlrDisable));
-    if ( func != NULL )
-        {
+    if (func != NULL)
+    {
 
         /* use interrupt controller mechanism */
 
         stat = (*func)(pIntCtlr, pDev, index, pIsr, pArg);
-        if ( stat != OK )
-          return(ERROR);
+        if (stat != OK)
+            return (ERROR);
 
-        return(OK);
-        }
+        return (OK);
+    }
 
 skipIntCtlr:
 
@@ -3810,8 +3810,8 @@ skipIntCtlr:
     accessIntrInfo.pISR =  pIsr;
     accessIntrInfo.pParameter = pArg;
 
-    return (vxbDevControl (pDev, (pVXB_DEVCTL_HDR)&accessIntrInfo));
-    }
+    return (vxbDevControl(pDev, (pVXB_DEVCTL_HDR)&accessIntrInfo));
+}
 
 /*********************************************************************
 *
@@ -3827,39 +3827,39 @@ skipIntCtlr:
 * ERRNO: N/A
 */
 
-VOIDFUNCPTR * vxbIntVectorGet
-    (
-    struct vxbDev * pDev,       /* Device Information */
+VOIDFUNCPTR *vxbIntVectorGet
+(
+    struct vxbDev *pDev,        /* Device Information */
     int             index       /* index of interrupt vector */
-    )
-    {
+)
+{
     VXB_ACCESS_INT_VECTOR_GET accessVectorGet;
-    struct plbIntrEntry *     pIntrEntry;
+    struct plbIntrEntry      *pIntrEntry;
     VXB_DEVICE_ID             pIntCtlr;
     FUNCPTR                   func;
     int                       x;
     int                       y;
 
-    VXB_ASSERT(pDev!=NULL, NULL)
+    VXB_ASSERT(pDev != NULL, NULL)
 
     pIntrEntry = pDev->pIntrInfo;
-    if ( pIntrEntry == NULL )
+    if (pIntrEntry == NULL)
         return NULL;
 
     x = index / VXB_INTR_ENTSZ;
     y = index % VXB_INTR_ENTSZ;
 
-    if ( pIntrEntry->pIntCtlrTable == NULL )
+    if (pIntrEntry->pIntCtlrTable == NULL)
         goto skipIntCtlr;
-    if ( pIntrEntry->pIntCtlrTable->pList[x] == NULL )
+    if (pIntrEntry->pIntCtlrTable->pList[x] == NULL)
         goto skipIntCtlr;
-    if ( pIntrEntry->pIntCtlrTable->pList[x]->intCtlr[y].intCtlr == NULL )
+    if (pIntrEntry->pIntCtlrTable->pList[x]->intCtlr[y].intCtlr == NULL)
         goto skipIntCtlr;
 
     pIntCtlr = pIntrEntry->pIntCtlrTable->pList[x]->intCtlr[y].intCtlr;
 
     func = vxbDevMethodGet(pIntCtlr, DEVMETHOD_CALL(vxbIntCtlrDisconnect));
-    if ( func == NULL )
+    if (func == NULL)
         goto skipIntCtlr;
 
     /*
@@ -3868,7 +3868,7 @@ VOIDFUNCPTR * vxbIntVectorGet
      * is undefined.  Just return NULL.
      */
 
-    return(NULL);
+    return (NULL);
 
 skipIntCtlr:
 
@@ -3876,10 +3876,10 @@ skipIntCtlr:
     accessVectorGet.intIndex = index;
     accessVectorGet.pIntVector = NULL;
 
-    vxbDevControl (pDev, (pVXB_DEVCTL_HDR)&accessVectorGet);
+    vxbDevControl(pDev, (pVXB_DEVCTL_HDR)&accessVectorGet);
 
     return (accessVectorGet.pIntVector);
-    }
+}
 
 #ifdef _WRS_CONFIG_SMP /* interrupt routing is SMP only */
 
@@ -3897,21 +3897,21 @@ skipIntCtlr:
 */
 
 STATUS vxbIntToCpuRoute
-    (
+(
     unsigned int destCpu /* logical index of destination CPU for reroute */
-    )
-    {
-    vxbDevMethodRun (DEVMETHOD_CALL(vxbIntCtlrCpuReroute),
-        (void *)((ULONG)destCpu));
+)
+{
+    vxbDevMethodRun(DEVMETHOD_CALL(vxbIntCtlrCpuReroute),
+                    (void *)((ULONG)destCpu));
 
     return (OK);
-    }
+}
 
 /*******************************************************************
 *
 * vxbIntRerouteSet - forward interrupt cpu/route to int ctlr
 *
-* This routine forwards the route request to the interrupt 
+* This routine forwards the route request to the interrupt
 * controllers which publish a {vxbIntCtlrIntReroute}() method
 *
 * RETURNS: OK always
@@ -3920,11 +3920,11 @@ STATUS vxbIntToCpuRoute
 */
 
 LOCAL STATUS vxbIntRerouteSet
-    (
+(
     VXB_DEVICE_ID pDev,
-    void * pArg
-    )
-    {
+    void *pArg
+)
+{
     struct vxbIntrRerouteInfo *routeInfo;
     FUNCPTR pMethod;
 
@@ -3936,7 +3936,7 @@ LOCAL STATUS vxbIntRerouteSet
                    routeInfo->destCpu);
 
     return (OK);
-    }
+}
 
 /*******************************************************************
 *
@@ -3950,22 +3950,22 @@ LOCAL STATUS vxbIntRerouteSet
 */
 
 STATUS vxbIntReroute
-    (
+(
     VXB_DEVICE_ID pRequestor,
     int           interruptIndex,
     cpuset_t      destCpu
-    )
-    {
+)
+{
     struct vxbIntrRerouteInfo routeInfo;
 
     routeInfo.pInst = pRequestor;
     routeInfo.interruptIndex = interruptIndex;
     routeInfo.destCpu = destCpu;
-    vxbDevIterate ((FUNCPTR)vxbIntRerouteSet, &routeInfo,
-                   VXB_ITERATE_INSTANCES);
+    vxbDevIterate((FUNCPTR)vxbIntRerouteSet, &routeInfo,
+                  VXB_ITERATE_INSTANCES);
 
     return (OK);
-    }
+}
 
 #endif /* _WRS_CONFIG_SMP */
 
@@ -3980,12 +3980,12 @@ STATUS vxbIntReroute
 * ERRNO: N/A
 */
 
-struct vxbDev * vxbDevStructAlloc
-    (
+struct vxbDev *vxbDevStructAlloc
+(
     int flags        /* Flags */
-    )
-    {
-    struct vxbDev * pRet;
+)
+{
+    struct vxbDev *pRet;
     UINT32      savedVersion;
 
     /* acquire the lock */
@@ -3994,8 +3994,8 @@ struct vxbDev * vxbDevStructAlloc
 
     /* reuse available storage, if possible */
 
-    if ( pBusDevFreeList != NULL )
-        {
+    if (pBusDevFreeList != NULL)
+    {
 
         /* fetch the first pointer */
 
@@ -4019,15 +4019,15 @@ struct vxbDev * vxbDevStructAlloc
 
         /* initialize the lock */
 
-        if ( vxbInitPhase > 1 )
+        if (vxbInitPhase > 1)
             vxbLockInit(&pRet->devLock);
 
         /* restore the versionCounter */
 
         pRet->versionCounter = savedVersion;
 
-        return(pRet);
-        }
+        return (pRet);
+    }
 
     /* release the lock */
 
@@ -4038,8 +4038,8 @@ struct vxbDev * vxbDevStructAlloc
     pRet = (struct vxbDev *)hwMemAlloc(sizeof(struct vxbDev));
 
 #ifdef HWMEM_ALLOC_FAIL_DEBUG
-    if ( pRet == NULL )
-        {
+    if (pRet == NULL)
+    {
 
         /*
          * If the caller allows us to wait forever for space,
@@ -4049,9 +4049,9 @@ struct vxbDev * vxbDevStructAlloc
          * of 16KBytes.
          */
 
-        if ( ( flags == WAIT_FOREVER ) && ( vxbInitPhase >= 2 ) )
-            {
-            char * pMem;
+        if ((flags == WAIT_FOREVER) && (vxbInitPhase >= 2))
+        {
+            char *pMem;
 
             /*
              * allocate 16 KBytes from system pool and add it
@@ -4064,31 +4064,31 @@ struct vxbDev * vxbDevStructAlloc
             /* try to allocate the structure again */
 
             pRet = (struct vxbDev *)hwMemAlloc(sizeof(struct vxbDev));
-            }
         }
-#endif	/* HWMEM_ALLOC_FAIL_DEBUG */
+    }
+#endif  /* HWMEM_ALLOC_FAIL_DEBUG */
 
     /* if we got a structure, zero it, and init versionCounter */
 
-    if ( pRet != NULL )
-        {
+    if (pRet != NULL)
+    {
 
         /* initialize the lock */
 
-        if ( vxbInitPhase > 1 )
+        if (vxbInitPhase > 1)
             vxbLockInit(&pRet->devLock);
 
         /*
-         * versionCounter field should be initialized by 
+         * versionCounter field should be initialized by
          * hwMemAlloc() pRet->versionCounter = 0;
          */
 
-        }
-
-    return(pRet);
     }
 
-#ifndef	_WRS_CONFIG_VXBUS_BASIC
+    return (pRet);
+}
+
+#ifndef _WRS_CONFIG_VXBUS_BASIC
 
 /*********************************************************************
 *
@@ -4102,38 +4102,38 @@ struct vxbDev * vxbDevStructAlloc
 */
 
 void vxbDevStructFree
-    (
-    struct vxbDev * pDev    /* Device Information */
-    )
-    {
+(
+    struct vxbDev *pDev     /* Device Information */
+)
+{
 
     /* delete the lock for the device information */
 
-    if (vxbLockDelete (&pDev->devLock) == OK)
-	{
+    if (vxbLockDelete(&pDev->devLock) == OK)
+    {
 
-	/*
-	 * increment version counter on free,
-	 * and save the structure to the free list
-	 *
-	 * XXX: What is the version counter used for?
-	 */
+        /*
+         * increment version counter on free,
+         * and save the structure to the free list
+         *
+         * XXX: What is the version counter used for?
+         */
 
-	pDev->versionCounter++;
+        pDev->versionCounter++;
 
-	/* acquire the lock for the Device Structure List */
+        /* acquire the lock for the Device Structure List */
 
-	vxbLockTake (&vxbDevStructListLock, VXB_LOCK_WRITER);
+        vxbLockTake(&vxbDevStructListLock, VXB_LOCK_WRITER);
 
-	pDev->pNext = pBusDevFreeList;
-	pBusDevFreeList = pDev;
+        pDev->pNext = pBusDevFreeList;
+        pBusDevFreeList = pDev;
 
-	/* release the lock for the Device Structure List */
+        /* release the lock for the Device Structure List */
 
-	vxbLockGive (&vxbDevStructListLock, VXB_LOCK_WRITER);
-	}
+        vxbLockGive(&vxbDevStructListLock, VXB_LOCK_WRITER);
     }
-#endif	/* _WRS_CONFIG_VXBUS_BASIC */
+}
+#endif  /* _WRS_CONFIG_VXBUS_BASIC */
 
 /*********************************************************************
 *
@@ -4146,20 +4146,20 @@ void vxbDevStructFree
 * ERRNO: N/A
 */
 
-STATUS	vxbInstUnitSet
-    (
-    VXB_DEVICE_ID	pDev,
-    UINT32		unitNumber
-    )
-    {
-    VXB_ASSERT(pDev!=NULL, ERROR)
+STATUS  vxbInstUnitSet
+(
+    VXB_DEVICE_ID   pDev,
+    UINT32      unitNumber
+)
+{
+    VXB_ASSERT(pDev != NULL, ERROR)
 
     /* set the unit number */
 
     pDev->unitNumber = unitNumber;
 
     return OK;
-    }
+}
 
 /*********************************************************************
 *
@@ -4172,20 +4172,20 @@ STATUS	vxbInstUnitSet
 * ERRNO: N/A
 */
 
-STATUS	vxbInstUnitGet
-    (
-    VXB_DEVICE_ID	pDev,
-    UINT32 *		pUnitNumber
-    )
-    {
-    VXB_ASSERT(pDev!=NULL, ERROR)
+STATUS  vxbInstUnitGet
+(
+    VXB_DEVICE_ID   pDev,
+    UINT32         *pUnitNumber
+)
+{
+    VXB_ASSERT(pDev != NULL, ERROR)
 
     /* set the unit number */
 
     *pUnitNumber = pDev->unitNumber;
 
     return OK;
-    }
+}
 
 /*********************************************************************
 *
@@ -4201,29 +4201,29 @@ STATUS	vxbInstUnitGet
 */
 
 LOCAL void vxbUnitCheck
-    (
+(
     VXB_DEVICE_ID pDev,
-    void * pArg
-    )
-    {
-    VXB_UNIT * pUnit;
+    void *pArg
+)
+{
+    VXB_UNIT *pUnit;
 
-    VXB_ASSERT_V(pDev!=NULL)
-    VXB_ASSERT_V(pDev->pDriver!=NULL)
+    VXB_ASSERT_V(pDev != NULL)
+    VXB_ASSERT_V(pDev->pDriver != NULL)
 
     pUnit = pArg;
 
     if (
         (pUnit->vxbUnitTaken) ||
-    	(strcmp(pDev->pDriver->drvName, pUnit->vxbDev->pDriver->drvName) != 0)
-       )
+        (strcmp(pDev->pDriver->drvName, pUnit->vxbDev->pDriver->drvName) != 0)
+    )
         return;
 
     if (pDev->unitNumber == pUnit->vxbCheckUnit)
         pUnit->vxbUnitTaken = TRUE;
 
     return;
-    }
+}
 
 /*********************************************************************
 *
@@ -4245,10 +4245,10 @@ LOCAL void vxbUnitCheck
 */
 
 STATUS vxbNextUnitGet
-    (
+(
     VXB_DEVICE_ID pDev
-    )
-    {
+)
+{
     UINT i;
     VXB_UNIT u;
 
@@ -4260,23 +4260,23 @@ STATUS vxbNextUnitGet
      * match this device as unit 0.
      */
 
-    vxbInstUnitSet (pDev, 0xFFFFFFFF);
+    vxbInstUnitSet(pDev, 0xFFFFFFFF);
     u.vxbDev = pDev;
 
     FOREVER
-        {
+    {
         u.vxbCheckUnit = i;
         u.vxbUnitTaken = FALSE;
-        vxbDevIterate ((FUNCPTR)vxbUnitCheck, &u, VXB_ITERATE_INSTANCES);
+        vxbDevIterate((FUNCPTR)vxbUnitCheck, &u, VXB_ITERATE_INSTANCES);
         if (u.vxbUnitTaken == FALSE)
             break;
         i++;
-        }
+    }
 
-    vxbInstUnitSet (pDev, i);
+    vxbInstUnitSet(pDev, i);
 
     return (OK);
-    }
+}
 
 /*********************************************************************
 *
@@ -4292,12 +4292,12 @@ STATUS vxbNextUnitGet
 */
 
 LOCAL void vxbSpinLockStub
-    (
-    spinlockIsr_t * lock
-    )
-    {
+(
+    spinlockIsr_t *lock
+)
+{
     /* do nothing here */
-    }
+}
 
 #ifdef SPIN_LOCK_TRACE
 
@@ -4315,32 +4315,32 @@ LOCAL void vxbSpinLockStub
 */
 
 LOCAL void vxbSpinLockTakeStub
-    (
-    spinlockIsr_t * lock,
-    char * file,
+(
+    spinlockIsr_t *lock,
+    char *file,
     int line
-    )
-    {
+)
+{
     /* do nothing here */
-    }
-#endif	/* SPIN_LOCK_TRACE */
+}
+#endif  /* SPIN_LOCK_TRACE */
 
 /*********************************************************************
 *
 * vxbLockTake - take a VxBus lock
 *
-* This routine takes a VxBus lock depending on if VXBUS_BASIC_RWSEM 
+* This routine takes a VxBus lock depending on if VXBUS_BASIC_RWSEM
 * is defined.
-* 
-* 1) If VXBUS_BASIC_RWSEM is defined, it locks with a counter and 
-*    disables interrupts of the local CPU. 
 *
-* 2) If VXBUS_BASIC_RWSEM is not defined, the behaviour depends on 
+* 1) If VXBUS_BASIC_RWSEM is defined, it locks with a counter and
+*    disables interrupts of the local CPU.
+*
+* 2) If VXBUS_BASIC_RWSEM is not defined, the behaviour depends on
 *    the current VxBus initialization phase:
-* 
+*
 * 2.1) Before VxBus second phase, it locks with readerCount;
 *
-* 2.2) After VxBus second phase, it will initialize the lock as a 
+* 2.2) After VxBus second phase, it will initialize the lock as a
 *      semaphore if not already, and then take the semaphore.
 *
 * RETURNS: OK or ERROR
@@ -4351,57 +4351,57 @@ LOCAL void vxbSpinLockTakeStub
 */
 
 STATUS vxbLockTake
-    (
-    VXB_LOCK	lockId,
-    BOOL	reader
-    )
-    {
+(
+    VXB_LOCK    lockId,
+    BOOL    reader
+)
+{
 #ifdef _VXBUS_BASIC_RWSEM
     if (lockId->counter == 0)
-        {
+    {
         lockId->counter = 1;
         lockId->key = intCpuLock();
-        }
+    }
     return (OK);
 #else /* _VXBUS_BASIC_RWSEM */
-    STATUS	retVal;
+    STATUS  retVal;
 
-    if ( ( lockId->initDone != TRUE ) && ( vxbInitPhase >= 2 ) )
+    if ((lockId->initDone != TRUE) && (vxbInitPhase >= 2))
         vxbLockInit(lockId);
 
-    if ( lockId->initDone != TRUE )
+    if (lockId->initDone != TRUE)
+    {
+        if (reader)
         {
-	if ( reader )
-	    {
-	    if ( lockId->readerCount == 0 )
-		{
-		lockId->readerCount = 1;
-		return(OK);
-		}
-	    }
-	else
-	    {
-	    if ( lockId->readerCount == 0 )
-		{
-		lockId->readerCount = -1;
-		return(OK);
-		}
-	    }
-	return(ERROR);
-	}
-
-    if ( reader )
+            if (lockId->readerCount == 0)
+            {
+                lockId->readerCount = 1;
+                return (OK);
+            }
+        }
+        else
         {
-	retVal = semRTake(lockId->semID, WAIT_FOREVER);
-	}
-    else
-        {
-	retVal = semWTake(lockId->semID, WAIT_FOREVER);
-	}
-
-    return(retVal);
-#endif /* _VXBUS_BASIC_RWSEM */    
+            if (lockId->readerCount == 0)
+            {
+                lockId->readerCount = -1;
+                return (OK);
+            }
+        }
+        return (ERROR);
     }
+
+    if (reader)
+    {
+        retVal = semRTake(lockId->semID, WAIT_FOREVER);
+    }
+    else
+    {
+        retVal = semWTake(lockId->semID, WAIT_FOREVER);
+    }
+
+    return (retVal);
+#endif /* _VXBUS_BASIC_RWSEM */
+}
 
 /*********************************************************************
 *
@@ -4409,16 +4409,16 @@ STATUS vxbLockTake
 *
 * This routine releases a VxBus lock depending on if VXBUS_BASIC_RWSEM
 * is defined.
-* 
-* 1) If VXBUS_BASIC_RWSEM is defined, it unlocks with a counter and 
-*    restores interrupts of the local CPU. 
 *
-* 2) If VXBUS_BASIC_RWSEM is not defined, the behaviour depends on 
+* 1) If VXBUS_BASIC_RWSEM is defined, it unlocks with a counter and
+*    restores interrupts of the local CPU.
+*
+* 2) If VXBUS_BASIC_RWSEM is not defined, the behaviour depends on
 *    the current VxBus initialization phase:
-* 
+*
 * 2.1) Before VxBus second phase, it unlocks with readerCount.
 *
-* 2.2) After VxBus second phase, it will initialize the lock as a 
+* 2.2) After VxBus second phase, it will initialize the lock as a
 *      semaphore if not already, and then give the semaphore.
 *
 * RETURNS: OK or ERROR
@@ -4429,71 +4429,71 @@ STATUS vxbLockTake
 */
 
 STATUS vxbLockGive
-    (
-    VXB_LOCK	lockId,
-    BOOL	reader
-    )
-    {
+(
+    VXB_LOCK    lockId,
+    BOOL    reader
+)
+{
 #ifdef _VXBUS_BASIC_RWSEM
     if (lockId->counter == 1)
-        {
-        lockId->counter = 0;            
-        intCpuUnlock (lockId->key);
-        }
+    {
+        lockId->counter = 0;
+        intCpuUnlock(lockId->key);
+    }
     return (OK);
-#else  /* _VXBUS_BASIC_RWSEM */      
+#else  /* _VXBUS_BASIC_RWSEM */
     STATUS retVal;
 
-    if ( lockId->initDone != TRUE )
+    if (lockId->initDone != TRUE)
+    {
+        if (reader)
         {
-	if ( reader )
-	    {
-	    if ( lockId->readerCount > 0 )
-		{
-		lockId->readerCount--;
+            if (lockId->readerCount > 0)
+            {
+                lockId->readerCount--;
 
-		if ( (lockId->readerCount == 0) && (vxbInitPhase >= 2) )
-		    vxbLockInit(lockId);
+                if ((lockId->readerCount == 0) && (vxbInitPhase >= 2))
+                    vxbLockInit(lockId);
 
-		return(OK);
-		}
-	    }
-	else
-	    {
-	    if ( lockId->readerCount == -1 )
-		{
-		lockId->readerCount = 0;
+                return (OK);
+            }
+        }
+        else
+        {
+            if (lockId->readerCount == -1)
+            {
+                lockId->readerCount = 0;
 
-		if ( vxbInitPhase >= 2 )
-		    vxbLockInit(lockId);
+                if (vxbInitPhase >= 2)
+                    vxbLockInit(lockId);
 
-		return(OK);
-		}
-	    }
-	return(ERROR);
-	}
+                return (OK);
+            }
+        }
+        return (ERROR);
+    }
 
     retVal = semGive(lockId->semID);
 
-    return(retVal);
-#endif /* _VXBUS_BASIC_RWSEM */    
-    }
+    return (retVal);
+#endif /* _VXBUS_BASIC_RWSEM */
+}
 
 /*********************************************************************
 *
 * vxbLockInit - initialize a VxBus lock
 *
-* This routine initializes a VxBus lock depending on if 
+* This routine initializes a VxBus lock depending on if
 * VXBUS_BASIC_RWSEM is defined.
 *
-* 1) If VXBUS_BASIC_RWSEM is defined, return OK directly. 
+* 1) If VXBUS_BASIC_RWSEM is defined, return OK directly.
 *
 * 2) If VXBUS_BASIC_RWSEM is not defined, and the readerCount has not
 *     been taken by vxbLockTake, then create it as a semaphore.
 *
 * NOTE:
 *
-* The content of <lockId> should be zero'ed before it is used the 
+* The content of <lockId> should be zero'ed before it is used the
 * first time.
 *
 * RETURNS: OK or ERROR
@@ -4504,36 +4504,36 @@ STATUS vxbLockGive
 */
 
 STATUS vxbLockInit
-    (
-    VXB_LOCK	lockId
-    )
-    {
-#ifdef _VXBUS_BASIC_RWSEM        
+(
+    VXB_LOCK    lockId
+)
+{
+#ifdef _VXBUS_BASIC_RWSEM
     return (OK);
 #else /* _VXBUS_BASIC_RWSEM */
 
     if (vxbInitPhase < 2 ||
-        lockId->readerCount != 0 )
-        return(ERROR);
+            lockId->readerCount != 0)
+        return (ERROR);
 
     /* check if init done or in-progress */
     if (vxAtomic32Set(&(lockId->initDone), TRUE) == TRUE)
-	{
-	while (*(volatile SEM_ID *) &(lockId->semID) == NULL)
-	    /* wait: do nothing */;
+    {
+        while (*(volatile SEM_ID *) & (lockId->semID) == NULL)
+            /* wait: do nothing */;
 
-	return(OK);
-	}
+        return (OK);
+    }
 
     lockId->semID = semRWCreate(SEM_Q_FIFO, 256);
 
-    if ( lockId->semID == NULL )
-        {
-	return(ERROR);
-	}
-    return(OK);
-#endif /* _VXBUS_BASIC_RWSEM */      
+    if (lockId->semID == NULL)
+    {
+        return (ERROR);
     }
+    return (OK);
+#endif /* _VXBUS_BASIC_RWSEM */
+}
 
 /*********************************************************************
 *
@@ -4541,10 +4541,10 @@ STATUS vxbLockInit
 *
 * This routine deletes a VxBus lock depending on if VXBUS_BASIC_RWSEM
 * is defined.
-* 
-* 1) If VXBUS_BASIC_RWSEM is defined, return OK directly. 
 *
-* 2) If VXBUS_BASIC_RWSEM is not defined, and the semaphore has been 
+* 1) If VXBUS_BASIC_RWSEM is defined, return OK directly.
+*
+* 2) If VXBUS_BASIC_RWSEM is not defined, and the semaphore has been
 *    created, delete it.
 *
 * RETURNS: OK or ERROR
@@ -4555,21 +4555,21 @@ STATUS vxbLockInit
 */
 
 STATUS vxbLockDelete
-    (
-    VXB_LOCK	lockId
-    )
-    {
-#ifdef _VXBUS_BASIC_RWSEM           
+(
+    VXB_LOCK    lockId
+)
+{
+#ifdef _VXBUS_BASIC_RWSEM
     return (OK);
 #else /* _VXBUS_BASIC_RWSEM */
     if (lockId->readerCount != 0)
-	return (ERROR);
+        return (ERROR);
 
     /* check if init is done */
 
     if (lockId->initDone != TRUE)
-	return (OK);
+        return (OK);
 
-    return (semDelete (lockId->semID));
+    return (semDelete(lockId->semID));
 #endif /* _VXBUS_BASIC_RWSEM */
-    }
+}

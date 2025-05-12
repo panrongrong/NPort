@@ -26,12 +26,12 @@ extern "C" {
 
 extern const char *sysNetDevName[MAX_MAC_DEVS];
 
-int    sysMacIndex2Dev  (int);
-int    sysMacIndex2Unit (int);
-STATUS sysMacOffsetGet  (char *, int, char **, int *);
-STATUS sysNetMacAddrGet (char *, int, UINT8 *, int);
-STATUS sysNetMacAddrSet (char *, int, UINT8 *, int);
-STATUS sysNetMacNVRamAddrGet (char *, int, UINT8 *, int);
+int    sysMacIndex2Dev(int);
+int    sysMacIndex2Unit(int);
+STATUS sysMacOffsetGet(char *, int, char **, int *);
+STATUS sysNetMacAddrGet(char *, int, UINT8 *, int);
+STATUS sysNetMacAddrSet(char *, int, UINT8 *, int);
+STATUS sysNetMacNVRamAddrGet(char *, int, UINT8 *, int);
 
 #ifdef __cplusplus
 }

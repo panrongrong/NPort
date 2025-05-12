@@ -1,4 +1,4 @@
-	/* config.h - FMSH FMQL configuration header */
+/* config.h - FMSH FMQL configuration header */
 
 /*
  * Copyright (c) 2011-2019 Wind River Systems, Inc.
@@ -57,9 +57,9 @@ extern "C" {
 
 /*
 ===========================================
-the bsp code adapter for two kinds of board: 
-	verify_board & demo_board	
--------------------------------------------	
+the bsp code adapter for two kinds of board:
+    verify_board & demo_board
+-------------------------------------------
 open : verify_board of fmsh
 close: demo_borad or usr_define board
 ===========================================
@@ -81,17 +81,17 @@ close: demo_borad or usr_define board
 /*  cpu OSC define*/
 /**/
 #ifdef FMSH_VERIFY_BOARD  /* verify_board in fmsh */
-	#define HARD_OSC_HZ   (APU_30M_HZ)	/* APU_30M_HZ-7020: 30.00M Hz */
+#define HARD_OSC_HZ   (APU_30M_HZ)  /* APU_30M_HZ-7020: 30.00M Hz */
 #else  /* demo_board or usr-define board */
-	#define HARD_OSC_HZ   (APU_33M_HZ)	/* APU_33M_HZ or APU_50M_HZ */
-	/*#define HARD_OSC_HZ   (APU_50M_HZ)	// for test ref_613*/
+#define HARD_OSC_HZ   (APU_33M_HZ)  /* APU_33M_HZ or APU_50M_HZ */
+/*#define HARD_OSC_HZ   (APU_50M_HZ)    // for test ref_613*/
 #endif
 
 
 /*
-//// for test cpu 
-	core-0: run vxworks, 
-	core-2: run bare-metal_app or freeRTOS
+//// for test cpu
+    core-0: run vxworks,
+    core-2: run bare-metal_app or freeRTOS
 ----------
 ddr setup:
 ----------
@@ -99,9 +99,9 @@ ddr setup:
 0x3000_0000 ~ 0x3FFF_FFFF: bare-metal or freeRTOS
 */
 /*#define AMP_MODE_CORE_0_RUN_VX*/
-/*************************************************** 
+/***************************************************
  for default compontents
-***************************************************/ 
+***************************************************/
 #define DRV_MMCSTORAGE_CARD
 #define DRV_SDSTORAGE_CARD
 #define INCLUDE_DMA_SYS
@@ -111,9 +111,9 @@ ddr setup:
 
 
 
-/*************************************************** 
+/***************************************************
  uart: 16550 standard
-***************************************************/ 
+***************************************************/
 #ifdef DRV_SIO_NS16550
 /* 1: bare-metal */
 #undef UART_1_BARE_METAL
@@ -147,16 +147,16 @@ ddr setup:
 
 
 
-/*************************************************** 
+/***************************************************
  GMAC: tri-speed ethernet controller
-***************************************************/ 
+***************************************************/
 #ifdef INCLUDE_ALT_SOC_GEN5_DW_END
 /* 1: bare-metal */
-#undef GMAC_1_BARE_METAL 
-	
+#undef GMAC_1_BARE_METAL
+
 /* 2: vx-nobus */
 #undef GMAC_2_VX
-	
+
 /* 3: vxbus */
 #define GMAC_3_VXB
 #endif  /* #ifdef INCLUDE_ALT_SOC_GEN5_DW_END */
@@ -169,7 +169,7 @@ enable the 2th gmac of ps
 
 #ifdef INCLUDE_ALT_SOC_GEN5_DW_END
 
-#define INCLUDE_GMAC_0     /* ps gmac_0 used in demo & verify	*/
+#define INCLUDE_GMAC_0     /* ps gmac_0 used in demo & verify   */
 #define GAMC_1_ENABLE
 
 #if defined(FMSH_VERIFY_BOARD) || defined(GAMC_1_ENABLE) /* verify_board */
@@ -195,31 +195,31 @@ enable the 2th gmac of ps
 
 
 #if defined(FMSH_VERIFY_BOARD) || defined(GAMC_1_ENABLE)  /* verify_board of fmsh*/
-	/**/
-	#if 0
-		#define GMAC_0_PHY_ADDR  (0x2)  /* demo-board*/
-		#define GMAC_1_PHY_ADDR  (0x3)
+/**/
+#if 0
+#define GMAC_0_PHY_ADDR  (0x2)  /* demo-board*/
+#define GMAC_1_PHY_ADDR  (0x3)
 
-	#elif 0
-		#define GMAC_0_PHY_ADDR  (0x1)   /* for bf-xian*/
-		#define GMAC_1_PHY_ADDR  (0x2)
-		
-	#else
-		#define GMAC_0_PHY_ADDR  (0x4)
-		#define GMAC_1_PHY_ADDR  (0x2)
-	#endif
-	
+#elif 0
+#define GMAC_0_PHY_ADDR  (0x1)   /* for bf-xian*/
+#define GMAC_1_PHY_ADDR  (0x2)
+
+#else
+#define GMAC_0_PHY_ADDR  (0x4)
+#define GMAC_1_PHY_ADDR  (0x2)
+#endif
+
 #else  /* demo_board or usr_define*/
 
-	#define GMAC_0_PHY_ADDR  (0x7)
-	#define GMAC_1_PHY_ADDR  (0xF)
+#define GMAC_0_PHY_ADDR  (0x7)
+#define GMAC_1_PHY_ADDR  (0xF)
 #endif
 
 #endif  /* #ifdef INCLUDE_ALT_SOC_GEN5_DW_END */
 
 #define INCLUDE_IFCONFIG
-#define	INCLUDE_IPPING_CMD
-#define	INCLUDE_PING
+#define INCLUDE_IPPING_CMD
+#define INCLUDE_PING
 
 #define INCLUDE_SHELL_BANNER
 
@@ -228,9 +228,9 @@ enable the 2th gmac of ps
 
 
 
-/*************************************************** 
+/***************************************************
  TTC
-***************************************************/ 
+***************************************************/
 #define INCLUDE_ALT_SOC_GEN5_TIMER
 #ifdef INCLUDE_ALT_SOC_GEN5_TIMER
 /* 3: vxbus */
@@ -239,16 +239,16 @@ enable the 2th gmac of ps
 
 
 
-/*************************************************** 
+/***************************************************
 PL fpag resource:
-***************************************************/ 
+***************************************************/
 #define FMQL_RESOURCE_FPGA
 
 
 
-/*************************************************** 
+/***************************************************
 OCM: sram on-chip:
-***************************************************/ 
+***************************************************/
 #undef FMQL_RESOURCE_SRAM
 
 
@@ -328,7 +328,7 @@ OCM: sram on-chip:
  */
 
 #ifndef _ASMLANGUAGE
-IMPORT void sysHwInit0 (void);
+IMPORT void sysHwInit0(void);
 #endif /* _ASMLANGUAGE */
 
 #define INCLUDE_SYS_HW_INIT_0
@@ -385,9 +385,9 @@ IMPORT void sysHwInit0 (void);
 /*************************************************************/
 
 /*
-1-whole_functions, 0-min_system 
+1-whole_functions, 0-min_system
 */
-#if 1  
+#if 1
 #undef BUILD_VIP_MIN_SYSTEM   /* whole_functions system */
 #else
 #define BUILD_VIP_MIN_SYSTEM  /* vip min_system */
@@ -396,9 +396,9 @@ IMPORT void sysHwInit0 (void);
 
 #ifndef BUILD_VIP_MIN_SYSTEM
 
-/*************************************************** 
+/***************************************************
 QSPI support
-***************************************************/ 
+***************************************************/
 #ifdef DRV_FM_QSPI
 /* 1: bare-metal */
 #undef QSPI_1_BARE_METAL
@@ -450,16 +450,16 @@ QSPI support
 
 #endif /* #if defined(QSPI_2_VX) || defined(QSPI_3_VXB) */
 
-/* 
-FLASH_BASE_ADRS is the base address used by TFFS 
+/*
+FLASH_BASE_ADRS is the base address used by TFFS
 for QSPI_CTRL_0:
 */
 #define FLASH_BASE_ADRS          (0xE0000000) /* QSPI_FLASH_BASE_ADRS */
 #define FLASH_DATA_BASE_ADRS     (0xE8000000)  /* #define FPS_QSPI0_D_BASEADDR (0xE8000000) */
- 
+
 /*
  * FLASH_SIZE is the flash size used by TFFS.
- * This definition can be modified. 
+ * This definition can be modified.
  */
 #ifndef DRV_FM_QSPI
 #define FLASH_SIZE               (SZ_8M)  /* SZ_16M default for tffs*/
@@ -479,7 +479,7 @@ for QSPI_CTRL_0:
 
 #ifdef INCLUDE_TFFS
 #define INCLUDE_TFFS_MOUNT
-#define INCLUDE_TFFS_SHOW	
+#define INCLUDE_TFFS_SHOW
 
 #define INCLUDE_DISK_UTIL
 #define INCLUDE_DISK_UTIL_SHELL_CMD
@@ -500,16 +500,16 @@ for QSPI_CTRL_0:
 #define INCLUDE_FS_MONITOR
 
 #define INCLUDE_XBD
-#endif	
+#endif
 
 
 
-/*************************************************** 
+/***************************************************
  dma must define befor sdmmc, because of sdmmc may use dma
-***************************************************/ 
+***************************************************/
 #ifdef DRV_FM_DMA
 /* 1: bare-metal */
-#define DMA_1_BARE_METAL 
+#define DMA_1_BARE_METAL
 
 /* 2: vx-nobus */
 #define DMA_2_VX
@@ -520,69 +520,69 @@ for QSPI_CTRL_0:
 
 
 
-/*************************************************** 
+/***************************************************
  SD/MMC support
-***************************************************/ 
+***************************************************/
 #ifdef DRV_FM_SDMMC
-		/* 1: bare-metal */
-	#define SDMMC_1_BARE_METAL 
-	
-		/* 2: vx-nobus */
-	#undef SDMMC_2_VX
-	
-		/* 3: vxbus */
-	#define SDMMC_3_VXB
-	
-		/* 4: vxbus-ref_alt */
-	#undef SD_DOSFS_V1
-		
-		/*
-		sdmmc data_speed: 5M or 25M or other: 50M, 52M
-		*/
-	#define SDEMMC_25M_OR_5M_ONLY	(25)  /* 25->25M or 5->5M or 50->50M*/
+/* 1: bare-metal */
+#define SDMMC_1_BARE_METAL
+
+/* 2: vx-nobus */
+#undef SDMMC_2_VX
+
+/* 3: vxbus */
+#define SDMMC_3_VXB
+
+/* 4: vxbus-ref_alt */
+#undef SD_DOSFS_V1
+
+/*
+sdmmc data_speed: 5M or 25M or other: 50M, 52M
+*/
+#define SDEMMC_25M_OR_5M_ONLY   (25)  /* 25->25M or 5->5M or 50->50M*/
 #endif  /* #ifdef DRV_FM_SDMMC */
 
 #ifdef SDMMC_2_VX
-	/*#define ENABLE_FATFS_SDMMC	/* vxbus-fatFS 	*/
-	#define SDMMC_DATA_SPEED   SDMMC_CLK_50_MHZ  /* SDMMC_CLK_50_MHZ or SDMMC_CLK_25_MHZ*/
+/*#define ENABLE_FATFS_SDMMC    /* vxbus-fatFS  */
+#define SDMMC_DATA_SPEED   SDMMC_CLK_50_MHZ  /* SDMMC_CLK_50_MHZ or SDMMC_CLK_25_MHZ*/
 #endif
 
 #ifdef SDMMC_3_VXB
-	/*
-	only one exist for fatFS or dosFS in vxbus
-	*/
-	#if 0  /* fatFS-ok, dosFS-disable*/
-	#define SDMMC_VXB_FATFS    /* vxbus-fatFS*/
-	#undef SDMMC_DOSFS_V2      /* vxbus-dosfs*/
-	
-	#else /* dosfs-ok, fatFS-disable*/
-	#undef SDMMC_VXB_FATFS      /* vxbus-fatFS*/
-	#define SDMMC_DOSFS_V2      /* vxbus-dosfs*/
-	#endif
+/*
+only one exist for fatFS or dosFS in vxbus
+*/
+#if 0  /* fatFS-ok, dosFS-disable*/
+#define SDMMC_VXB_FATFS    /* vxbus-fatFS*/
+#undef SDMMC_DOSFS_V2      /* vxbus-dosfs*/
 
-	#ifdef SDMMC_VXB_FATFS
-	#define ENABLE_FATFS_SDMMC  /* vxbus-fatFS */
-	#endif  /* #ifdef SDMMC_VXB_FATFS */
+#else /* dosfs-ok, fatFS-disable*/
+#undef SDMMC_VXB_FATFS      /* vxbus-fatFS*/
+#define SDMMC_DOSFS_V2      /* vxbus-dosfs*/
+#endif
 
-	#ifdef SDMMC_DOSFS_V2
-	#define INCLUDE_SD_BUS
-	#define DRV_SDSTORAGE_CARD   /* for sd*/
-	#define DRV_MMCSTORAGE_CARD  /* for emmc*/
-	#endif  /* #ifdef SDMMC_DOSFS_V2 */	
+#ifdef SDMMC_VXB_FATFS
+#define ENABLE_FATFS_SDMMC  /* vxbus-fatFS */
+#endif  /* #ifdef SDMMC_VXB_FATFS */
+
+#ifdef SDMMC_DOSFS_V2
+#define INCLUDE_SD_BUS
+#define DRV_SDSTORAGE_CARD   /* for sd*/
+#define DRV_MMCSTORAGE_CARD  /* for emmc*/
+#endif  /* #ifdef SDMMC_DOSFS_V2 */
 #endif  /* #ifdef SDMMC_3_VXB */
 
 
 
-/*************************************************** 
- WDT(watchdog timer) support 
-***************************************************/ 
+/***************************************************
+ WDT(watchdog timer) support
+***************************************************/
 #undef INCLUDE_ALT_SOC_GEN5_WDT
 
 
 
-/*************************************************** 
-USB support 
-***************************************************/ 
+/***************************************************
+USB support
+***************************************************/
 #ifdef INCLUDE_SYNOPSYSHCI
 #define USB_3_VXB
 
@@ -606,12 +606,12 @@ USB support
 
 
 
-/*************************************************** 
- CAN support 
-***************************************************/ 
+/***************************************************
+ CAN support
+***************************************************/
 #ifdef DRV_FM_CAN
 /* 1: bare-metal */
-#define CAN_1_BARE_METAL 
+#define CAN_1_BARE_METAL
 
 /* 2: vx-nobus */
 #undef CAN_2_VX
@@ -622,12 +622,12 @@ USB support
 
 
 
-/*************************************************** 
- SPI support 
-***************************************************/ 
+/***************************************************
+ SPI support
+***************************************************/
 #ifdef DRV_FM_SPI
 /* 1: bare-metal */
-#undef SPI_1_BARE_METAL 
+#undef SPI_1_BARE_METAL
 
 /* 2: vx-nobus */
 #define SPI_2_VX
@@ -638,12 +638,12 @@ USB support
 
 
 
-/*************************************************** 
+/***************************************************
  I2C
-***************************************************/ 
+***************************************************/
 #ifdef INCLUDE_ALT_SOC_GEN5_DW_I2C
 /* 1: bare-metal */
-#define I2C_1_BARE_METAL 
+#define I2C_1_BARE_METAL
 
 /* 2: vx-nobus */
 #define I2C_2_VX
@@ -654,12 +654,12 @@ USB support
 
 
 
-/*************************************************** 
+/***************************************************
  NFC(nandflash) support
-***************************************************/ 
+***************************************************/
 #ifdef DRV_FM_NFC
 /* 1: bare-metal */
-#undef NFC_1_BARE_METAL 
+#undef NFC_1_BARE_METAL
 
 /* 2: vx-nobus */
 #define NFC_2_VX
@@ -670,12 +670,12 @@ USB support
 
 
 
-/*************************************************** 
+/***************************************************
  GPIO support
-***************************************************/ 
+***************************************************/
 #ifdef INCLUDE_FMSH_FMQL_GPIO
 /* 1: bare-metal */
-#undef GPIO_1_BARE_METAL 
+#undef GPIO_1_BARE_METAL
 
 /* 2: vx-nobus */
 #define GPIO_2_VX
@@ -693,12 +693,12 @@ USB support
 
 
 
-/*************************************************** 
+/***************************************************
  DEVC: config-PL
-***************************************************/ 
+***************************************************/
 #ifdef DRV_FM_DEVC
 /* 1: bare-metal */
-#undef DEVC_1_BARE_METAL 
+#undef DEVC_1_BARE_METAL
 
 /* 2: vx-nobus */
 #define DEVC_2_VX
@@ -713,12 +713,12 @@ USB support
 
 
 
-/*************************************************** 
+/***************************************************
  SMC: sram / norflash
-***************************************************/ 
+***************************************************/
 #ifdef DRV_FM_SMC
 /* 1: bare-metal */
-#undef SMC_1_BARE_METAL 
+#undef SMC_1_BARE_METAL
 
 /* 2: vx-nobus */
 #define SMC_2_VX
@@ -731,12 +731,12 @@ USB support
 
 
 
-/*************************************************** 
- GTC support 
-***************************************************/ 
+/***************************************************
+ GTC support
+***************************************************/
 #ifdef INCLUDE_DRV_FM_GTC
 /* 1: bare-metal */
-#undef GTC_1_BARE_METAL 
+#undef GTC_1_BARE_METAL
 
 /* 2: vx-nobus */
 #define GTC_2_VX
@@ -747,12 +747,12 @@ USB support
 
 
 
-/*************************************************** 
- WDT(WatchDog Timer) support 
-***************************************************/ 
+/***************************************************
+ WDT(WatchDog Timer) support
+***************************************************/
 #ifdef DRV_FM_WDT
 /* 1: bare-metal */
-#undef WDT_1_BARE_METAL 
+#undef WDT_1_BARE_METAL
 
 /* 2: vx-nobus */
 #define WDT_2_VX
@@ -763,9 +763,9 @@ USB support
 
 
 
-/*************************************************** 
- Ramdisk support for vxWorks(some ram used as disk) 
-***************************************************/ 
+/***************************************************
+ Ramdisk support for vxWorks(some ram used as disk)
+***************************************************/
 #undef DRV_FM_RAMDISK_VX
 
 
@@ -776,7 +776,7 @@ USB support
 #ifdef PL_PFGA_RUN
 
 /* pl - xadc demo */
-#undef PL_XADC 
+#undef PL_XADC
 
 /* pl - axi_dma demo */
 #undef PL_AXI_DMA
@@ -825,20 +825,20 @@ in file: usrAppInit.c of VIP
 ----------
 <<<<<<<<then print log:>>>>>>>
 
-==== Image6911 build: Dec 25 2020-10:31:39 ==== 
+==== Image6911 build: Dec 25 2020-10:31:39 ====
 
-== HARD_OSC_HZ: 33333333->	Hz !!! Demo_Board or Usr_Define !!! == 
-== CPU: 666666660 Hz,DDR: 1599999984 bps == 
+== HARD_OSC_HZ: 33333333->  Hz !!! Demo_Board or Usr_Define !!! ==
+== CPU: 666666660 Hz,DDR: 1599999984 bps ==
 */
-#ifndef	USER_APPL_INIT
+#ifndef USER_APPL_INIT
 #define USER_APPL_INIT  app_main();
-#endif  /* #ifdef	USER_APPL_INIT */
+#endif  /* #ifdef   USER_APPL_INIT */
 
 /*
-in vx image booting process, while 2 key(of keyboard) pressed, 
+in vx image booting process, while 2 key(of keyboard) pressed,
 should be ack
 */
-#undef VX_BOOT_ACK_2KEY	
+#undef VX_BOOT_ACK_2KEY
 
 /* Support network devices */
 
@@ -848,7 +848,7 @@ should be ack
 #endif  /* __INCconfigh */
 
 #if defined(PRJ_BUILD)
-#include "prjParams.h"
+    #include "prjParams.h"
 #endif
 
 #define NV_MAC_ADRS_OFFSET (0x1000000-0x100000)  /* 0x100_0000 - 0x10_0000 */

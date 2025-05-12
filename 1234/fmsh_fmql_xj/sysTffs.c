@@ -126,18 +126,18 @@ INCLUDE FILES: flsocket.h, tffsDrv.h
 /* defines */
 
 #ifndef PRJ_BUILD
-#undef  INCLUDE_MTD_CFISCS       /* CFI/SCS */
-#define INCLUDE_TL_FTL           /* FTL translation layer */
-#undef  INCLUDE_TL_SSFDC         /* SSFDC translation layer */
-#undef  INCLUDE_SOCKET_SIMM       /* SIMM socket interface */
-#undef  INCLUDE_SOCKET_PCMCIA     /* PCMCIA socket interface */
+    #undef  INCLUDE_MTD_CFISCS       /* CFI/SCS */
+    #define INCLUDE_TL_FTL           /* FTL translation layer */
+    #undef  INCLUDE_TL_SSFDC         /* SSFDC translation layer */
+    #undef  INCLUDE_SOCKET_SIMM       /* SIMM socket interface */
+    #undef  INCLUDE_SOCKET_PCMCIA     /* PCMCIA socket interface */
 #endif  /* PRJ_BUILD */
 
 #define INCLUDE_MTD_USR
 
 #ifdef INCLUDE_MTD_USR
-#include "sysMtd.c"
-#define MTD_USR_IDENTIFY        qspiFlashIdentify
+    #include "sysMtd.c"
+    #define MTD_USR_IDENTIFY        qspiFlashIdentify
 #endif /* INCLUDE_MTD_USR */
 
 #define TFFS_FORMAT_PRINT           /* print the tffs format process */
@@ -166,22 +166,22 @@ LOCAL UINT32 sysTffsMsecLoopCount = 0;
 
 /* forward declarations */
 
-LOCAL FLBoolean   rfaCardDetected (FLSocket vol);
-LOCAL void        rfaVccOn (FLSocket vol);
-LOCAL void        rfaVccOff (FLSocket vol);
+LOCAL FLBoolean   rfaCardDetected(FLSocket vol);
+LOCAL void        rfaVccOn(FLSocket vol);
+LOCAL void        rfaVccOff(FLSocket vol);
 #ifdef SOCKET_12_VOLTS
-LOCAL FLStatus    rfaVppOn (FLSocket vol);
-LOCAL void        rfaVppOff (FLSocket vol);
+    LOCAL FLStatus    rfaVppOn(FLSocket vol);
+    LOCAL void        rfaVppOff(FLSocket vol);
 #endif /* SOCKET_12_VOLTS */
-LOCAL FLStatus    rfaInitSocket (FLSocket vol);
-LOCAL void        rfaSetWindow (FLSocket vol);
-LOCAL void        rfaSetMappingContext (FLSocket vol, unsigned page);
-LOCAL FLBoolean   rfaGetAndClearCardChangeIndicator (FLSocket vol);
-LOCAL FLBoolean   rfaWriteProtected (FLSocket vol);
-LOCAL void        rfaRegister (void);
+LOCAL FLStatus    rfaInitSocket(FLSocket vol);
+LOCAL void        rfaSetWindow(FLSocket vol);
+LOCAL void        rfaSetMappingContext(FLSocket vol, unsigned page);
+LOCAL FLBoolean   rfaGetAndClearCardChangeIndicator(FLSocket vol);
+LOCAL FLBoolean   rfaWriteProtected(FLSocket vol);
+LOCAL void        rfaRegister(void);
 
 #ifndef DOC
-#include "tffs/tffsConfig.c"
+    #include "tffs/tffsConfig.c"
 #endif /* DOC */
 
 /*******************************************************************************
@@ -195,8 +195,8 @@ LOCAL void        rfaRegister (void);
 * RETURNS: N/A
 */
 
-LOCAL void sysTffsInit (void)
-    {
+LOCAL void sysTffsInit(void)
+{
 
     UINT32 ix = 0;
     UINT32 iy = 1;
@@ -212,14 +212,14 @@ LOCAL void sysTffsInit (void)
 
     oldTick = tickGet();
     while (oldTick == tickGet())    /* wait for next clock interrupt */
-    ;
+        ;
 
     oldTick = tickGet();
     while (oldTick == tickGet())    /* loop one clock tick */
-        {
+    {
         iy = KILL_TIME_FUNC;            /* consume time */
         ix++;                            /* increment the counter */
-        }
+    }
 
     sysTffsMsecLoopCount = ix * sysClkRateGet() / 1000;
 
@@ -228,8 +228,8 @@ LOCAL void sysTffsInit (void)
      * Call each sockets register routine here
      */
 
-    rfaRegister ();                 /* RFA socket interface register */
-    }
+    rfaRegister();                  /* RFA socket interface register */
+}
 
 /*******************************************************************************
 *
@@ -240,20 +240,20 @@ LOCAL void sysTffsInit (void)
 * RETURNS: N/A
 */
 
-LOCAL void rfaRegister (void)
+LOCAL void rfaRegister(void)
 {
-    FLSocket vol = flSocketOf (noOfDrives);
+    FLSocket vol = flSocketOf(noOfDrives);
 
     tffsSocket[noOfDrives] = "RFA";
-	
+
     /*vol.window.baseAddress = FLASH_BASE_ADRS >> 12;  /* QSPI_DATA 0xFFA00000 */
     vol.window.baseAddress = FLASH_DATA_BASE_ADRS >> 12;  /* QSPI_DATA 0xFFA00000 */
     /*vol.window.baseAddress = (FLASH_DATA_BASE_ADRS + 0x800000) >> 12;  /* QSPI_DATA 0xFFA00000 */
-	
+
     vol.cardDetected       = rfaCardDetected;
     vol.VccOn              = rfaVccOn;
     vol.VccOff             = rfaVccOff;
-	
+
 #ifdef SOCKET_12_VOLTS
     vol.VppOn              = rfaVppOn;
     vol.VppOff             = rfaVppOff;
@@ -266,9 +266,9 @@ LOCAL void rfaRegister (void)
     vol.writeProtected     = rfaWriteProtected;
     noOfDrives++;
 
-	printf("rfaRegister! \n");
-	
-	return;
+    printf("rfaRegister! \n");
+
+    return;
 }
 
 /*******************************************************************************
@@ -282,12 +282,12 @@ LOCAL void rfaRegister (void)
 */
 
 LOCAL FLBoolean rfaCardDetected
-    (
+(
     FLSocket vol        /* pointer identifying drive */
-    )
-    {
+)
+{
     return (TRUE);
-    }
+}
 
 /*******************************************************************************
 *
@@ -300,11 +300,11 @@ LOCAL FLBoolean rfaCardDetected
 */
 
 LOCAL void rfaVccOn
-    (
+(
     FLSocket vol        /* pointer identifying drive */
-    )
-    {
-    }
+)
+{
+}
 
 /*******************************************************************************
 *
@@ -317,11 +317,11 @@ LOCAL void rfaVccOn
 */
 
 LOCAL void rfaVccOff
-    (
+(
     FLSocket vol        /* pointer identifying drive */
-    )
-    {
-    }
+)
+{
+}
 
 #ifdef SOCKET_12_VOLTS
 
@@ -337,12 +337,12 @@ LOCAL void rfaVccOff
 */
 
 LOCAL FLStatus rfaVppOn
-    (
+(
     FLSocket vol        /* pointer identifying drive */
-    )
-    {
+)
+{
     return (flOK);
-    }
+}
 
 /*******************************************************************************
 *
@@ -355,11 +355,11 @@ LOCAL FLStatus rfaVppOn
 */
 
 LOCAL void rfaVppOff
-    (
+(
     FLSocket vol        /* pointer identifying drive */
-    )
-    {
-    }
+)
+{
+}
 
 #endif /* SOCKET_12_VOLTS */
 
@@ -372,12 +372,12 @@ LOCAL void rfaVppOff
 * RETURNS: flOK always.
 */
 LOCAL FLStatus rfaInitSocket
-    (
+(
     FLSocket vol        /* pointer identifying drive */
-    )
-    {
+)
+{
     return (flOK);
-    }
+}
 
 /*******************************************************************************
 *
@@ -393,18 +393,18 @@ LOCAL FLStatus rfaInitSocket
 * RETURNS: N/A
 */
 LOCAL void rfaSetWindow
-    (
+(
     FLSocket vol        /* pointer identifying drive */
-    )
+)
 {
     /* Physical base as a 4K page */
-	vol.window.baseAddress = FLASH_DATA_BASE_ADRS >> 12;
-	/*vol.window.baseAddress = (FLASH_DATA_BASE_ADRS+0x800000) >> 12;*/
+    vol.window.baseAddress = FLASH_DATA_BASE_ADRS >> 12;
+    /*vol.window.baseAddress = (FLASH_DATA_BASE_ADRS+0x800000) >> 12;*/
 
-	
-	/*flSetWindowSize (&vol, (MAIN_FLASH_SIZE/2) >> 12);*/
+
+    /*flSetWindowSize (&vol, (MAIN_FLASH_SIZE/2) >> 12);*/
     /*flSetWindowSize (&vol, FLASH_SIZE >> 12);*/
-    flSetWindowSize (&vol, 0x2000000 >> 12);  /* 32M*/
+    flSetWindowSize(&vol, 0x2000000 >> 12);   /* 32M*/
 }
 
 /*******************************************************************************
@@ -425,12 +425,12 @@ LOCAL void rfaSetWindow
 */
 
 LOCAL void rfaSetMappingContext
-    (
+(
     FLSocket vol,        /* pointer identifying drive */
     unsigned page        /* page to be mapped */
-    )
-    {
-    }
+)
+{
+}
 
 /*******************************************************************************
 *
@@ -444,12 +444,12 @@ LOCAL void rfaSetMappingContext
 */
 
 LOCAL FLBoolean rfaGetAndClearCardChangeIndicator
-    (
+(
     FLSocket vol        /* pointer identifying drive */
-    )
-    {
+)
+{
     return (FALSE);
-    }
+}
 
 /*******************************************************************************
 *
@@ -461,12 +461,12 @@ LOCAL FLBoolean rfaGetAndClearCardChangeIndicator
 */
 
 LOCAL FLBoolean rfaWriteProtected
-    (
+(
     FLSocket vol        /* pointer identifying drive */
-    )
-    {
+)
+{
     return (FALSE);
-    }
+}
 
 /*******************************************************************************
 *
@@ -478,14 +478,14 @@ LOCAL FLBoolean rfaWriteProtected
 */
 
 long int flFitInSocketWindow
-    (
+(
     long int chipSize,        /* size of single physical chip in bytes */
     int      interleaving,    /* flash chip interleaving (1,2,4 etc) */
     long int windowSize       /* socket window size in bytes */
-    )
+)
+{
+    if (chipSize * interleaving > windowSize) /* doesn't fit in socket window */
     {
-    if (chipSize*interleaving > windowSize) /* doesn't fit in socket window */
-        {
         int  roundedSizeBits;
 
         /* fit chip in the socket window */
@@ -495,14 +495,14 @@ long int flFitInSocketWindow
         /* round chip size at powers of 2 */
 
         for (roundedSizeBits = 0; (0x1L << roundedSizeBits) <= chipSize;
-             roundedSizeBits++)
-        ;
+                roundedSizeBits++)
+            ;
 
         chipSize = (0x1L << (roundedSizeBits - 1));
-        }
+    }
 
     return (chipSize);
-    }
+}
 
 /*******************************************************************************
 *
@@ -516,10 +516,10 @@ long int flFitInSocketWindow
 */
 
 void flDelayMsecs
-    (
+(
     unsigned milliseconds       /* milliseconds to wait */
-    )
-    {
+)
+{
     UINT32 ix;
     UINT32 iy = 1;
     UINT32 iz = 2;
@@ -527,14 +527,14 @@ void flDelayMsecs
     /* it doesn't count time consumed in interrupt level */
 
     for (ix = 0; ix < milliseconds; ix++)
-        {
+    {
         for (ix = 0; ix < sysTffsMsecLoopCount; ix++)
-            {
-            tickGet ();             /* dummy */
+        {
+            tickGet();              /* dummy */
             iy = KILL_TIME_FUNC;    /* consume time */
-            }
         }
     }
+}
 
 /*******************************************************************************
 *
@@ -546,30 +546,30 @@ void flDelayMsecs
 */
 
 void flDelayLoop
-    (
+(
     int  cycles
-    )
-    {
+)
+{
     while (--cycles)
-    ;
-    }
+        ;
+}
 
 #ifdef TFFS_FORMAT_PRINT
 int sysTffsProgressCb
-    (
+(
     int totalUnitsToFormat,
     int totalUnitsFormattedSoFar
-    )
-    {
+)
+{
     printf("Formatted %d of %d units(%dM) = %d.%01d %%\r",
-           totalUnitsFormattedSoFar, totalUnitsToFormat, (totalUnitsToFormat*64)/1024,
+           totalUnitsFormattedSoFar, totalUnitsToFormat, (totalUnitsToFormat * 64) / 1024,
            100 * totalUnitsFormattedSoFar / totalUnitsToFormat,
            1000 * totalUnitsFormattedSoFar / totalUnitsToFormat % 10
-           );
+          );
     if (totalUnitsFormattedSoFar == totalUnitsToFormat)
-        printf ("\n");
+        printf("\n");
     return flOK;
-    }
+}
 
 #   define PROGRESS_CB sysTffsProgressCb
 #else /* TFFS_FORMAT_PRINT */
@@ -600,112 +600,112 @@ int sysTffsProgressCb
 
 #ifdef TFFS_ONE_LOGIC_DISK  /* one logic_disk */
 
-STATUS sysTffsFormat (void)
+STATUS sysTffsFormat(void)
 {
     STATUS status;
 
     /* Note: cfiamd keeps track of room to save at end of flash as required */
     tffsDevFormatParams params =
-    { 
-    	/* Reserve header area as ROM_SIZE */
-    	/*{0x000000l/*ROM_SIZE, 99, 1, 0x10000l, PROGRESS_CB, {0,0,0,0}, NULL, 2, 0, NULL},*/ /* not reserved*/
-    	/* {FLASH_RSV_8M_SIZE, 99, 1, 0x10000, PROGRESS_CB, {0,0,0,0}, NULL, 2, 0, NULL}, */  /*reserved header area: FLASH_RSV_8M_SIZE*/
-    	{0x000000/*ROM_SIZE*/, 99, 1, 0x10000, PROGRESS_CB, {0,0,0,0}, NULL, 2, 0, NULL},
-	    FTL_FORMAT
+    {
+        /* Reserve header area as ROM_SIZE */
+        /*{0x000000l/*ROM_SIZE, 99, 1, 0x10000l, PROGRESS_CB, {0,0,0,0}, NULL, 2, 0, NULL},*/ /* not reserved*/
+        /* {FLASH_RSV_8M_SIZE, 99, 1, 0x10000, PROGRESS_CB, {0,0,0,0}, NULL, 2, 0, NULL}, */  /*reserved header area: FLASH_RSV_8M_SIZE*/
+        {0x000000/*ROM_SIZE*/, 99, 1, 0x10000, PROGRESS_CB, {0, 0, 0, 0}, NULL, 2, 0, NULL},
+        FTL_FORMAT
     };
 
     /* we assume that the drive number 0 is RFA */
-    status = tffsDevFormat (0, (int)&params);
+    status = tffsDevFormat(0, (int)&params);
 
     return (status);
 }
 
 #else  /* many logic_disk */
 
-STATUS sysTffsFormat (unsigned int tffsDriveNo)
+STATUS sysTffsFormat(unsigned int tffsDriveNo)
 {
     STATUS status;
 
     if (tffsDriveNo > 1)
     {
         printf("tffsDriveNo too large,eg:0,1\n\r");
-		 return -1;
-	}
-	
+        return -1;
+    }
+
     /* Note: cfiamd keeps track of room to save at end of flash as required */
     tffsDevFormatParams params[] =
     {
-	    { 
-	    	/* Reserve header area as ROM_SIZE */
-	    	/*{0x000000 ROM_SIZE, 99, 1, 0x10000l, PROGRESS_CB, {0,0,0,0}, NULL, 2, 0, NULL},*/
-	    	{0x1000000/*ROM_SIZE*/, 99, 1, 0x10000, PROGRESS_CB, {1,2,3,4}, "disk0", 2, 0, NULL},
-		    FTL_FORMAT
-	    },
-	    { 
-	    	/* Reserve header area as ROM_SIZE */
-	    	/*{0x000000l ROM_SIZE, 99, 1, 0x10000l, PROGRESS_CB, {0,0,0,0}, NULL, 2, 0, NULL},*/
-	    	{0x000000/*ROM_SIZE*/, 99, 1, 0x10000, PROGRESS_CB, {5,6,7,8}, "disk1", 2, 0, NULL},
-		    FTL_FORMAT
-	    }
-	};
+        {
+            /* Reserve header area as ROM_SIZE */
+            /*{0x000000 ROM_SIZE, 99, 1, 0x10000l, PROGRESS_CB, {0,0,0,0}, NULL, 2, 0, NULL},*/
+            {0x1000000/*ROM_SIZE*/, 99, 1, 0x10000, PROGRESS_CB, {1, 2, 3, 4}, "disk0", 2, 0, NULL},
+            FTL_FORMAT
+        },
+        {
+            /* Reserve header area as ROM_SIZE */
+            /*{0x000000l ROM_SIZE, 99, 1, 0x10000l, PROGRESS_CB, {0,0,0,0}, NULL, 2, 0, NULL},*/
+            {0x000000/*ROM_SIZE*/, 99, 1, 0x10000, PROGRESS_CB, {5, 6, 7, 8}, "disk1", 2, 0, NULL},
+            FTL_FORMAT
+        }
+    };
 
 
     /* we assume that the drive number 0 is RFA */
-    status = tffsDevFormat (tffsDriveNo, (int)&(params[tffsDriveNo]));
+    status = tffsDevFormat(tffsDriveNo, (int) & (params[tffsDriveNo]));
 
     return (status);
 }
 
 
-STATUS  usrCreatePartitions( char *devName  ,int nPart)
+STATUS  usrCreatePartitions(char *devName, int nPart)
 {
     devname_t  baseName;
     char       autoPartName[16];
-    char *     newPartName[4] = {"/p1", "/p2", "/p3", "/p4"};
+    char      *newPartName[4] = {"/p1", "/p2", "/p3", "/p4"};
     STATUS     result;
     int        i, fd;
 
     if (nPart > 4)  // max: 4-logic_disk
     {
-		nPart = 4;
-	}
+        nPart = 4;
+    }
 
     if (nPart < 1)
     {
-		nPart = 1;
-	}
-	
-	/*Name mapping */
-
-    /* Get the base name of the device */
-    fd = open (devName, 0, 0666);
-    if (fd < 0)
-    {
-    	return (ERROR);
+        nPart = 1;
     }
 
-    ioctl (fd, XBD_GETBASENAME, (_Vx_ioctl_arg_t)baseName);
-    close (fd);
+    /*Name mapping */
+
+    /* Get the base name of the device */
+    fd = open(devName, 0, 0666);
+    if (fd < 0)
+    {
+        return (ERROR);
+    }
+
+    ioctl(fd, XBD_GETBASENAME, (_Vx_ioctl_arg_t)baseName);
+    close(fd);
 
     for (i = 0; i < nPart; i++)
     {
-        sprintf (autoPartName, "%s:%d", baseName, i+1);
-        printf ("Installing mapping from %s to %s\n", autoPartName, newPartName[i]);
-        fsmNameInstall (autoPartName, newPartName[i]);
+        sprintf(autoPartName, "%s:%d", baseName, i + 1);
+        printf("Installing mapping from %s to %s\n", autoPartName, newPartName[i]);
+        fsmNameInstall(autoPartName, newPartName[i]);
     }
 
     /* create 4 partitions on the device all with equal sizes */
-    result = xbdCreatePartition ( devName, nPart, 25, 25, 25 );
+    result = xbdCreatePartition(devName, nPart, 25, 25, 25);
     if (result != OK)
     {
         return (ERROR);
     }
 
     /* create file systems atop each partition */
-	for (i = 0; i < nPart; i++)
-	{
-		dosFsVolFormat ( newPartName[i], 0, NULL);
-	}
+    for (i = 0; i < nPart; i++)
+    {
+        dosFsVolFormat(newPartName[i], 0, NULL);
+    }
 
     return (OK);
 }
@@ -721,53 +721,53 @@ STATUS  usrCreatePartitions( char *devName  ,int nPart)
 normal tffs cmd & procedure
 */
 #if 1
-/*
-->sysTffsFormat 0
+    /*
+    ->sysTffsFormat 0
 
-->usrTffsConfig 0, 0, "/tffs0"
+    ->usrTffsConfig 0, 0, "/tffs0"
 
--> dosfsDiskFormat("/tffs0")
+    -> dosfsDiskFormat("/tffs0")
 
-///////////////////////////////////
-// log : 16M flash
-//////////////////////////////////
--> sysTffsFormat 0
-Formatted 256 of 256 units = 100.0 %
-value = 0 = 0x0
+    ///////////////////////////////////
+    // log : 16M flash
+    //////////////////////////////////
+    -> sysTffsFormat 0
+    Formatted 256 of 256 units = 100.0 %
+    value = 0 = 0x0
 
--> usrTffsConfig 0, 0, "/tffs0"
-Instantiating /tffs0 as rawFs,  device = 0x70001
-value = 0 = 0x0
+    -> usrTffsConfig 0, 0, "/tffs0"
+    Instantiating /tffs0 as rawFs,  device = 0x70001
+    value = 0 = 0x0
 
--> dosfsDiskFormat("/tffs0")
-Formatting /tffs0 for DOSFS
-Instantiating /tffs0 as rawFs, device = 0x70001
-Formatting...Retrieved old volume params with %38 confidence:
-Volume Parameters: FAT type: FAT32, sectors per cluster 0
-  0 FAT copies, 0 clusters, 0 sectors per FAT
-  Sectors reserved 0, hidden 0, FAT sectors 0
-  Root dir entries 0, sysId (null)  , serial number d9b70000
-  Label:"           " ...
-Disk with 31557 sectors of 512 bytes will be formatted with:
-Volume Parameters: FAT type: FAT16, sectors per cluster 2
-  2 FAT copies, 15700 clusters, 62 sectors per FAT
-  Sectors reserved 1, hidden 63, FAT sectors 124
-  Root dir entries 512, sysId VXDOS16 , serial number d9b70000
-  Label:"           " ...
-OK.
-value = 0 = 0x0
--> 
--> devs
-drv name                
-  0 /null               
-  1 /tyCo/0             
-  8 host:               
- 11 /vio                
-  3 /sd0:1              
-  3 /sd0:2              
-  3 /tffs0              
-value = 25 = 0x19
--> 
-*/
+    -> dosfsDiskFormat("/tffs0")
+    Formatting /tffs0 for DOSFS
+    Instantiating /tffs0 as rawFs, device = 0x70001
+    Formatting...Retrieved old volume params with %38 confidence:
+    Volume Parameters: FAT type: FAT32, sectors per cluster 0
+    0 FAT copies, 0 clusters, 0 sectors per FAT
+    Sectors reserved 0, hidden 0, FAT sectors 0
+    Root dir entries 0, sysId (null)  , serial number d9b70000
+    Label:"           " ...
+    Disk with 31557 sectors of 512 bytes will be formatted with:
+    Volume Parameters: FAT type: FAT16, sectors per cluster 2
+    2 FAT copies, 15700 clusters, 62 sectors per FAT
+    Sectors reserved 1, hidden 63, FAT sectors 124
+    Root dir entries 512, sysId VXDOS16 , serial number d9b70000
+    Label:"           " ...
+    OK.
+    value = 0 = 0x0
+    ->
+    -> devs
+    drv name
+    0 /null
+    1 /tyCo/0
+    8 host:
+    11 /vio
+    3 /sd0:1
+    3 /sd0:2
+    3 /tffs0
+    value = 25 = 0x19
+    ->
+    */
 #endif
 

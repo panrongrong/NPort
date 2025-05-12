@@ -11,7 +11,7 @@
 /*
 modification history
 --------------------
-02e,04nov13,mcm  Fix for static analysis issue 
+02e,04nov13,mcm  Fix for static analysis issue
 02d,25sep10,jxu  Added inclusion of iosLibP.h for _func_consoleOut.
 02c,16sep10,mcm  Fixed fioBufPrint prototype
 02b,22may10,pch  small footprint
@@ -20,7 +20,7 @@ modification history
 01y,16apr10,mcm  Fixing crash observed while printf floating point arguments
                  for LP64 (WIND00200149)
 01x,15sep09,mcm  Fixing up printExc's arguments, also updated type of variable
-		 holding strlen's return value
+         holding strlen's return value
 01w,01jul09,jmp  Moved _func_shellExcPrint definition to shellLibP.h.
 01v,27mar09,mcm  Updates for the LP64 data model
 01u,27mar09,zl   updated job deferral API
@@ -29,10 +29,10 @@ modification history
 01t,04sep08,gls  renamed _WRS_CONFIG_FORMATTED_IO to _WRS_CONFIG_FORMATTED_OUT
 01s,27aug08,jpb  Renamed VSB header file
 01r,18jun08,jpb  Renamed _WRS_VX_SMP to _WRS_CONFIG_SMP.  Added include path
-		 for kernel configurations options set in vsb.
+         for kernel configurations options set in vsb.
 01q,12may08,jpb  Modifications for source build.  Renamed
-		 INCLUDE_FORMATTED_OUT_BASIC to _WRS_CONFIG_FORMATTED_OUT_BASIC,
-		 _WRS_VX_SMP to _WRS_CONFIG_SMP.
+         INCLUDE_FORMATTED_OUT_BASIC to _WRS_CONFIG_FORMATTED_OUT_BASIC,
+         _WRS_VX_SMP to _WRS_CONFIG_SMP.
 01p,08mar07,pch  adjust for generic ED&R locking
 01o,26nov06,nld  Documentation update for spinlock restricted APIs
 06y,17oct06,pch  SMP support
@@ -40,12 +40,12 @@ modification history
 06w,07apr06,dgp  doc: fix prog gd ref, library; synopsis, snprintf()
 06v,29sep05,zl   include vmLibP.h
 06u,26sep05,kk   moved fioFlt*Rtn routines to funcBind, make FORMATTED_IO
-		 and FORMATTED_OUT_BASIC mutually exclusive.
+         and FORMATTED_OUT_BASIC mutually exclusive.
 06t,12sep05,yvp  Moved fioFlt* out of #ifdef.
 06s,05sep05,dbt  Make sure jobExcAdd() is not called when in kernel context
-		 (SPR #111131).
+         (SPR #111131).
 06r,29aug05,rhe  SPR 111376 Replaced MACRO FIO_SCALED_DOWN with
-		 INCLUDE_FORMATTED_OUT_BASIC
+         INCLUDE_FORMATTED_OUT_BASIC
 06q,20jul05,rhe  New File, extracted from fioLib.c of 23jun05 for scalability
 */
 
@@ -99,17 +99,17 @@ SEE ALSO: ansiStdio, floatLib,
 #include <private/fioLibP.h>
 #include <private/floatioP.h>
 #include <private/funcBindP.h>
-#include <private/excLibP.h>	/* _func_excJobAdd */
-#include <private/kwriteLibP.h>	/* _func_kprintf, _func_kwrite */
+#include <private/excLibP.h>    /* _func_excJobAdd */
+#include <private/kwriteLibP.h> /* _func_kprintf, _func_kwrite */
 #include <private/shellLibP.h>
 #include <private/kernelLibP.h>
 #include <private/vmLibP.h>
-#include <private/iosLibP.h>	/* _func_consoleOut */
+#include <private/iosLibP.h>    /* _func_consoleOut */
 
 #ifdef _WRS_ALTIVEC_SUPPORT
-# ifdef __GNUC__
-#include <altivec.h>
-# endif /* __GNUC__ */
+    #ifdef __GNUC__
+        #include <altivec.h>
+    #endif /* __GNUC__ */
 #endif /* _WRS_ALTIVEC_SUPPORT */
 
 /*
@@ -122,52 +122,52 @@ SEE ALSO: ansiStdio, floatLib,
 /* temp fix for va_list addressing issue (SPR 92721) */
 
 #ifndef _WRS_CONFIG_FORMATTED_OUT_BASIC
-# ifdef _WRS_VA_ADDR
-#   define va_addr(x) _WRS_VA_ADDR(x)
-# else	/* _WRS_VA_ADDR */
-#   if defined(__x86_64__)
-#      define va_addr(x) (x)
-#   else
-#   define va_addr(x) (&x)
-#   endif /* __x86_64__ */
-# endif	/* _WRS_VA_ADDR */
+#ifdef _WRS_VA_ADDR
+    #define va_addr(x) _WRS_VA_ADDR(x)
+#else   /* _WRS_VA_ADDR */
+    #if defined(__x86_64__)
+        #define va_addr(x) (x)
+    #else
+        #define va_addr(x) (&x)
+    #endif /* __x86_64__ */
+#endif  /* _WRS_VA_ADDR */
 
 
 /* Macros for converting digits to letters and vice versa */
 
 
-#define	BUF		400		/* buffer for %dfg etc */
+#define BUF     400     /* buffer for %dfg etc */
 
 
-#define	to_digit(c)	((c) - '0')
-#define is_digit(c)	((unsigned)to_digit(c) <= 9)
-#define	to_char(n)	((char)(n) + '0')
+#define to_digit(c) ((c) - '0')
+#define is_digit(c) ((unsigned)to_digit(c) <= 9)
+#define to_char(n)  ((char)(n) + '0')
 
-#define	PAD(howmany, with)					\
-    {								\
-    if ((n = (howmany)) > 0)					\
-	{							\
-	while (n > PADSIZE)					\
-	    {							\
-	    if ((*outRoutine) (with, PADSIZE, outarg) != OK)	\
-		return (ERROR);					\
-	    n -= PADSIZE;					\
-	    }							\
-	if ((*outRoutine) (with, n, outarg) != OK)		\
-	    return (ERROR);					\
-	}							\
+#define PAD(howmany, with)                  \
+    {                               \
+    if ((n = (howmany)) > 0)                    \
+    {                           \
+    while (n > PADSIZE)                 \
+        {                           \
+        if ((*outRoutine) (with, PADSIZE, outarg) != OK)    \
+        return (ERROR);                 \
+        n -= PADSIZE;                   \
+        }                           \
+    if ((*outRoutine) (with, n, outarg) != OK)      \
+        return (ERROR);                 \
+    }                           \
     }
 
 /* to extend shorts, signed and unsigned arg extraction methods are needed */
-#define	SARG()	((doLongLongInt) ? (long long) va_arg(vaList, long long) : \
-		 (doLongInt) ? (long long)(long)va_arg(vaList, long) : \
-		 (doShortInt) ? (long long)(short)va_arg(vaList, int) : \
-		 (long long)(int) va_arg(vaList, int))
+#define SARG()  ((doLongLongInt) ? (long long) va_arg(vaList, long long) : \
+         (doLongInt) ? (long long)(long)va_arg(vaList, long) : \
+         (doShortInt) ? (long long)(short)va_arg(vaList, int) : \
+         (long long)(int) va_arg(vaList, int))
 
-#define	UARG()	((doLongLongInt) ? (unsigned long long) va_arg(vaList, unsigned long long) :	\
-	 (doLongInt) ? (unsigned long long)(ulong_t)va_arg(vaList,ulong_t):\
-	 (doShortInt) ? (unsigned long long)(ushort_t)va_arg(vaList,int):\
-	 (unsigned long long)(uint_t) va_arg(vaList, uint_t))
+#define UARG()  ((doLongLongInt) ? (unsigned long long) va_arg(vaList, unsigned long long) :    \
+     (doLongInt) ? (unsigned long long)(ulong_t)va_arg(vaList,ulong_t):\
+     (doShortInt) ? (unsigned long long)(ushort_t)va_arg(vaList,int):\
+     (unsigned long long)(uint_t) va_arg(vaList, uint_t))
 
 
 /* typedefs */
@@ -185,40 +185,40 @@ BOOL fieldSzIncludeSign = TRUE;
 void (*_func_printExcPrintHook)(long, _Vx_usr_arg_t, _Vx_usr_arg_t, _Vx_usr_arg_t, _Vx_usr_arg_t, _Vx_usr_arg_t);
 
 #if defined(_WRS_CONFIG_SMP)
-extern int  edrBufLock   (void);
-extern void edrBufUnlock (int oldSR);
-#endif	/* _WRS_CONFIG_SMP */
+    extern int  edrBufLock(void);
+    extern void edrBufUnlock(int oldSR);
+#endif  /* _WRS_CONFIG_SMP */
 
 /* locals */
 #ifdef _WRS_CONFIG_FORMATTED_OUT_BASIC
 LOCAL char tlVal[] = "0123456789abcdef";
-# ifdef FIO_HEX_X_SUPPORT
-LOCAL char tuVal[] = "0123456789ABCDEF";
-# endif	/* FIO_HEX_X_SUPPORT */
-#else	/* _WRS_CONFIG_FORMATTED_OUT_BASIC */
+#ifdef FIO_HEX_X_SUPPORT
+    LOCAL char tuVal[] = "0123456789ABCDEF";
+#endif  /* FIO_HEX_X_SUPPORT */
+#else   /* _WRS_CONFIG_FORMATTED_OUT_BASIC */
 /* Choose PADSIZE to trade efficiency vs size.  If larger printf fields occur
  * frequently, increase PADSIZE (and make the initialisers below longer).
  */
 
 LOCAL char blanks[PADSIZE] =
-    {
-    ' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' '
-    };
+{
+    ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '
+};
 
 LOCAL char zeroes[PADSIZE] =
-    {
-    '0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'
-    };
-#endif	/* _WRS_CONFIG_FORMATTED_OUT_BASIC */
+{
+    '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0'
+};
+#endif  /* _WRS_CONFIG_FORMATTED_OUT_BASIC */
 
 
 
 
 /* forwards */
 #ifdef _WRS_CONFIG_FORMATTED_OUT_BASIC
-LOCAL int fioBasicFormat (FUNCPTR outRoutine, int outarg, unsigned long value,
-			  int base, BOOL isNegative, char * pTtanslate);
-#endif	/* _WRS_CONFIG_FORMATTED_OUT_BASIC */
+LOCAL int fioBasicFormat(FUNCPTR outRoutine, int outarg, unsigned long value,
+                         int base, BOOL isNegative, char *pTtanslate);
+#endif  /* _WRS_CONFIG_FORMATTED_OUT_BASIC */
 
 
 /*******************************************************************************
@@ -232,10 +232,10 @@ LOCAL int fioBasicFormat (FUNCPTR outRoutine, int outarg, unsigned long value,
 * RETURNS: N/A
 */
 
-void fioBaseLibInit (void)
-    {
+void fioBaseLibInit(void)
+{
     _func_printErr = printErr;
-    }
+}
 
 
 /*******************************************************************************
@@ -442,10 +442,10 @@ void fioBaseLibInit (void)
 * In a small footprint configuration, interrupts may be locked for the
 * duration of the operation because printf() may use the same polled-mode
 * console port driver as kprintf().  The choice of output mechanism is
-* an implementation detail and subject to change -- in particular, any 
-* output that _must_ use polled mode should be written with kprintf() 
-* instead of with printf() -- however users of printf() in small footprint 
-* configurations should be aware of the likely impact on system performance 
+* an implementation detail and subject to change -- in particular, any
+* output that _must_ use polled mode should be written with kprintf()
+* instead of with printf() -- however users of printf() in small footprint
+* configurations should be aware of the likely impact on system performance
 * and interrupt latency when polled mode is used.
 *
 * RETURNS:
@@ -460,21 +460,21 @@ void fioBaseLibInit (void)
 */
 
 int printf
-    (
-    const char *  fmt,	/* format string to write */
-    ...			/* optional arguments to format string */
-    )
-    {
-    va_list vaList;	/* traverses argument list */
+(
+    const char   *fmt,  /* format string to write */
+    ...         /* optional arguments to format string */
+)
+{
+    va_list vaList; /* traverses argument list */
     int nChars;
 
-    va_start (vaList, fmt);
-    nChars = fioFormatV (fmt, vaList, (FIOFORMATV_OUTPUT_FUNCPTR)fioBufPrint,
-			 (_Vx_usr_arg_t)1);
-    va_end (vaList);
+    va_start(vaList, fmt);
+    nChars = fioFormatV(fmt, vaList, (FIOFORMATV_OUTPUT_FUNCPTR)fioBufPrint,
+                        (_Vx_usr_arg_t)1);
+    va_end(vaList);
 
     return (nChars);
-    }
+}
 
 
 /*******************************************************************************
@@ -501,33 +501,33 @@ int printf
 */
 
 int oprintf
-    (
+(
     OPRINTF_OUTPUT_FUNCPTR prtFunc,/* pointer to output function */
-    _Vx_usr_arg_t prtArg,	/* argument for output function */
-    const char *  fmt,		/* format string to write */
-    ...				/* optional arguments to format string */
-    )
-    {
-    va_list	vaList;	/* traverses argument list */
-    int		nChars;
+    _Vx_usr_arg_t prtArg,   /* argument for output function */
+    const char   *fmt,      /* format string to write */
+    ...             /* optional arguments to format string */
+)
+{
+    va_list vaList; /* traverses argument list */
+    int     nChars;
 
-    va_start (vaList, fmt);
+    va_start(vaList, fmt);
 
     /* if no output routine, do what printf does */
 
     if (prtFunc == NULL)
-	{
-	prtFunc = (FIOFORMATV_OUTPUT_FUNCPTR)fioBufPrint;
-	prtArg = 1;
-	}
+    {
+        prtFunc = (FIOFORMATV_OUTPUT_FUNCPTR)fioBufPrint;
+        prtArg = 1;
+    }
 
     /* format the data */
 
-    nChars = fioFormatV (fmt, vaList, prtFunc, prtArg);
+    nChars = fioFormatV(fmt, vaList, prtFunc, prtArg);
 
     va_end(vaList);
-    return(nChars);
-    }
+    return (nChars);
+}
 
 
 /*******************************************************************************
@@ -549,21 +549,21 @@ int oprintf
 */
 
 int printErr
-    (
-    const char *  fmt,	/* format string to write */
-    ...			/* optional arguments to format */
-    )
-    {
-    va_list vaList;	/* traverses argument list */
+(
+    const char   *fmt,  /* format string to write */
+    ...         /* optional arguments to format */
+)
+{
+    va_list vaList; /* traverses argument list */
     int nChars;
 
-    va_start (vaList, fmt);
-    nChars = fioFormatV (fmt, vaList, (FIOFORMATV_OUTPUT_FUNCPTR)fioBufPrint,
-			 (_Vx_usr_arg_t)2);
-    va_end (vaList);
+    va_start(vaList, fmt);
+    nChars = fioFormatV(fmt, vaList, (FIOFORMATV_OUTPUT_FUNCPTR)fioBufPrint,
+                        (_Vx_usr_arg_t)2);
+    va_end(vaList);
 
     return (nChars);
-    }
+}
 
 
 /*******************************************************************************
@@ -587,18 +587,18 @@ int printErr
 */
 
 void printExc
-    (
-    char *	  fmt,	/* format string */
-    _Vx_usr_arg_t arg1,	/* argument #1 */
-    _Vx_usr_arg_t arg2,	/* argument #2 */
-    _Vx_usr_arg_t arg3,	/* argument #3 */
-    _Vx_usr_arg_t arg4,	/* argument #4 */
-    _Vx_usr_arg_t arg5	/* argument #5 */
-    )
-    {
-    UINT	state;
-    size_t	pageSize;
-    char *	pageAddr;
+(
+    char     *fmt,  /* format string */
+    _Vx_usr_arg_t arg1, /* argument #1 */
+    _Vx_usr_arg_t arg2, /* argument #2 */
+    _Vx_usr_arg_t arg3, /* argument #3 */
+    _Vx_usr_arg_t arg4, /* argument #4 */
+    _Vx_usr_arg_t arg5  /* argument #5 */
+)
+{
+    UINT    state;
+    size_t  pageSize;
+    char   *pageAddr;
 
     /*
      * Dump formatted string to sysExcMsg area if called from an ISR, or from
@@ -606,94 +606,98 @@ void printExc
      * if none of the hooks have been installed.
      */
 
-    if ((INT_CONTEXT ()) || (taskIdCurrent == NULL) || (KERNEL_ENTERED_ME ()) ||
-	((_func_printExcPrintHook == NULL) && (_func_excJobAdd == NULL)))
-	{
-	/* Exception happened during exception processing, or before
-	 * any task could be initialized. Tack the message onto the end
-	 * of a well-known location.
-	 */
+    if ((INT_CONTEXT()) || (taskIdCurrent == NULL) || (KERNEL_ENTERED_ME()) ||
+            ((_func_printExcPrintHook == NULL) && (_func_excJobAdd == NULL)))
+    {
+        /* Exception happened during exception processing, or before
+         * any task could be initialized. Tack the message onto the end
+         * of a well-known location.
+         */
 
-	/* see if we need to write enable the memory */
+        /* see if we need to write enable the memory */
 
-	if (vmLibInfo.vmLibInstalled)
-	    {
-	    pageSize = VM_PAGE_SIZE_GET();
-	    pageAddr = (char *) ((ptrdiff_t) sysExcMsg / pageSize * pageSize);
+        if (vmLibInfo.vmLibInstalled)
+        {
+            pageSize = VM_PAGE_SIZE_GET();
+            pageAddr = (char *)((ptrdiff_t) sysExcMsg / pageSize * pageSize);
 
-	    if ((VM_STATE_GET (NULL, (void *) pageAddr, &state) != ERROR) &&
-		((state & VM_STATE_MASK_WRITABLE) == VM_STATE_WRITABLE_NOT))
-		{
-		TASK_SAFE();			/* safe from deletion */
+            if ((VM_STATE_GET(NULL, (void *) pageAddr, &state) != ERROR) &&
+                    ((state & VM_STATE_MASK_WRITABLE) == VM_STATE_WRITABLE_NOT))
+            {
+                TASK_SAFE();            /* safe from deletion */
 
-		VM_STATE_SET (NULL, pageAddr, (msize_t)pageSize,
-			      VM_STATE_MASK_WRITABLE, VM_STATE_WRITABLE);
-
-#if defined(_WRS_CONFIG_SMP)
-		/*
-		 * Get the ED&R record-allocation lock.  This is not strictly
-		 * necessary, but ensures that the entire message from this
-		 * CPU will be intact rather than possibly corrupted by those
-		 * from other CPUs that happen to be doing printExc at the
-		 * same time.  This lock supports recursive acquisition.
-		 */
-		{ int key = edrBufLock();
-#endif	/* _WRS_CONFIG_SMP */
-		sysExcMsg += sprintf (sysExcMsg,fmt,arg1,arg2,arg3,arg4,arg5);
-#if defined(_WRS_CONFIG_SMP)
-		edrBufUnlock(key);	}
-#endif	/* _WRS_CONFIG_SMP */
-
-		VM_STATE_SET (NULL, pageAddr, (msize_t)pageSize,
-			      VM_STATE_MASK_WRITABLE, VM_STATE_WRITABLE_NOT);
-
-		TASK_UNSAFE();			/* unsafe from deletion */
-		return;
-		}
-	    }
+                VM_STATE_SET(NULL, pageAddr, (msize_t)pageSize,
+                             VM_STATE_MASK_WRITABLE, VM_STATE_WRITABLE);
 
 #if defined(_WRS_CONFIG_SMP)
-	{ int key = edrBufLock();
-#endif	/* _WRS_CONFIG_SMP */
-	sysExcMsg += sprintf (sysExcMsg, fmt, arg1, arg2, arg3, arg4, arg5);
+                /*
+                 * Get the ED&R record-allocation lock.  This is not strictly
+                 * necessary, but ensures that the entire message from this
+                 * CPU will be intact rather than possibly corrupted by those
+                 * from other CPUs that happen to be doing printExc at the
+                 * same time.  This lock supports recursive acquisition.
+                 */
+                {
+                    int key = edrBufLock();
+#endif  /* _WRS_CONFIG_SMP */
+                    sysExcMsg += sprintf(sysExcMsg, fmt, arg1, arg2, arg3, arg4, arg5);
 #if defined(_WRS_CONFIG_SMP)
-	edrBufUnlock(key);	}
-#endif	/* _WRS_CONFIG_SMP */
-	}
-    else
-	{
-	/* If the hook is set up, then use that to print out the
-	 * exception info, otherwise post it off to tExcTask as
-	 * previously.
-	 */
-	if (_func_printExcPrintHook != NULL)
-	    {
-	    (* _func_printExcPrintHook) ((long) fmt, arg1,arg2,arg3,arg4,arg5);
-	    }
-	else if (_func_excJobAdd != NULL)
-	    {
-	    /* Queue printErr/_func_shellExcPrint to the exception task */
+                    edrBufUnlock(key);
+                }
+#endif  /* _WRS_CONFIG_SMP */
 
-	    if (_func_shellExcPrint != NULL)
-		_func_excJobAdd ((VOIDFUNCPTR)_func_shellExcPrint,
-				 (_Vx_usr_arg_t)taskIdSelf(),
-				 (_Vx_usr_arg_t)fmt,
-				 arg1, arg2, arg3, arg4);
-	    else
-		_func_excJobAdd ((VOIDFUNCPTR)printErr, (_Vx_usr_arg_t)fmt,
-				 arg1, arg2, arg3, arg4, arg5);
-	    }
-	/*
-	 * At this point we have an unhandled exception but no exception
-	 * task to handle the message.  Use kprintf() if it is available.
-	 * (Unhandled exceptions are not supposed to occur, so it is
-	 * appropriate to use a debugging function to report them if
-	 * no other mechanism is available.)
-	*/
-	else if (_func_kprintf != NULL)
-		_func_kprintf (fmt, arg1, arg2, arg3, arg4, arg5);
-	}
+                VM_STATE_SET(NULL, pageAddr, (msize_t)pageSize,
+                             VM_STATE_MASK_WRITABLE, VM_STATE_WRITABLE_NOT);
+
+                TASK_UNSAFE();          /* unsafe from deletion */
+                return;
+            }
+        }
+
+#if defined(_WRS_CONFIG_SMP)
+        {
+            int key = edrBufLock();
+#endif  /* _WRS_CONFIG_SMP */
+            sysExcMsg += sprintf(sysExcMsg, fmt, arg1, arg2, arg3, arg4, arg5);
+#if defined(_WRS_CONFIG_SMP)
+            edrBufUnlock(key);
+        }
+#endif  /* _WRS_CONFIG_SMP */
     }
+    else
+    {
+        /* If the hook is set up, then use that to print out the
+         * exception info, otherwise post it off to tExcTask as
+         * previously.
+         */
+        if (_func_printExcPrintHook != NULL)
+        {
+            (* _func_printExcPrintHook)((long) fmt, arg1, arg2, arg3, arg4, arg5);
+        }
+        else if (_func_excJobAdd != NULL)
+        {
+            /* Queue printErr/_func_shellExcPrint to the exception task */
+
+            if (_func_shellExcPrint != NULL)
+                _func_excJobAdd((VOIDFUNCPTR)_func_shellExcPrint,
+                                (_Vx_usr_arg_t)taskIdSelf(),
+                                (_Vx_usr_arg_t)fmt,
+                                arg1, arg2, arg3, arg4);
+            else
+                _func_excJobAdd((VOIDFUNCPTR)printErr, (_Vx_usr_arg_t)fmt,
+                                arg1, arg2, arg3, arg4, arg5);
+        }
+        /*
+         * At this point we have an unhandled exception but no exception
+         * task to handle the message.  Use kprintf() if it is available.
+         * (Unhandled exceptions are not supposed to occur, so it is
+         * appropriate to use a debugging function to report them if
+         * no other mechanism is available.)
+        */
+        else if (_func_kprintf != NULL)
+            _func_kprintf(fmt, arg1, arg2, arg3, arg4, arg5);
+    }
+}
 
 
 /*******************************************************************************
@@ -716,24 +720,24 @@ void printExc
 */
 
 int sprintf
-    (
-    char *  buffer,	/* buffer to write to */
-    const char *  fmt,	/* format string */
-    ...			/* optional arguments to format */
-    )
-    {
-    va_list	vaList;		/* traverses argument list */
-    int		nChars;
+(
+    char   *buffer, /* buffer to write to */
+    const char   *fmt,  /* format string */
+    ...         /* optional arguments to format */
+)
+{
+    va_list vaList;     /* traverses argument list */
+    int     nChars;
 
-    va_start (vaList, fmt);
-    nChars = fioFormatV (fmt, vaList, (FIOFORMATV_OUTPUT_FUNCPTR)fioBufPut,
-			 (_Vx_usr_arg_t) &buffer);
-    va_end (vaList);
+    va_start(vaList, fmt);
+    nChars = fioFormatV(fmt, vaList, (FIOFORMATV_OUTPUT_FUNCPTR)fioBufPut,
+                        (_Vx_usr_arg_t) &buffer);
+    va_end(vaList);
 
     *buffer = EOS;
 
     return (nChars);
-    }
+}
 
 
 /*******************************************************************************
@@ -763,43 +767,44 @@ int sprintf
 */
 
 int snprintf
-    (
-    char *       buffer, /* buffer to write to */
+(
+    char        *buffer, /* buffer to write to */
     size_t       count,  /* max number of characters to store in buffer */
-    const char * fmt,    /* format string */
+    const char *fmt,     /* format string */
     ...                  /* optional arguments to format */
-    )
-    {
-    va_list	  vaList;	 /* traverses the argument list */
-    int		  nChars;
+)
+{
+    va_list   vaList;    /* traverses the argument list */
+    int       nChars;
     SNPUTBUF_ARG  snputbufArg;
 
-    snputbufArg.pBuf	= buffer;
-    snputbufArg.pBufEnd	= (char *)(buffer + count);
+    snputbufArg.pBuf    = buffer;
+    snputbufArg.pBufEnd = (char *)(buffer + count);
 
-    va_start (vaList, fmt);
-    nChars = fioFormatV (fmt, vaList, (FIOFORMATV_OUTPUT_FUNCPTR)fioSnBufPut,
-			 (_Vx_usr_arg_t) &snputbufArg);
-    va_end (vaList);
+    va_start(vaList, fmt);
+    nChars = fioFormatV(fmt, vaList, (FIOFORMATV_OUTPUT_FUNCPTR)fioSnBufPut,
+                        (_Vx_usr_arg_t) &snputbufArg);
+    va_end(vaList);
 
     if (count != 0)
-	*snputbufArg.pBuf = EOS; /* null-terminate the string */
+        *snputbufArg.pBuf = EOS; /* null-terminate the string */
 
     return (nChars);
-    }
+}
 
 
 #ifdef _WRS_ALTIVEC_SUPPORT
-typedef union {
-      __vector unsigned int	vul;
-      float			f32[4];
-      unsigned long		u32[4];
-      unsigned short		u16[8];
-      unsigned char		u8[16];
-      signed long		s32[4];
-      signed short		s16[8];
-      signed char		s8[16];
-    } VECTOR;
+typedef union
+{
+    __vector unsigned int vul;
+    float         f32[4];
+    unsigned long     u32[4];
+    unsigned short        u16[8];
+    unsigned char     u8[16];
+    signed long       s32[4];
+    signed short      s16[8];
+    signed char       s8[16];
+} VECTOR;
 #endif /* _WRS_ALTIVEC_SUPPORT */
 
 
@@ -843,25 +848,25 @@ typedef union {
 */
 
 int fioFormatV
-    (
-    FAST const char *fmt,	/* format string */
-    va_list	vaList,		/* pointer to varargs list */
+(
+    FAST const char *fmt,   /* format string */
+    va_list vaList,     /* pointer to varargs list */
     FIOFORMATV_OUTPUT_FUNCPTR outRoutine,/* handler for args as they're formatted */
-    _Vx_usr_arg_t outarg	/* argument to routine */
-    )
+    _Vx_usr_arg_t outarg    /* argument to routine */
+)
 #ifndef _WRS_CONFIG_FORMATTED_OUT_BASIC
-    {
-    FAST char	ch;		/* character from fmt */
-    FAST int	n;		/* handy integer (short term usage) */
-    FAST char *	cp;		/* handy char pointer (short term usage) */
-    int		width;		/* width from format (%8d), or 0 */
-    char	sign;		/* sign prefix (' ', '+', '-', or \0) */
+{
+    FAST char   ch;     /* character from fmt */
+    FAST int    n;      /* handy integer (short term usage) */
+    FAST char  *cp;     /* handy char pointer (short term usage) */
+    int     width;      /* width from format (%8d), or 0 */
+    char    sign;       /* sign prefix (' ', '+', '-', or \0) */
     unsigned long long
-		ulongLongVal;	/* unsigned 64 bit arguments %[diouxX] */
-    long long * llTmpAddr;
-    long * lTmpAddr;
-    int * iTmpAddr;
-    short * sTmpAddr;
+    ulongLongVal;   /* unsigned 64 bit arguments %[diouxX] */
+    long long *llTmpAddr;
+    long *lTmpAddr;
+    int *iTmpAddr;
+    short *sTmpAddr;
 
 # ifdef _WRS_SPE_SUPPORT
     int         e500_sign_flag; /* e500-specific 'r' and 'R' modifiers */
@@ -869,885 +874,900 @@ int fioFormatV
     int         a, ndigs;       /* e500-specific (short term usage) */
 # endif /* _WRS_SPE_SUPPORT */
 
-    int		prec;		/* precision from format (%.3d), or -1 */
-    int		oldprec;	/* old precision from format (%.3d), or -1 */
-    int		dprec;		/* a copy of prec if [diouxX], 0 otherwise */
-    int		fpprec;		/* `extra' floating precision in [eEfgG] */
-    size_t	size;		/* size of converted field or string */
-    int		fieldsz;	/* field size expanded by sign, etc */
-    int		realsz;		/* field size expanded by dprec */
+    int     prec;       /* precision from format (%.3d), or -1 */
+    int     oldprec;    /* old precision from format (%.3d), or -1 */
+    int     dprec;      /* a copy of prec if [diouxX], 0 otherwise */
+    int     fpprec;     /* `extra' floating precision in [eEfgG] */
+    size_t  size;       /* size of converted field or string */
+    int     fieldsz;    /* field size expanded by sign, etc */
+    int     realsz;     /* field size expanded by dprec */
 
 # ifdef _WRS_ALTIVEC_SUPPORT
-    FAST int	i;		/* handy integer (short term usage) */
-    FAST char *	vp;		/* handy char pointer (short term usage) */
-    char	Separator;	/* separator for vector elements */
-    char	C_Separator;	/* separator for char vector elements */
-    VECTOR	vec;		/* vector argument */
-    BOOL	doVector;	/* AltiVec vector */
+    FAST int    i;      /* handy integer (short term usage) */
+    FAST char  *vp;     /* handy char pointer (short term usage) */
+    char    Separator;  /* separator for vector elements */
+    char    C_Separator;    /* separator for char vector elements */
+    VECTOR  vec;        /* vector argument */
+    BOOL    doVector;   /* AltiVec vector */
 # endif /* _WRS_ALTIVEC_SUPPORT */
-    char	FMT[20];	/* To collect fmt info */
-    FAST char *	Collect;	/* char pointer to FMT */
+    char    FMT[20];    /* To collect fmt info */
+    FAST char  *Collect;    /* char pointer to FMT */
 
-    BOOL	doLongInt;	/* long integer */
-    BOOL	doLongLongInt;	/* long long integer - 64 bit */
-    BOOL	doShortInt;	/* short integer */
-    BOOL	doAlt;		/* alternate form */
-    BOOL	doLAdjust;	/* left adjustment */
-    BOOL	doZeroPad;	/* zero (as opposed to blank) pad */
-    BOOL	doHexPrefix;	/* add 0x or 0X prefix */
-    BOOL	doSign;		/* change sign to '-' */
-    char	buf[BUF];	/* space for %c, %[diouxX], %[eEfgG] */
-    char	ox[4];		/* space for 0x hex-prefix */
-    char *	xdigs = NULL;	/* digits for [xX] conversion */
-    int		ret = 0;	/* return value accumulator */
-    enum {OCT, DEC, HEX} base;	/* base for [diouxX] conversion */
+    BOOL    doLongInt;  /* long integer */
+    BOOL    doLongLongInt;  /* long long integer - 64 bit */
+    BOOL    doShortInt; /* short integer */
+    BOOL    doAlt;      /* alternate form */
+    BOOL    doLAdjust;  /* left adjustment */
+    BOOL    doZeroPad;  /* zero (as opposed to blank) pad */
+    BOOL    doHexPrefix;    /* add 0x or 0X prefix */
+    BOOL    doSign;     /* change sign to '-' */
+    char    buf[BUF];   /* space for %c, %[diouxX], %[eEfgG] */
+    char    ox[4];      /* space for 0x hex-prefix */
+    char   *xdigs = NULL;   /* digits for [xX] conversion */
+    int     ret = 0;    /* return value accumulator */
+    enum {OCT, DEC, HEX} base;  /* base for [diouxX] conversion */
 
 
-    FOREVER		/* Scan the format for conversions (`%' character) */
-	{
-	for (cp = CHAR_FROM_CONST(fmt);((ch=*fmt) != EOS)&&(ch != '%'); fmt++)
-	    ;
+    FOREVER     /* Scan the format for conversions (`%' character) */
+    {
+        for (cp = CHAR_FROM_CONST(fmt); ((ch = *fmt) != EOS) && (ch != '%'); fmt++)
+            ;
 
-	if ((n = (int)(fmt - cp)) != 0)
-	    {
-	    if ((*outRoutine) (cp, n, outarg) != OK)
-		return (ERROR);
+        if ((n = (int)(fmt - cp)) != 0)
+        {
+            if ((*outRoutine)(cp, n, outarg) != OK)
+                return (ERROR);
 
-	    ret += n;
-	    }
+            ret += n;
+        }
 
-	if (ch == EOS)
-	    return (ret);		/* return total length */
+        if (ch == EOS)
+            return (ret);       /* return total length */
 
-	fmt++;				/* skip over '%' */
+        fmt++;              /* skip over '%' */
 # ifdef _WRS_ALTIVEC_SUPPORT
-	Separator	= ' ';	/* default separator for vector elements */
-	C_Separator	= EOS;	/* default separator for char vector elements */
-	doVector	= FALSE;	/* no vector modifier */
+        Separator   = ' ';  /* default separator for vector elements */
+        C_Separator = EOS;  /* default separator for char vector elements */
+        doVector    = FALSE;    /* no vector modifier */
 # endif /* _WRS_ALTIVEC_SUPPORT */
 
-	*FMT		= EOS;
-	Collect		= FMT;
-	doLongInt	= FALSE;	/* long integer */
-	doLongLongInt	= FALSE;	/* 64 bit integer */
-	doShortInt	= FALSE;	/* short integer */
-	doAlt		= FALSE;	/* alternate form */
-	doLAdjust	= FALSE;	/* left adjustment */
-	doZeroPad	= FALSE;	/* zero (as opposed to blank) pad */
-	doHexPrefix	= FALSE;	/* add 0x or 0X prefix */
-	doSign		= FALSE;	/* change sign to '-' */
-	dprec		= 0;
-	fpprec		= 0;
-	width		= 0;
-	prec		= -1;
-	oldprec		= -1;
-	sign		= EOS;
+        *FMT        = EOS;
+        Collect     = FMT;
+        doLongInt   = FALSE;    /* long integer */
+        doLongLongInt   = FALSE;    /* 64 bit integer */
+        doShortInt  = FALSE;    /* short integer */
+        doAlt       = FALSE;    /* alternate form */
+        doLAdjust   = FALSE;    /* left adjustment */
+        doZeroPad   = FALSE;    /* zero (as opposed to blank) pad */
+        doHexPrefix = FALSE;    /* add 0x or 0X prefix */
+        doSign      = FALSE;    /* change sign to '-' */
+        dprec       = 0;
+        fpprec      = 0;
+        width       = 0;
+        prec        = -1;
+        oldprec     = -1;
+        sign        = EOS;
 # ifdef _WRS_SPE_SUPPORT
-	e500_sign_flag  = 1;	/* default is %r -- signed fixed point value */
+        e500_sign_flag  = 1;    /* default is %r -- signed fixed point value */
 # endif /* _WRS_SPE_SUPPORT */
 
 #define get_CHAR  (ch = *Collect++ = *fmt++)
 
 # ifdef _WRS_ALTIVEC_SUPPORT
-#define SET_VECTOR_FMT(VFMT,NO)						\
-  do									\
-    {									\
-	char * to;							\
-									\
-	vec.vul =  va_arg (vaList,__vector unsigned int);		\
-	cp = buf;							\
-									\
-	*Collect = EOS;							\
-	i = (NO);							\
-	to = VFMT = (char *) malloc (i*20);				\
-	if (to != NULL) {						\
-		while(i-- > 0) {					\
-									\
-			char * from = FMT;				\
-									\
-			*to++ = '%';					\
-			while ((*to++ = *from++) != '\0')		\
-			    /* do nothing*/;				\
-			*(char*)((int)(to)-1) = Separator;		\
-		}							\
-		*(--to) = EOS;						\
-	    }								\
-    }									\
+#define SET_VECTOR_FMT(VFMT,NO)                     \
+  do                                    \
+    {                                   \
+    char * to;                          \
+                                    \
+    vec.vul =  va_arg (vaList,__vector unsigned int);       \
+    cp = buf;                           \
+                                    \
+    *Collect = EOS;                         \
+    i = (NO);                           \
+    to = VFMT = (char *) malloc (i*20);             \
+    if (to != NULL) {                       \
+        while(i-- > 0) {                    \
+                                    \
+            char * from = FMT;              \
+                                    \
+            *to++ = '%';                    \
+            while ((*to++ = *from++) != '\0')       \
+                /* do nothing*/;                \
+            *(char*)((int)(to)-1) = Separator;      \
+        }                           \
+        *(--to) = EOS;                      \
+        }                               \
+    }                                   \
   while (0)
 
-#define RESET_VECTOR_FMT(VFMT)			\
-						\
-			size = strlen(cp);	\
-			sign = EOS;		\
-						\
-			free(VFMT)
+#define RESET_VECTOR_FMT(VFMT)          \
+                        \
+            size = strlen(cp);  \
+            sign = EOS;     \
+                        \
+            free(VFMT)
 # endif /* _WRS_ALTIVEC_SUPPORT */
 
 rflag:
-get_CHAR;
+        get_CHAR;
 reswitch:
-	switch (ch)
-	    {
-	    case ' ':
-		    /* If the space and + flags both appear, the space
-		     * flag will be ignored. -- ANSI X3J11
-		     */
-		    if (!sign)
-			sign = ' ';
-		    goto rflag;
+        switch (ch)
+        {
+            case ' ':
+                /* If the space and + flags both appear, the space
+                 * flag will be ignored. -- ANSI X3J11
+                 */
+                if (!sign)
+                    sign = ' ';
+                goto rflag;
 # ifdef _WRS_ALTIVEC_SUPPORT
-	    case ',':
-	    case ';':
-	    case ':':
-	    case '_':
-		    Collect--;
-		    Separator = C_Separator = ch;
-		    goto rflag;
+            case ',':
+            case ';':
+            case ':':
+            case '_':
+                Collect--;
+                Separator = C_Separator = ch;
+                goto rflag;
 # endif /* _WRS_ALTIVEC_SUPPORT */
-	    case '#':
-		    doAlt = TRUE;
-		    goto rflag;
+            case '#':
+                doAlt = TRUE;
+                goto rflag;
 
-	    case '*':
-		    /* A negative field width argument is taken as a
-		     * flag followed by a positive field width.
-		     *	-- ANSI X3J11
-		     * They don't exclude field widths read from args.
-		     */
-		    if ((width = va_arg(vaList, int)) >= 0)
-			goto rflag;
+            case '*':
+                /* A negative field width argument is taken as a
+                 * flag followed by a positive field width.
+                 *  -- ANSI X3J11
+                 * They don't exclude field widths read from args.
+                 */
+                if ((width = va_arg(vaList, int)) >= 0)
+                    goto rflag;
 
-		    width = -width;			/* FALLTHROUGH */
+                width = -width;         /* FALLTHROUGH */
 
-	    case '-':
-		    doLAdjust = TRUE;
-		    goto rflag;
+            case '-':
+                doLAdjust = TRUE;
+                goto rflag;
 
-	    case '+':
-		    sign = '+';
-		    goto rflag;
+            case '+':
+                sign = '+';
+                goto rflag;
 
-	    case '.':
-		    get_CHAR;
-		    if ( ch == '*' )
-			{
-			n = va_arg(vaList, int);
-			prec = (n < 0) ? -1 : n;
-			goto rflag;
-			}
+            case '.':
+                get_CHAR;
+                if (ch == '*')
+                {
+                    n = va_arg(vaList, int);
+                    prec = (n < 0) ? -1 : n;
+                    goto rflag;
+                }
 
-		    n = 0;
-		    while (is_digit(ch))
-			{
-			n = 10 * n + to_digit(ch);
-			get_CHAR;
-			}
-		    prec = n < 0 ? -1 : n;
-		    goto reswitch;
+                n = 0;
+                while (is_digit(ch))
+                {
+                    n = 10 * n + to_digit(ch);
+                    get_CHAR;
+                }
+                prec = n < 0 ? -1 : n;
+                goto reswitch;
 
-	    case '0':
-		    /* Note that 0 is taken as a flag, not as the
-		     * beginning of a field width. -- ANSI X3J11
-		     */
-		    doZeroPad = TRUE;
-		    goto rflag;
+            case '0':
+                /* Note that 0 is taken as a flag, not as the
+                 * beginning of a field width. -- ANSI X3J11
+                 */
+                doZeroPad = TRUE;
+                goto rflag;
 
-	    case '1':
-	    case '2':
-	    case '3':
-	    case '4':
-	    case '5':
-	    case '6':
-	    case '7':
-	    case '8':
-	    case '9':
-		    n = 0;
-		    do
-			{
-			n = 10 * n + to_digit(ch);
-			get_CHAR;
-			} while (is_digit(ch));
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                n = 0;
+                do
+                {
+                    n = 10 * n + to_digit(ch);
+                    get_CHAR;
+                }
+                while (is_digit(ch));
 
-		    width = n;
-		    goto reswitch;
+                width = n;
+                goto reswitch;
 
-	    case 'h':
-		    doShortInt = TRUE;
-		    goto rflag;
+            case 'h':
+                doShortInt = TRUE;
+                goto rflag;
 
-	    case 'l':
-		    get_CHAR;
-		    if ( ch == 'l' )
-			{
-			doLongLongInt = TRUE;
-			goto rflag;
-			}
+            case 'l':
+                get_CHAR;
+                if (ch == 'l')
+                {
+                    doLongLongInt = TRUE;
+                    goto rflag;
+                }
 # ifdef _WRS_SPE_SUPPORT
-		    else if ( ch == 'r' || ch == 'R' ) /* e500 fixed point */
-			{
-			doLongLongInt = TRUE;
-			goto reswitch;
-			}
+                else if (ch == 'r' || ch == 'R')   /* e500 fixed point */
+                {
+                    doLongLongInt = TRUE;
+                    goto reswitch;
+                }
 # endif /*_WRS_SPE_SUPPORT */
-		    else
-			{
-			doLongInt = TRUE;
-			goto reswitch;
-			}
+                else
+                {
+                    doLongInt = TRUE;
+                    goto reswitch;
+                }
 # ifdef _WRS_SPE_SUPPORT
-	    case 'R': /* e500 fixed point */
-		    e500_sign_flag  = 0; /* unsigned fixed point value */
-		    /* FALLTHROUGH */
-	    case 'r': /* e500 fixed point */
-		    sign = EOS;
-		    cp = buf;
+            case 'R': /* e500 fixed point */
+                e500_sign_flag  = 0; /* unsigned fixed point value */
+            /* FALLTHROUGH */
+            case 'r': /* e500 fixed point */
+                sign = EOS;
+                cp = buf;
 
-		    if (e500_sign_flag) {
-			ulongLongVal = SARG();
-			if ((long long)ulongLongVal < 0)
-			   {
-			   ulongLongVal = -ulongLongVal;
-			   sign = '-';
-			   }
-		    }
-		    else ulongLongVal = UARG();
+                if (e500_sign_flag)
+                {
+                    ulongLongVal = SARG();
+                    if ((long long)ulongLongVal < 0)
+                    {
+                        ulongLongVal = -ulongLongVal;
+                        sign = '-';
+                    }
+                }
+                else ulongLongVal = UARG();
 
-		    if (doShortInt) {
-			ndigs = 5;
-			ulongLongVal <<= (32+16);
-		    } else if (!(doLongLongInt)) {
-			ndigs = 10;
-			ulongLongVal <<= 32;
-		    } else {
-			ndigs = 19;
-		    }
-		    n = 0;
-		    if (e500_sign_flag) {
-		      if (ulongLongVal & (1LL << 63)) {
-			n = 1;
-		      }
-		      ulongLongVal <<= 1;
-		      ndigs--;
-		    }
-		    *cp++ = n + '0';
-		    *cp++ = '.';
-		    ndigs = (prec >0 ? prec : ndigs);
-		    llconst = ((1LL << (64-1))-1);
-		    while (ndigs) {
-		      a = (ulongLongVal >> (64-3)) + (ulongLongVal >> (64-1));
-		      ulongLongVal  = (ulongLongVal & llconst)
-				      + ((ulongLongVal << 2) & llconst);
-		      a += (ulongLongVal >> 63);
-		      *cp++ = a + '0';
-		      ndigs--;
-		      ulongLongVal <<= 1;
-		    }
-		    *cp = '\0';
+                if (doShortInt)
+                {
+                    ndigs = 5;
+                    ulongLongVal <<= (32 + 16);
+                }
+                else if (!(doLongLongInt))
+                {
+                    ndigs = 10;
+                    ulongLongVal <<= 32;
+                }
+                else
+                {
+                    ndigs = 19;
+                }
+                n = 0;
+                if (e500_sign_flag)
+                {
+                    if (ulongLongVal & (1LL << 63))
+                    {
+                        n = 1;
+                    }
+                    ulongLongVal <<= 1;
+                    ndigs--;
+                }
+                *cp++ = n + '0';
+                *cp++ = '.';
+                ndigs = (prec > 0 ? prec : ndigs);
+                llconst = ((1LL << (64 - 1)) - 1);
+                while (ndigs)
+                {
+                    a = (ulongLongVal >> (64 - 3)) + (ulongLongVal >> (64 - 1));
+                    ulongLongVal  = (ulongLongVal & llconst)
+                                    + ((ulongLongVal << 2) & llconst);
+                    a += (ulongLongVal >> 63);
+                    *cp++ = a + '0';
+                    ndigs--;
+                    ulongLongVal <<= 1;
+                }
+                *cp = '\0';
 
-		    cp = buf;
-		    size = strlen(cp);
-		    break;
+                cp = buf;
+                size = strlen(cp);
+                break;
 # endif /* _WRS_SPE_SUPPORT */
 
 # ifdef _WRS_ALTIVEC_SUPPORT
-	    case 'v':
-		    Collect--;
-		    doVector = TRUE;
-		    goto rflag;
+            case 'v':
+                Collect--;
+                doVector = TRUE;
+                goto rflag;
 # endif /* _WRS_ALTIVEC_SUPPORT */
 
-	    case 'c':
+            case 'c':
 # ifdef _WRS_ALTIVEC_SUPPORT
-		    if (doVector)
-		    {
-			vec.vul =  va_arg (vaList,__vector unsigned int);
-			cp = buf;
-			vp = (unsigned char *)&vec.u8;
-			i = 15;
+                if (doVector)
+                {
+                    vec.vul =  va_arg(vaList, __vector unsigned int);
+                    cp = buf;
+                    vp = (unsigned char *)&vec.u8;
+                    i = 15;
 
-			while(i-- > 0) {
+                    while (i-- > 0)
+                    {
 
-				*cp++ = *vp++;
-				if (C_Separator) *cp++ = C_Separator;
-			}
+                        *cp++ = *vp++;
+                        if (C_Separator) *cp++ = C_Separator;
+                    }
 
-			*cp++ = *vp++;
+                    *cp++ = *vp++;
 
-			cp = buf;
-			size = 16 + (C_Separator ? 15:0);
-			sign = EOS;
-		    }
-		    else
-		    {
+                    cp = buf;
+                    size = 16 + (C_Separator ? 15 : 0);
+                    sign = EOS;
+                }
+                else
+                {
 # endif /* _WRS_ALTIVEC_SUPPORT */
-			*(cp = buf) = (char)va_arg(vaList, int);
-			size = 1;
-			sign = EOS;
+                    *(cp = buf) = (char)va_arg(vaList, int);
+                    size = 1;
+                    sign = EOS;
 # ifdef _WRS_ALTIVEC_SUPPORT
-		    }
+                }
 # endif /* _WRS_ALTIVEC_SUPPORT */
-		    break;
+                break;
 
-	    case 'D':
-		    doLongInt = TRUE;			/* FALLTHROUGH */
+            case 'D':
+                doLongInt = TRUE;           /* FALLTHROUGH */
 
-	    case 'd':
-	    case 'i':
+            case 'd':
+            case 'i':
 # ifdef _WRS_ALTIVEC_SUPPORT
-		    if (doVector)
-		    {
-			SET_VECTOR_FMT(vp,doShortInt?8:4);
+                if (doVector)
+                {
+                    SET_VECTOR_FMT(vp, doShortInt ? 8 : 4);
 
-			if (doShortInt)
-			    sprintf(cp, vp, vec.s16[0], vec.s16[1], vec.s16[2],
-				    vec.s16[3], vec.s16[4], vec.s16[5],
-				    vec.s16[6], vec.s16[7]);
-			else
-			    sprintf(cp, vp, vec.s32[0], vec.s32[1], vec.s32[2],
-				    vec.s32[3]);
+                    if (doShortInt)
+                        sprintf(cp, vp, vec.s16[0], vec.s16[1], vec.s16[2],
+                                vec.s16[3], vec.s16[4], vec.s16[5],
+                                vec.s16[6], vec.s16[7]);
+                    else
+                        sprintf(cp, vp, vec.s32[0], vec.s32[1], vec.s32[2],
+                                vec.s32[3]);
 
-			RESET_VECTOR_FMT(vp);
-			break;
-		    }
+                    RESET_VECTOR_FMT(vp);
+                    break;
+                }
 # endif /* _WRS_ALTIVEC_SUPPORT */
 
-		    ulongLongVal = SARG();
-		    if ((long long)ulongLongVal < 0)
-			{
-			ulongLongVal = -ulongLongVal;
-			sign = '-';
-			}
-		    base = DEC;
-		    goto number;
+                ulongLongVal = SARG();
+                if ((long long)ulongLongVal < 0)
+                {
+                    ulongLongVal = -ulongLongVal;
+                    sign = '-';
+                }
+                base = DEC;
+                goto number;
 
-	    case 'n':
-		    /* ret is int, so effectively %lln = %ln */
-		    if (doLongLongInt)
-		    {
-		    if ((llTmpAddr = va_arg(vaList, long long *)) != NULL)
-		    *llTmpAddr= (long long) ret;
-		    }
-		    else if (doLongInt)
-		    {
-		    if ((lTmpAddr = va_arg(vaList, long *)) != NULL)
-		    *lTmpAddr = ret;
-		    }
-		    else if (doShortInt)
-		    {
-		    if ((sTmpAddr = va_arg(vaList, short *)) != NULL)
-		    *sTmpAddr = (short)ret;
-		    }
-		    else
-		    {
-		    if ((iTmpAddr = va_arg(vaList, int *)) != NULL)
-		    *iTmpAddr = ret;
-		    }
-		    continue;				/* no output */
+            case 'n':
+                /* ret is int, so effectively %lln = %ln */
+                if (doLongLongInt)
+                {
+                    if ((llTmpAddr = va_arg(vaList, long long *)) != NULL)
+                        * llTmpAddr = (long long) ret;
+                }
+                else if (doLongInt)
+                {
+                    if ((lTmpAddr = va_arg(vaList, long *)) != NULL)
+                        * lTmpAddr = ret;
+                }
+                else if (doShortInt)
+                {
+                    if ((sTmpAddr = va_arg(vaList, short *)) != NULL)
+                        * sTmpAddr = (short)ret;
+                }
+                else
+                {
+                    if ((iTmpAddr = va_arg(vaList, int *)) != NULL)
+                        * iTmpAddr = ret;
+                }
+                continue;               /* no output */
 
-	    case 'O':
-		    doLongInt = TRUE;			/* FALLTHROUGH */
+            case 'O':
+                doLongInt = TRUE;           /* FALLTHROUGH */
 
-	    case 'o':
+            case 'o':
 # ifdef _WRS_ALTIVEC_SUPPORT
-		    if (doVector)
-		    {
-			SET_VECTOR_FMT(vp,doShortInt?8:4);
+                if (doVector)
+                {
+                    SET_VECTOR_FMT(vp, doShortInt ? 8 : 4);
 
-			if (doShortInt)
-			    sprintf(cp, vp, vec.s16[0], vec.s16[1], vec.s16[2],
-				    vec.s16[3], vec.s16[4], vec.s16[5],
-				    vec.s16[6], vec.s16[7]);
-			else
-			    sprintf(cp, vp, vec.s32[0], vec.s32[1], vec.s32[2],
-				    vec.s32[3]);
+                    if (doShortInt)
+                        sprintf(cp, vp, vec.s16[0], vec.s16[1], vec.s16[2],
+                                vec.s16[3], vec.s16[4], vec.s16[5],
+                                vec.s16[6], vec.s16[7]);
+                    else
+                        sprintf(cp, vp, vec.s32[0], vec.s32[1], vec.s32[2],
+                                vec.s32[3]);
 
-			RESET_VECTOR_FMT(vp);
-			break;
-		    }
+                    RESET_VECTOR_FMT(vp);
+                    break;
+                }
 # endif /* _WRS_ALTIVEC_SUPPORT */
-		    ulongLongVal = UARG();
-		    base = OCT;
-		    goto nosign;
+                ulongLongVal = UARG();
+                base = OCT;
+                goto nosign;
 
-	    case 'p':
-		    /* The argument shall be a pointer to void.  The
-		     * value of the pointer is converted to a sequence
-		     * of printable characters, in an implementation
-		     * defined manner. -- ANSI X3J11
-		     */
+            case 'p':
+                /* The argument shall be a pointer to void.  The
+                 * value of the pointer is converted to a sequence
+                 * of printable characters, in an implementation
+                 * defined manner. -- ANSI X3J11
+                 */
 # ifdef _WRS_ALTIVEC_SUPPORT
-		    if (doVector)
-		    {
-			SET_VECTOR_FMT(vp,4);
+                if (doVector)
+                {
+                    SET_VECTOR_FMT(vp, 4);
 
-			sprintf(cp, vp, vec.u32[0], vec.u32[1], vec.u32[2],
-				vec.u32[3]);
+                    sprintf(cp, vp, vec.u32[0], vec.u32[1], vec.u32[2],
+                            vec.u32[3]);
 
-			RESET_VECTOR_FMT(vp);
-			break;
-		    }
+                    RESET_VECTOR_FMT(vp);
+                    break;
+                }
 # endif /* _WRS_ALTIVEC_SUPPORT */
-		    ulongLongVal = (unsigned long long) (unsigned long)
-				   va_arg(vaList, void *);/* NOSTRICT */
-		    base	= HEX;
-		    xdigs	= "0123456789abcdef";
-		    doHexPrefix = TRUE;
-		    ch		= 'x';
-		    goto nosign;
+                ulongLongVal = (unsigned long long)(unsigned long)
+                               va_arg(vaList, void *);/* NOSTRICT */
+                base    = HEX;
+                xdigs   = "0123456789abcdef";
+                doHexPrefix = TRUE;
+                ch      = 'x';
+                goto nosign;
 
-	    case 's':
-		    if ((cp = va_arg(vaList, char *)) == NULL)
-			cp = "(null)";
+            case 's':
+                if ((cp = va_arg(vaList, char *)) == NULL)
+                    cp = "(null)";
 
-		    if (prec >= 0)
-			{
-			/* can't use strlen; can only look for the
-			 * NUL in the first `prec' characters, and
-			 * strlen() will go further.
-			 */
+                if (prec >= 0)
+                {
+                    /* can't use strlen; can only look for the
+                     * NUL in the first `prec' characters, and
+                     * strlen() will go further.
+                     */
 
-			char *p = (char *)memchr(cp, 0, (size_t)prec);
+                    char *p = (char *)memchr(cp, 0, (size_t)prec);
 
-			if (p != NULL)
-			    {
-			    size = p - cp;
-			    if (size > prec)
-				size = prec;
-			    }
-			else
-			    size = prec;
-			}
-		    else
-			size = strlen(cp);
+                    if (p != NULL)
+                    {
+                        size = p - cp;
+                        if (size > prec)
+                            size = prec;
+                    }
+                    else
+                        size = prec;
+                }
+                else
+                    size = strlen(cp);
 
-		    sign = EOS;
-		    break;
+                sign = EOS;
+                break;
 
-	    case 'U':
-		    doLongInt = TRUE;			/* FALLTHROUGH */
+            case 'U':
+                doLongInt = TRUE;           /* FALLTHROUGH */
 
-	    case 'u':
+            case 'u':
 # ifdef _WRS_ALTIVEC_SUPPORT
-		    if (doVector)
-		    {
-			SET_VECTOR_FMT(vp, doShortInt?8:4);
+                if (doVector)
+                {
+                    SET_VECTOR_FMT(vp, doShortInt ? 8 : 4);
 
-			if (doShortInt)
-			    sprintf(cp, vp, vec.u16[0], vec.u16[1], vec.u16[2],
-				    vec.u16[3], vec.u16[4], vec.u16[5],
-				    vec.u16[6], vec.u16[7]);
-			else
-			    sprintf(cp, vp, vec.u32[0], vec.u32[1], vec.u32[2],
-				    vec.u32[3]);
+                    if (doShortInt)
+                        sprintf(cp, vp, vec.u16[0], vec.u16[1], vec.u16[2],
+                                vec.u16[3], vec.u16[4], vec.u16[5],
+                                vec.u16[6], vec.u16[7]);
+                    else
+                        sprintf(cp, vp, vec.u32[0], vec.u32[1], vec.u32[2],
+                                vec.u32[3]);
 
-			RESET_VECTOR_FMT(vp);
-			break;
-		    }
+                    RESET_VECTOR_FMT(vp);
+                    break;
+                }
 # endif /* _WRS_ALTIVEC_SUPPORT */
-		    ulongLongVal = UARG();
-		    base = DEC;
-		    goto nosign;
+                ulongLongVal = UARG();
+                base = DEC;
+                goto nosign;
 
-	    case 'X':
-		    xdigs = "0123456789ABCDEF";
-		    goto hex;
+            case 'X':
+                xdigs = "0123456789ABCDEF";
+                goto hex;
 
-	    case 'x':
-		    xdigs = "0123456789abcdef";
+            case 'x':
+                xdigs = "0123456789abcdef";
 
 hex:
 # ifdef _WRS_ALTIVEC_SUPPORT
-		    if (doVector)
-		    {
-			SET_VECTOR_FMT(vp, doShortInt?8:4);
+                if (doVector)
+                {
+                    SET_VECTOR_FMT(vp, doShortInt ? 8 : 4);
 
-			if (doShortInt)
-			    sprintf(cp, vp, vec.s16[0], vec.s16[1], vec.s16[2],
-				    vec.s16[3], vec.s16[4], vec.s16[5],
-				    vec.s16[6], vec.s16[7]);
-			else
-			    sprintf(cp, vp, vec.s32[0], vec.s32[1], vec.s32[2],
-				    vec.s32[3]);
+                    if (doShortInt)
+                        sprintf(cp, vp, vec.s16[0], vec.s16[1], vec.s16[2],
+                                vec.s16[3], vec.s16[4], vec.s16[5],
+                                vec.s16[6], vec.s16[7]);
+                    else
+                        sprintf(cp, vp, vec.s32[0], vec.s32[1], vec.s32[2],
+                                vec.s32[3]);
 
-			RESET_VECTOR_FMT(vp);
-			break;
-		    }
+                    RESET_VECTOR_FMT(vp);
+                    break;
+                }
 # endif /* _WRS_ALTIVEC_SUPPORT */
-		    ulongLongVal = UARG();
-		    base = HEX;
+                ulongLongVal = UARG();
+                base = HEX;
 
-		    /* leading 0x/X only if non-zero */
+                /* leading 0x/X only if non-zero */
 
-		    if (doAlt && (ulongLongVal != 0))
-			doHexPrefix = TRUE;
+                if (doAlt && (ulongLongVal != 0))
+                    doHexPrefix = TRUE;
 
-		    /* unsigned conversions */
-nosign:		    sign = EOS;
+                /* unsigned conversions */
+nosign:
+                sign = EOS;
 
-		    /* ... diouXx conversions ... if a precision is
-		     * specified, the 0 flag will be ignored. -- ANSI X3J11
-		     */
+                /* ... diouXx conversions ... if a precision is
+                 * specified, the 0 flag will be ignored. -- ANSI X3J11
+                 */
 
-number:		    if ((dprec = prec) >= 0)
-			doZeroPad = FALSE;
+number:
+                if ((dprec = prec) >= 0)
+                    doZeroPad = FALSE;
 
-		    /* The result of converting a zero value with an
-		     * explicit precision of zero is no characters.
-		     * -- ANSI X3J11
-		     */
-		    cp = buf + BUF;
-		    if ((ulongLongVal != 0) || (prec != 0))
-			{
-			/* unsigned mod is hard, and unsigned mod
-			 * by a constant is easier than that by
-			 * a variable; hence this switch.
-			 */
-			switch (base)
-			    {
-			    case OCT:
-				do
-				    {
-				    *--cp = to_char(ulongLongVal & 7);
-				    ulongLongVal >>= 3;
-				    } while (ulongLongVal);
+                /* The result of converting a zero value with an
+                 * explicit precision of zero is no characters.
+                 * -- ANSI X3J11
+                 */
+                cp = buf + BUF;
+                if ((ulongLongVal != 0) || (prec != 0))
+                {
+                    /* unsigned mod is hard, and unsigned mod
+                     * by a constant is easier than that by
+                     * a variable; hence this switch.
+                     */
+                    switch (base)
+                    {
+                        case OCT:
+                            do
+                            {
+                                *--cp = to_char(ulongLongVal & 7);
+                                ulongLongVal >>= 3;
+                            }
+                            while (ulongLongVal);
 
-				/* handle octal leading 0 */
+                            /* handle octal leading 0 */
 
-				if (doAlt && (*cp != '0'))
-				    *--cp = '0';
-				break;
+                            if (doAlt && (*cp != '0'))
+                                *--cp = '0';
+                            break;
 
-			    case DEC:
-				/* many numbers are 1 digit */
+                        case DEC:
+                            /* many numbers are 1 digit */
 
-				while (ulongLongVal >= 10)
-				    {
-				    *--cp = to_char(ulongLongVal % 10);
-				    ulongLongVal /= 10;
-				    }
+                            while (ulongLongVal >= 10)
+                            {
+                                *--cp = to_char(ulongLongVal % 10);
+                                ulongLongVal /= 10;
+                            }
 
-				*--cp = to_char(ulongLongVal);
-				break;
+                            *--cp = to_char(ulongLongVal);
+                            break;
 
-			    case HEX:
-				do
-				    {
-				    *--cp = xdigs[ulongLongVal & 15];
-				    ulongLongVal >>= 4;
-				    } while (ulongLongVal);
-				break;
+                        case HEX:
+                            do
+                            {
+                                *--cp = xdigs[ulongLongVal & 15];
+                                ulongLongVal >>= 4;
+                            }
+                            while (ulongLongVal);
+                            break;
 
-			    default:
-				cp = "bug in vfprintf: bad base";
-				size = strlen(cp);
-				goto skipsize;
-			    }
-			}
+                        default:
+                            cp = "bug in vfprintf: bad base";
+                            size = strlen(cp);
+                            goto skipsize;
+                    }
+                }
 
-		    size = buf + BUF - cp;
+                size = buf + BUF - cp;
 skipsize:
-		    break;
+                break;
 
-	    case 'L':
-		    /* NOT IMPLEMENTED */
-		    goto rflag;
+            case 'L':
+                /* NOT IMPLEMENTED */
+                goto rflag;
 
-	    case 'e':
-	    case 'E':
-	    case 'f':
-	    case 'g':
-	    case 'G':
+            case 'e':
+            case 'E':
+            case 'f':
+            case 'g':
+            case 'G':
 # ifdef _WRS_ALTIVEC_SUPPORT
-		    if (doVector)
-		    {
-			SET_VECTOR_FMT(vp, 4);
+                if (doVector)
+                {
+                    SET_VECTOR_FMT(vp, 4);
 
-			sprintf(cp, vp, vec.f32[0], vec.f32[1], vec.f32[2],
-			        vec.f32[3]);
+                    sprintf(cp, vp, vec.f32[0], vec.f32[1], vec.f32[2],
+                            vec.f32[3]);
 
-			RESET_VECTOR_FMT(vp);
-			break;
-		    }
+                    RESET_VECTOR_FMT(vp);
+                    break;
+                }
 # endif /* _WRS_ALTIVEC_SUPPORT */
-		    if (_func_fioFltFormatRtn != NULL)
-			{
-			oldprec = prec;		/* in case of strange float */
+                if (_func_fioFltFormatRtn != NULL)
+                {
+                    oldprec = prec;     /* in case of strange float */
 
-			if (prec > MAXFRACT)	/* do realistic precision */
-			    {
-			    if (((ch != 'g') && (ch != 'G')) || doAlt)
-				fpprec = prec - MAXFRACT;
-			    prec = MAXFRACT;	/* they asked for it! */
-			    }
-			else if (prec == -1)
-			    prec = 6;		/* ANSI default precision */
+                    if (prec > MAXFRACT)    /* do realistic precision */
+                    {
+                        if (((ch != 'g') && (ch != 'G')) || doAlt)
+                            fpprec = prec - MAXFRACT;
+                        prec = MAXFRACT;    /* they asked for it! */
+                    }
+                    else if (prec == -1)
+                        prec = 6;       /* ANSI default precision */
 
-			cp  = buf;		/* where to fill in result */
-			*cp = EOS;		/* EOS terminate just in case */
-			size = (*_func_fioFltFormatRtn) (va_addr(vaList), prec,
-						   doAlt, ch, &doSign, cp,
-						   buf+sizeof(buf));
-			if ((int)size < 0)	/* strange value (Nan,Inf,..) */
-			    {
-			    size = -size;	/* get string length */
-			    prec = oldprec;	/* old precision (not default)*/
+                    cp  = buf;      /* where to fill in result */
+                    *cp = EOS;      /* EOS terminate just in case */
+                    size = (*_func_fioFltFormatRtn)(va_addr(vaList), prec,
+                                                    doAlt, ch, &doSign, cp,
+                                                    buf + sizeof(buf));
+                    if ((int)size < 0)  /* strange value (Nan,Inf,..) */
+                    {
+                        size = -size;   /* get string length */
+                        prec = oldprec; /* old precision (not default)*/
 
-			    doZeroPad = FALSE;	/* don't pad with zeroes */
-			    if (doSign)		/* is strange value signed? */
-				sign = '-';
-			    }
-			else
-			    {
-			    if (doSign)
-				sign = '-';
+                        doZeroPad = FALSE;  /* don't pad with zeroes */
+                        if (doSign)     /* is strange value signed? */
+                            sign = '-';
+                    }
+                    else
+                    {
+                        if (doSign)
+                            sign = '-';
 
-			    if (*cp == EOS)
-				cp++;
-			    }
-			break;
-			}
-		    /* FALLTHROUGH if no floating point format routine */
+                        if (*cp == EOS)
+                            cp++;
+                    }
+                    break;
+                }
+            /* FALLTHROUGH if no floating point format routine */
 
-	    default:			/* "%?" prints ?, unless ? is NULL */
-		    if (ch == EOS)
-			return (ret);
+            default:            /* "%?" prints ?, unless ? is NULL */
+                if (ch == EOS)
+                    return (ret);
 
-		    /* pretend it was %c with argument ch */
+                /* pretend it was %c with argument ch */
 
-		    cp   = buf;
-		    *cp  = ch;
-		    size = 1;
-		    sign = EOS;
-		    break;
-	    }
+                cp   = buf;
+                *cp  = ch;
+                size = 1;
+                sign = EOS;
+                break;
+        }
 
-	/* All reasonable formats wind up here.  At this point,
-	 * `cp' points to a string which (if not doLAdjust)
-	 * should be padded out to `width' places.  If
-	 * doZeroPad, it should first be prefixed by any
-	 * sign or other prefix; otherwise, it should be blank
-	 * padded before the prefix is emitted.  After any
-	 * left-hand padding and prefixing, emit zeroes
-	 * required by a decimal [diouxX] precision, then print
-	 * the string proper, then emit zeroes required by any
-	 * leftover floating precision; finally, if doLAdjust,
-	 * pad with blanks.
-	 */
+        /* All reasonable formats wind up here.  At this point,
+         * `cp' points to a string which (if not doLAdjust)
+         * should be padded out to `width' places.  If
+         * doZeroPad, it should first be prefixed by any
+         * sign or other prefix; otherwise, it should be blank
+         * padded before the prefix is emitted.  After any
+         * left-hand padding and prefixing, emit zeroes
+         * required by a decimal [diouxX] precision, then print
+         * the string proper, then emit zeroes required by any
+         * leftover floating precision; finally, if doLAdjust,
+         * pad with blanks.
+         */
 
-	/*
-	 * compute actual size, so we know how much to pad.
-	 * fieldsz excludes decimal prec; realsz includes it
-	 */
+        /*
+         * compute actual size, so we know how much to pad.
+         * fieldsz excludes decimal prec; realsz includes it
+         */
 
-	fieldsz = (int)(size + fpprec);
+        fieldsz = (int)(size + fpprec);
 
-	if (sign)
-	    {
-	    fieldsz++;
-	    if (fieldSzIncludeSign)
-		dprec++;
-	    }
-	else if (doHexPrefix)
-	    fieldsz += 2;
+        if (sign)
+        {
+            fieldsz++;
+            if (fieldSzIncludeSign)
+                dprec++;
+        }
+        else if (doHexPrefix)
+            fieldsz += 2;
 
-	realsz = (dprec > fieldsz) ? dprec : fieldsz;
+        realsz = (dprec > fieldsz) ? dprec : fieldsz;
 
-	/* right-adjusting blank padding */
+        /* right-adjusting blank padding */
 
-	if (!doLAdjust && !doZeroPad)
-	    PAD(width - realsz, blanks);
+        if (!doLAdjust && !doZeroPad)
+            PAD(width - realsz, blanks);
 
-	/* prefix */
+        /* prefix */
 
-	if (sign)
-	    {
-	    if ((*outRoutine) (&sign, 1, outarg) != OK)
-		return (ERROR);
-	    }
-	else if (doHexPrefix)
-	    {
-	    ox[0] = '0';
-	    ox[1] = ch;
-	    if ((*outRoutine) (ox, 2, outarg) != OK)
-		return (ERROR);
-	    }
+        if (sign)
+        {
+            if ((*outRoutine)(&sign, 1, outarg) != OK)
+                return (ERROR);
+        }
+        else if (doHexPrefix)
+        {
+            ox[0] = '0';
+            ox[1] = ch;
+            if ((*outRoutine)(ox, 2, outarg) != OK)
+                return (ERROR);
+        }
 
-	/* right-adjusting zero padding */
+        /* right-adjusting zero padding */
 
-	if (!doLAdjust && doZeroPad)
-	    PAD(width - realsz, zeroes);
+        if (!doLAdjust && doZeroPad)
+            PAD(width - realsz, zeroes);
 
-	/* leading zeroes from decimal precision */
+        /* leading zeroes from decimal precision */
 
-	PAD(dprec - fieldsz, zeroes);
+        PAD(dprec - fieldsz, zeroes);
 
-	/* the string or number proper */
+        /* the string or number proper */
 
-	if ((*outRoutine) (cp, (int)size, outarg) != OK)
-	    return (ERROR);
+        if ((*outRoutine)(cp, (int)size, outarg) != OK)
+            return (ERROR);
 
-	/* trailing floating point zeroes */
+        /* trailing floating point zeroes */
 
-	PAD(fpprec, zeroes);
+        PAD(fpprec, zeroes);
 
-	/* left-adjusting padding (always blank) */
+        /* left-adjusting padding (always blank) */
 
-	if (doLAdjust)
-	    PAD(width - realsz, blanks);
+        if (doLAdjust)
+            PAD(width - realsz, blanks);
 
-	/* finally, adjust ret */
+        /* finally, adjust ret */
 
-	ret += (width > realsz) ? width : realsz;
-	}
+        ret += (width > realsz) ? width : realsz;
     }
-#else	/* _WRS_CONFIG_FORMATTED_OUT_BASIC */
-    {
-    char *           pBuf;              /* buffer Pointer */
+}
+#else   /* _WRS_CONFIG_FORMATTED_OUT_BASIC */
+{
+    char            *pBuf;              /* buffer Pointer */
     int              nChars;            /* Number of chars written */
     char             cBuf;              /* One character buffer */
     int              state;             /* Collection State */
     long             value;
-    char *           pPtr;
-    char *           pStr;              /* Temporary pointer */
+    char            *pPtr;
+    char            *pStr;              /* Temporary pointer */
     int              length;
     static char      terminate[] = "xscuandXoAFfgeGpEi%";
-    BOOL	     isNegative;
+    BOOL         isNegative;
 
     /* initialize */
     nChars = 0;
     while (*fmt != EOS)
-	{
-	pBuf   = (char *) fmt;	  /* Collects the text from the format string */
+    {
+        pBuf   = (char *) fmt;    /* Collects the text from the format string */
 
-	/* Walk throught pFmt and collect text to print */
+        /* Walk throught pFmt and collect text to print */
 
-	while ((*fmt != EOS) && (*fmt != '%'))
-	    fmt++;
+        while ((*fmt != EOS) && (*fmt != '%'))
+            fmt++;
 
 
-	/* Output text from format string */
+        /* Output text from format string */
 
-	if (fmt != pBuf)
-	    {
-	    if ((*outRoutine) (pBuf, fmt - pBuf, outarg) == OK)
-		 nChars += (fmt - pBuf);
-	    if (*fmt == EOS)
-		break;
-	    }
+        if (fmt != pBuf)
+        {
+            if ((*outRoutine)(pBuf, fmt - pBuf, outarg) == OK)
+                nChars += (fmt - pBuf);
+            if (*fmt == EOS)
+                break;
+        }
 
-	state = FIO_STATE_COLLECT + 1;
-	while ((*++fmt != EOS) && (state != FIO_STATE_COLLECT))
-	    {
-	    for (pPtr = terminate; *pPtr; pPtr++)
-		{
-		if (*pPtr == *fmt)
-		   {
-		   switch (*fmt)
-			{
-			case '%':
-			    if ((*outRoutine) ("%", 1, outarg) == OK)
-				nChars += 1;
-			    break;
-			case 'c':
-			    cBuf = va_arg(vaList, int);
-			    if ((*outRoutine) (&cBuf, 1, outarg) == OK)
-				nChars += 1;
-			    break;
+        state = FIO_STATE_COLLECT + 1;
+        while ((*++fmt != EOS) && (state != FIO_STATE_COLLECT))
+        {
+            for (pPtr = terminate; *pPtr; pPtr++)
+            {
+                if (*pPtr == *fmt)
+                {
+                    switch (*fmt)
+                    {
+                        case '%':
+                            if ((*outRoutine)("%", 1, outarg) == OK)
+                                nChars += 1;
+                            break;
+                        case 'c':
+                            cBuf = va_arg(vaList, int);
+                            if ((*outRoutine)(&cBuf, 1, outarg) == OK)
+                                nChars += 1;
+                            break;
 
-			case 's':
-			    pStr = va_arg(vaList, char*);
-			    for (pBuf = pStr, length = 0 ;
-				 *pBuf != EOS ;
-				 pBuf++, length++)
-				;
+                        case 's':
+                            pStr = va_arg(vaList, char *);
+                            for (pBuf = pStr, length = 0 ;
+                                    *pBuf != EOS ;
+                                    pBuf++, length++)
+                                ;
 
-			    if ((*outRoutine) (pStr, length, outarg) == OK)
-				nChars += length;
+                            if ((*outRoutine)(pStr, length, outarg) == OK)
+                                nChars += length;
 
-			    break;
+                            break;
 
-			case 'X':
+                        case 'X':
 # ifdef FIO_HEX_X_SUPPORT
-			    if ((length = fioBasicFormat (outRoutine,
-							  outarg,
-							  va_arg(vaList,
-								 ptrdiff_t),
-							  FIO_HEX,
-							  FALSE,
-							  tuVal)) > 0)
-				nChars += length;
+                            if ((length = fioBasicFormat(outRoutine,
+                                                         outarg,
+                                                         va_arg(vaList,
+                                                                ptrdiff_t),
+                                                         FIO_HEX,
+                                                         FALSE,
+                                                         tuVal)) > 0)
+                                nChars += length;
 
-			    break;
+                            break;
 # endif /* FIO_HEX_X_SUPPORT */
-			case 'x':
-			    if ((length = fioBasicFormat (outRoutine,
-							  outarg,
-							  va_arg(vaList,
-								 ptrdiff_t),
-							  FIO_HEX,
-							  FALSE,
-							  tlVal)) > 0)
-				nChars += length;
+                        case 'x':
+                            if ((length = fioBasicFormat(outRoutine,
+                                                         outarg,
+                                                         va_arg(vaList,
+                                                                ptrdiff_t),
+                                                         FIO_HEX,
+                                                         FALSE,
+                                                         tlVal)) > 0)
+                                nChars += length;
 
-			    break;
+                            break;
 
-			case 'o':
+                        case 'o':
 # ifdef FIO_OCT_SUPPORT
-			    if ((length = fioBasicFormat (outRoutine,
-							  outarg,
-							  va_arg(vaList, int),
-							  FIO_OCT,
-							  FALSE,
-							  tlVal)) > 0)
-				nChars += length;
+                            if ((length = fioBasicFormat(outRoutine,
+                                                         outarg,
+                                                         va_arg(vaList, int),
+                                                         FIO_OCT,
+                                                         FALSE,
+                                                         tlVal)) > 0)
+                                nChars += length;
 
-			    break;
+                            break;
 # endif /* FIO_OCT_SUPPORT */
-			case 'd':
-			    value = (long) va_arg(vaList, int);
-			    if (value < 0)
-				{
-				isNegative = TRUE;
-				value = ((value == INT_MIN)?
-					 ((unsigned int)INT_MAX+1) :
-					 (unsigned int)(-value));
-				}
-			    else
-				isNegative = FALSE;
+                        case 'd':
+                            value = (long) va_arg(vaList, int);
+                            if (value < 0)
+                            {
+                                isNegative = TRUE;
+                                value = ((value == INT_MIN) ?
+                                         ((unsigned int)INT_MAX + 1) :
+                                         (unsigned int)(-value));
+                            }
+                            else
+                                isNegative = FALSE;
 
-			    if ((length = fioBasicFormat (outRoutine,
-							  outarg,
-							  value,
-							  FIO_DEC,
-							  isNegative,
-							  tlVal)) > 0)
-				nChars += length;
+                            if ((length = fioBasicFormat(outRoutine,
+                                                         outarg,
+                                                         value,
+                                                         FIO_DEC,
+                                                         isNegative,
+                                                         tlVal)) > 0)
+                                nChars += length;
 
-			    break;
+                            break;
 
-			case 'u':
-			    if ((length = fioBasicFormat (outRoutine,
-						   outarg,
-						   va_arg(vaList, unsigned int),
-						   FIO_DEC,
-						   FALSE,
-						   tlVal)) > 0)
-				nChars += length;
+                        case 'u':
+                            if ((length = fioBasicFormat(outRoutine,
+                                                         outarg,
+                                                         va_arg(vaList, unsigned int),
+                                                         FIO_DEC,
+                                                         FALSE,
+                                                         tlVal)) > 0)
+                                nChars += length;
 
-			    break;
+                            break;
 
-			default:
-			    break;
-			}
-		    state = FIO_STATE_COLLECT;
-		    break;
-		    }
-		}
-	    }
-	}
+                        default:
+                            break;
+                    }
+                    state = FIO_STATE_COLLECT;
+                    break;
+                }
+            }
+        }
+    }
 
     return (nChars);
-    }
+}
 
 
 /*******************************************************************************
@@ -1765,42 +1785,43 @@ skipsize:
 */
 
 LOCAL int fioBasicFormat
-    (
+(
     FUNCPTR     outRoutine,        /* output handler */
     int         outarg,            /* argument to routine */
     unsigned long        value,    /* value to convert into a string */
     int         base,              /* FIO_HEX, FIO_OCT or FIO_DEC */
     BOOL        isNegative,        /* Display negative */
-    char *      pTtanslate         /* Translation string */
-    )
-    {
-    FAST char *	pChar;
+    char       *pTtanslate         /* Translation string */
+)
+{
+    FAST char  *pChar;
     char        numArray[NSIZE];
     int         count = 0;
 
-    bzero (numArray, sizeof (numArray));
-    pChar = &numArray[NSIZE-1];
+    bzero(numArray, sizeof(numArray));
+    pChar = &numArray[NSIZE - 1];
 
     do
-	{
-	*pChar = (char)(pTtanslate[value % base]);
-	--pChar;
-	value /= base;
-	count++;
-	} while (value > 0);
+    {
+        *pChar = (char)(pTtanslate[value % base]);
+        --pChar;
+        value /= base;
+        count++;
+    }
+    while (value > 0);
 
     if (isNegative)
-	*pChar-- = '-';
+        *pChar-- = '-';
 
     pChar++;
 
-    if (((*outRoutine) (pChar, &numArray[NSIZE-1] - (int)pChar + 1,
-	                outarg)) == OK)
-	return count;
+    if (((*outRoutine)(pChar, &numArray[NSIZE - 1] - (int)pChar + 1,
+                       outarg)) == OK)
+        return count;
 
     return 0;
 
-    }
+}
 #endif /* _WRS_CONFIG_FORMATTED_OUT_BASIC */
 
 
@@ -1818,17 +1839,17 @@ LOCAL int fioBasicFormat
 */
 
 STATUS fioBufPut
-    (
+(
     char *inbuf,                /* pointer to source buffer */
     int length,                 /* number of bytes to copy */
     char **outptr               /* pointer to destination buffer */
-    )
-    {
-    bcopy (inbuf, *outptr, (size_t)length);
+)
+{
+    bcopy(inbuf, *outptr, (size_t)length);
     *outptr += length;
 
     return (OK);
-    }
+}
 
 
 /*******************************************************************************
@@ -1851,12 +1872,12 @@ STATUS fioBufPut
 */
 
 STATUS fioSnBufPut
-    (
-    char *         pInBuf,       /* pointer to input buffer */
+(
+    char          *pInBuf,       /* pointer to input buffer */
     int            length,       /* length of input buffer */
-    SNPUTBUF_ARG * pArg          /* fioSnBufPut argument structure */
-    )
-    {
+    SNPUTBUF_ARG *pArg           /* fioSnBufPut argument structure */
+)
+{
     int remaining;
 
     /* check if sufficient free space remains in the buffer */
@@ -1866,16 +1887,16 @@ STATUS fioSnBufPut
     /* bail if at the end of buffer, recall need a single byte for null */
 
     if (remaining <= 0)
-	return (OK);
+        return (OK);
     else if (length > remaining)
-	length = remaining;
+        length = remaining;
 
-    bcopy (pInBuf, pArg->pBuf, (size_t)length);
+    bcopy(pInBuf, pArg->pBuf, (size_t)length);
 
     pArg->pBuf += length;
 
     return (OK);
-    }
+}
 
 
 /*******************************************************************************
@@ -1888,22 +1909,22 @@ STATUS fioSnBufPut
 */
 
 STATUS fioBufPrint
-    (
+(
     char *buf,
     size_t nbytes,
     int fd
-    )
-    {
-	/* _func_consoleOut = NULL;  */  /* ll */
+)
+{
+    /* _func_consoleOut = NULL;  */  /* ll */
     if (_func_consoleOut == NULL)
-	{
-	if (_func_kwrite != NULL)
-	    return ((*_func_kwrite) (buf, nbytes));
-	return (ERROR);
-	}
+    {
+        if (_func_kwrite != NULL)
+            return ((*_func_kwrite)(buf, nbytes));
+        return (ERROR);
+    }
 
-    if ((* _func_consoleOut) (fd, buf, nbytes) != nbytes)
-	return (ERROR);
+    if ((* _func_consoleOut)(fd, buf, nbytes) != nbytes)
+        return (ERROR);
 
     return (OK);
-    }
+}

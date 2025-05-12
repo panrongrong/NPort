@@ -7,7 +7,7 @@
  * of this software may be licensed only pursuant to the terms
  * of an applicable Wind River license agreement.
  */
- 
+
 /*
 modification history
 --------------------
@@ -27,11 +27,11 @@ extern "C" {
 #ifdef INCLUDE_END
 
 END_TBL_ENTRY endDevTbl [] =
-    {
+{
     /* End of table marker */
 
     { 0, END_TBL_END, NULL, 0, NULL, FALSE}
-    };
+};
 
 #endif /* INCLUDE_END */
 

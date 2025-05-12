@@ -41,17 +41,17 @@ modify MAC addresses of on-board network interfaces.
 
 #define DEBUG_ON
 #ifdef  DEBUG_ON
-#   define DEBUG_LOG printf
+    #define DEBUG_LOG printf
 #else
-#   define DEBUG_LOG(format, ... )
+    #define DEBUG_LOG(format, ... )
 #endif  /* DEBUG_ON */
 
 #define MAC_ADRS_LEN         6
 #define MAX_MAC_ADRS         7
 #define MAX_MAC_DEVS         7
 
-/* 
-MAC address configuration 
+/*
+MAC address configuration
 */
 #define FMSH_ENET0           0x00
 #define FMSH_ENET1           0x0a
@@ -61,36 +61,37 @@ MAC address configuration
 #define CUST_ENET4           0x22
 #define CUST_ENET5           0x33
 
-#define ENET_DEFAULT0 		FMSH_ENET0
-#define ENET_DEFAULT1 		FMSH_ENET1
-#define ENET_DEFAULT2 		FMSH_ENET2
+#define ENET_DEFAULT0       FMSH_ENET0
+#define ENET_DEFAULT1       FMSH_ENET1
+#define ENET_DEFAULT2       FMSH_ENET2
 
 /* globals */
 const char *sysNetDevName [MAX_MAC_DEVS] = { SYS_NET_DEV_NAME };
 
 /* locals */
-LOCAL UINT8 glbEnetAddr [MAX_MAC_ADRS][MAC_ADRS_LEN + 1] = 
+LOCAL UINT8 glbEnetAddr [MAX_MAC_ADRS][MAC_ADRS_LEN + 1] =
 {
     { FMSH_ENET0, FMSH_ENET1, FMSH_ENET2, CUST_ENET3, CUST_ENET4, CUST_ENET5 },
-    
+
 #if 1  /* jc */
-    { FMSH_ENET0, FMSH_ENET1, FMSH_ENET2, CUST_ENET3, CUST_ENET4, CUST_ENET5+1 },
-    { FMSH_ENET0, FMSH_ENET1, FMSH_ENET2, CUST_ENET3, CUST_ENET4, CUST_ENET5+2 },
-    { FMSH_ENET0, FMSH_ENET1, FMSH_ENET2, CUST_ENET3, CUST_ENET4, CUST_ENET5+3 },
-    { FMSH_ENET0, FMSH_ENET1, FMSH_ENET2, CUST_ENET3, CUST_ENET4, CUST_ENET5+4 },
-    { FMSH_ENET0, FMSH_ENET1, FMSH_ENET2, CUST_ENET3, CUST_ENET4, CUST_ENET5+5 },
+    { FMSH_ENET0, FMSH_ENET1, FMSH_ENET2, CUST_ENET3, CUST_ENET4, CUST_ENET5 + 1 },
+    { FMSH_ENET0, FMSH_ENET1, FMSH_ENET2, CUST_ENET3, CUST_ENET4, CUST_ENET5 + 2 },
+    { FMSH_ENET0, FMSH_ENET1, FMSH_ENET2, CUST_ENET3, CUST_ENET4, CUST_ENET5 + 3 },
+    { FMSH_ENET0, FMSH_ENET1, FMSH_ENET2, CUST_ENET3, CUST_ENET4, CUST_ENET5 + 4 },
+    { FMSH_ENET0, FMSH_ENET1, FMSH_ENET2, CUST_ENET3, CUST_ENET4, CUST_ENET5 + 5 },
 #endif
 };
 
-LOCAL UINT8 sysInvalidAddr [2][MAC_ADRS_LEN + 1] = {
+LOCAL UINT8 sysInvalidAddr [2][MAC_ADRS_LEN + 1] =
+{
     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
     { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff }
 };
 
 STATUS sysNetMacNVRamAddrGet(char *ifName,
-		int ifUnit,
-		UINT8 * ifMacAddr,
-		int ifMacAddrLen);
+                             int ifUnit,
+                             UINT8 *ifMacAddr,
+                             int ifMacAddrLen);
 
 /*
 IMPORT STATUS qspiFlashRead(UINT32 offset,
@@ -110,12 +111,12 @@ UINT32         byteLen );
 */
 
 int sysMacIndex2Dev
-    (
+(
     int index
-    )
-    {
+)
+{
     return 0;
-    }
+}
 
 /*******************************************************************************
 *
@@ -130,12 +131,12 @@ int sysMacIndex2Dev
 */
 
 int sysMacIndex2Unit
-    (
+(
     int index
-    )
-    {
+)
+{
     return (index - MAC_OFFSET_GEMAC);
-    }
+}
 
 /*******************************************************************************
 *
@@ -151,34 +152,34 @@ int sysMacIndex2Unit
 */
 
 STATUS sysMacOffsetGet
-    (
-    char *  ifName,     /* interface name */
+(
+    char   *ifName,     /* interface name */
     int     ifUnit,     /* interface unit */
-    char ** ppEnet,     /* pointer to glbEnetAddr[][] entry */
-    int *   pOffset     /* offset in NVRAM */
-    )
-    {
-	
+    char **ppEnet,      /* pointer to glbEnetAddr[][] entry */
+    int    *pOffset     /* offset in NVRAM */
+)
+{
+
     if (ifUnit > MAX_MAC_DEVS)
         return ERROR;
 
-    if (strcmp (ifName, SYS_NET_DEV_NAME) == 0)
-        {
+    if (strcmp(ifName, SYS_NET_DEV_NAME) == 0)
+    {
         *pOffset = (ifUnit + MAC_OFFSET_GEMAC) * (MAC_ADRS_LEN + 2);
-        *ppEnet  = (char*)glbEnetAddr [ifUnit + MAC_OFFSET_GEMAC];
-        }
-	else if (strcmp (ifName, SYS_AXI_NET_DEV_NAME) == 0)
-        {
+        *ppEnet  = (char *)glbEnetAddr [ifUnit + MAC_OFFSET_GEMAC];
+    }
+    else if (strcmp(ifName, SYS_AXI_NET_DEV_NAME) == 0)
+    {
         *pOffset = (ifUnit + MAC_OFFSET_GEMAC) * (MAC_ADRS_LEN + 2);
-        *ppEnet  = (char*)glbEnetAddr [ifUnit + MAC_OFFSET_GEMAC];
-        }
+        *ppEnet  = (char *)glbEnetAddr [ifUnit + MAC_OFFSET_GEMAC];
+    }
     else
-        {
+    {
         return ERROR;
-        }
+    }
 
     return OK;
-    }
+}
 
 /*******************************************************************************
 *
@@ -196,23 +197,23 @@ STATUS sysMacOffsetGet
 */
 
 STATUS sysNetMacAddrGet
-    (
-    char *  ifName,
+(
+    char   *ifName,
     int     ifUnit,
-    UINT8 * ifMacAddr,
+    UINT8 *ifMacAddr,
     int     ifMacAddrLen
-    )
-    {
+)
+{
     /*
      * None of our interfaces can be queried directly.
      * Return ERROR to indicate that we need to use RAM/NVRAM instead.
      */
-#if 0  
-    return sysNetMacNVRamAddrGet(ifName,ifUnit,ifMacAddr,ifMacAddrLen);
-#else  
-	return ERROR;
+#if 0
+    return sysNetMacNVRamAddrGet(ifName, ifUnit, ifMacAddr, ifMacAddrLen);
+#else
+    return ERROR;
 #endif
-    }
+}
 
 /*******************************************************************************
 *
@@ -231,49 +232,49 @@ STATUS sysNetMacAddrGet
 */
 
 STATUS sysNetMacAddrSet
-    (
-    char *  ifName,
+(
+    char   *ifName,
     int     ifUnit,
-    UINT8 * ifMacAddr,
+    UINT8 *ifMacAddr,
     int     ifMacAddrLen
-    )
-    {
+)
+{
 
     int   offset;
     char *pEnet;
     UINT8  nvAddr[8];
 
-#if 0 
+#if 0
 
     /* fetch address line & offset from glbEnetAddr[] table */
-    if (sysMacOffsetGet (ifName, ifUnit, &pEnet, &offset) != OK)
+    if (sysMacOffsetGet(ifName, ifUnit, &pEnet, &offset) != OK)
         return ERROR;
 
 #if (NV_RAM_SIZE != NONE)
 
-    if (sysNvRamGet ((char *)nvAddr, ifMacAddrLen,
-                     NV_MAC_ADRS_OFFSET + offset) != OK)
+    if (sysNvRamGet((char *)nvAddr, ifMacAddrLen,
+                    NV_MAC_ADRS_OFFSET + offset) != OK)
         return ERROR;
 
     if (nvAddr[0] != ENET_DEFAULT0 ||
-        nvAddr[1] != ENET_DEFAULT1 ||
-        nvAddr[2] != ENET_DEFAULT2)
-        {
-        DEBUG_LOG ("%s%d: warning: using hard-coded "
-                "address %02x:%02x:%02x:%02x:%02x:%02x\n",
-                ifName, ifUnit, pEnet[0], pEnet[1], pEnet[2],
-                pEnet[3], pEnet[4], pEnet[5]);
-        }
+            nvAddr[1] != ENET_DEFAULT1 ||
+            nvAddr[2] != ENET_DEFAULT2)
+    {
+        DEBUG_LOG("%s%d: warning: using hard-coded "
+                  "address %02x:%02x:%02x:%02x:%02x:%02x\n",
+                  ifName, ifUnit, pEnet[0], pEnet[1], pEnet[2],
+                  pEnet[3], pEnet[4], pEnet[5]);
+    }
     else
-        memcpy (pEnet, nvAddr, MAC_ADRS_LEN);
+        memcpy(pEnet, nvAddr, MAC_ADRS_LEN);
 
-    if (memcmp (ifMacAddr, pEnet, ifMacAddrLen) == 0)
-        {
+    if (memcmp(ifMacAddr, pEnet, ifMacAddrLen) == 0)
+    {
         /* same address so don't erase and rewrite flash */
 
-        DEBUG_LOG ("Address unchanged\n");
+        DEBUG_LOG("Address unchanged\n");
         return OK;
-        }
+    }
 
     /*if (sysNvRamSet ((char *)ifMacAddr, ifMacAddrLen,
                      NV_MAC_ADRS_OFFSET + offset) != OK)
@@ -284,16 +285,20 @@ STATUS sysNetMacAddrSet
 
     /* mac address in memory only */
 #if 0
-    memcpy (ifMacAddr, pEnet, ifMacAddrLen); 
+    memcpy(ifMacAddr, pEnet, ifMacAddrLen);
 #else
     UINT8 mac[6] = {0};
-	mac[0] = 0x00; mac[1] = 0x0A; mac[2] = 0x35;
-	mac[3] = 0x01; mac[4] = 0x02; mac[5] = 0x03;
-    memcpy (ifMacAddr, (UINT8 *)(&mac[0]), 6);
+    mac[0] = 0x00;
+    mac[1] = 0x0A;
+    mac[2] = 0x35;
+    mac[3] = 0x01;
+    mac[4] = 0x02;
+    mac[5] = 0x03;
+    memcpy(ifMacAddr, (UINT8 *)(&mac[0]), 6);
 #endif
 
     return OK;
-    }
+}
 
 /*******************************************************************************
 *
@@ -320,13 +325,13 @@ STATUS sysNetMacAddrSet
 */
 #define NV_RAM_SIZE NONE
 STATUS sysNetMacNVRamAddrGet
-    (
-    char *  ifName,
+(
+    char   *ifName,
     int     ifUnit,
-    UINT8 * ifMacAddr,
+    UINT8 *ifMacAddr,
     int     ifMacAddrLen
-    )
-    {
+)
+{
     int   offset;
     char *pEnet;
 #if (NV_RAM_SIZE != NONE)
@@ -336,100 +341,101 @@ STATUS sysNetMacNVRamAddrGet
 #if 0
     /* fetch address line & offset from glbEnetAddr[] table */
 
-    if (sysMacOffsetGet (ifName, ifUnit, &pEnet, &offset) != OK)
+    if (sysMacOffsetGet(ifName, ifUnit, &pEnet, &offset) != OK)
         return ERROR;
 
 #if (NV_RAM_SIZE != NONE)
 
 #if 0
-	DEBUG_LOG ("qspi MAC addr get start at : 0x%x\n",NV_MAC_ADRS_OFFSET+offset);
+    DEBUG_LOG("qspi MAC addr get start at : 0x%x\n", NV_MAC_ADRS_OFFSET + offset);
     /*qspiFlashRead(offset, (char *)nvAddr, ifMacAddrLen);*/
-    if (qspiFlashRead(NV_MAC_ADRS_OFFSET+offset, (char *)nvAddr, ifMacAddrLen)!= OK){
-    	DEBUG_LOG ("qspiFlashRead err, return\n");
+    if (qspiFlashRead(NV_MAC_ADRS_OFFSET + offset, (char *)nvAddr, ifMacAddrLen) != OK)
+    {
+        DEBUG_LOG("qspiFlashRead err, return\n");
         return ERROR;
     }
-    DEBUG_LOG ("qspi mac address - %02x:%02x:%02x:%02x:%02x:%02x\n",
-    		nvAddr[0], nvAddr[1], nvAddr[2], nvAddr[3], nvAddr[4], nvAddr[5]);
+    DEBUG_LOG("qspi mac address - %02x:%02x:%02x:%02x:%02x:%02x\n",
+              nvAddr[0], nvAddr[1], nvAddr[2], nvAddr[3], nvAddr[4], nvAddr[5]);
 #else
-    if (sysNvRamGet ((char *)nvAddr, ifMacAddrLen,
-                     NV_MAC_ADRS_OFFSET + offset) != OK)
+    if (sysNvRamGet((char *)nvAddr, ifMacAddrLen,
+                    NV_MAC_ADRS_OFFSET + offset) != OK)
         return ERROR;
 
 #endif
 
     if (nvAddr[0] != ENET_DEFAULT0 ||
-        nvAddr[1] != ENET_DEFAULT1 ||
-        nvAddr[2] != ENET_DEFAULT2)
-        {
-        DEBUG_LOG ("%s%d: warning: using hard-coded "
-                "address %02x:%02x:%02x:%02x:%02x:%02x\n",
-                ifName, ifUnit, pEnet[0], pEnet[1], pEnet[2],
-                pEnet[3], pEnet[4], pEnet[5]);
-        }
+            nvAddr[1] != ENET_DEFAULT1 ||
+            nvAddr[2] != ENET_DEFAULT2)
+    {
+        DEBUG_LOG("%s%d: warning: using hard-coded "
+                  "address %02x:%02x:%02x:%02x:%02x:%02x\n",
+                  ifName, ifUnit, pEnet[0], pEnet[1], pEnet[2],
+                  pEnet[3], pEnet[4], pEnet[5]);
+    }
     else
-        memcpy (pEnet, nvAddr, MAC_ADRS_LEN);
-	
+        memcpy(pEnet, nvAddr, MAC_ADRS_LEN);
+
 #endif
 
-    if (memcmp (pEnet, sysInvalidAddr[0], MAC_ADRS_LEN) == 0)
-        {
-    	DEBUG_LOG ("Inv mac address\n");
+    if (memcmp(pEnet, sysInvalidAddr[0], MAC_ADRS_LEN) == 0)
+    {
+        DEBUG_LOG("Inv mac address\n");
         return ERROR;
-        }
-    if (memcmp (pEnet, sysInvalidAddr[1], MAC_ADRS_LEN) == 0)
-        {
-    	DEBUG_LOG ("Inv mac address\n");
+    }
+    if (memcmp(pEnet, sysInvalidAddr[1], MAC_ADRS_LEN) == 0)
+    {
+        DEBUG_LOG("Inv mac address\n");
         return ERROR;
-        }
+    }
 
     /* mac address in memory only */
 
-    memcpy (ifMacAddr, pEnet, ifMacAddrLen);
-    DEBUG_LOG ("qspi MAC addr get ok\n");
-	
+    memcpy(ifMacAddr, pEnet, ifMacAddrLen);
+    DEBUG_LOG("qspi MAC addr get ok\n");
+
 #else
 
-	/* fetch address line & offset from glbEnetAddr[] table */	
-	if (sysMacOffsetGet (ifName, ifUnit, &pEnet, &offset) != OK)
-	{	
-		return ERROR;
-	}
+    /* fetch address line & offset from glbEnetAddr[] table */
+    if (sysMacOffsetGet(ifName, ifUnit, &pEnet, &offset) != OK)
+    {
+        return ERROR;
+    }
 
 #if (NV_RAM_SIZE != NONE)
-	if (sysNvRamGet ((char *)nvAddr, ifMacAddrLen, NV_MAC_ADRS_OFFSET + offset) != OK)
-	{	
-		return ERROR;
-	}
+    if (sysNvRamGet((char *)nvAddr, ifMacAddrLen, NV_MAC_ADRS_OFFSET + offset) != OK)
+    {
+        return ERROR;
+    }
 
-	if (nvAddr[0] != ENET_DEFAULT0 ||
-		nvAddr[1] != ENET_DEFAULT1 ||
-		nvAddr[2] != ENET_DEFAULT2)
-	{
-		DEBUG_LOG ("%s%d: warning: using hard-coded "
-				"address %02x:%02x:%02x:%02x:%02x:%02x\n",
-				ifName, ifUnit, pEnet[0], pEnet[1], pEnet[2],
-				pEnet[3], pEnet[4], pEnet[5]);
-	}
-	else
-	{
-		memcpy (pEnet, nvAddr, MAC_ADRS_LEN);
-	}
+    if (nvAddr[0] != ENET_DEFAULT0 ||
+            nvAddr[1] != ENET_DEFAULT1 ||
+            nvAddr[2] != ENET_DEFAULT2)
+    {
+        DEBUG_LOG("%s%d: warning: using hard-coded "
+                  "address %02x:%02x:%02x:%02x:%02x:%02x\n",
+                  ifName, ifUnit, pEnet[0], pEnet[1], pEnet[2],
+                  pEnet[3], pEnet[4], pEnet[5]);
+    }
+    else
+    {
+        memcpy(pEnet, nvAddr, MAC_ADRS_LEN);
+    }
 #endif
 
-	if (memcmp (pEnet, sysInvalidAddr[0], MAC_ADRS_LEN) == 0)
-	{
-		return ERROR;
-	}
-	
-	if (memcmp (pEnet, sysInvalidAddr[1], MAC_ADRS_LEN) == 0)
-	{
-		return ERROR;
-	}
+    if (memcmp(pEnet, sysInvalidAddr[0], MAC_ADRS_LEN) == 0)
+    {
+        return ERROR;
+    }
 
-	/* mac address in memory only */
-	memcpy (ifMacAddr, pEnet, ifMacAddrLen);
+    if (memcmp(pEnet, sysInvalidAddr[1], MAC_ADRS_LEN) == 0)
+    {
+        return ERROR;
+    }
+
+    /* mac address in memory only */
+    memcpy(ifMacAddr, pEnet, ifMacAddrLen);
 #endif
 
     return OK;
 }
-	
+

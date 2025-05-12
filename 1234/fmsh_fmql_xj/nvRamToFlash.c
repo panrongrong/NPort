@@ -42,12 +42,12 @@ sysFlashSet().
 */
 
 STATUS sysNvRamGet
-    (
+(
     char *string,       /* where to copy non-volatile RAM    */
     int strLen,         /* maximum number of bytes to copy   */
     int offset          /* byte offset into non-volatile RAM */
-    )
-    {
+)
+{
 #ifdef INCLUDE_FMQL_QSPI
     STATUS retVal;
 
@@ -64,7 +64,7 @@ STATUS sysNvRamGet
 #else
     return (ERROR);
 #endif /* INCLUDE_FMQL_QSPI */
-    }
+}
 
 /*******************************************************************************
 *
@@ -80,21 +80,21 @@ STATUS sysNvRamGet
 */
 
 STATUS sysNvRamSet
-    (
+(
     char *string,       /* string to be copied into non-volatile RAM */
     int strLen,         /* maximum number of bytes to copy           */
     int offset          /* byte offset into non-volatile RAM         */
-    )
-    {
+)
+{
 #ifdef INCLUDE_FMQL_QSPI
     offset += NV_BOOT_OFFSET;   /* boot line begins at <offset> = 0 */
 
-    if ((offset < 0) || (strLen < 0) || ((offset + strLen) > NV_RAM_SIZE ))
+    if ((offset < 0) || (strLen < 0) || ((offset + strLen) > NV_RAM_SIZE))
         return (ERROR);
 
     return (sysFlashSet(string, strLen, offset + NV_RAM_ADRS));
 #else
     return (ERROR);
 #endif /* INCLUDE_FMQL_QSPI */
-    }
+}
 

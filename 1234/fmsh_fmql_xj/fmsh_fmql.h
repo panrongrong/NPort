@@ -123,20 +123,20 @@ extern "C" {
 
 
 /*
-FMSH FMQL interrupt level and vectors 
+FMSH FMQL interrupt level and vectors
 */
 
 /*
-42	SPI	TIMER0(TIMER0_intr1_n)		
-43	SPI	TIMER0(TIMER0_intr2_n)		
-44	SPI	TIMER0(TIMER0_intr3_n)	*/
-#define INT_LVL_ALT_TIMER0          (42)  /* ttc0-timer0,1,2 */ 
+42  SPI TIMER0(TIMER0_intr1_n)
+43  SPI TIMER0(TIMER0_intr2_n)
+44  SPI TIMER0(TIMER0_intr3_n)  */
+#define INT_LVL_ALT_TIMER0          (42)  /* ttc0-timer0,1,2 */
 
 /*
-65	SPI	TIMER1(TIMER0_intr1_n)		
-66	SPI	TIMER1(TIMER0_intr2_n)		
-67	SPI	TIMER1(TIMER0_intr3_n)	*/
-#define INT_LVL_ALT_TIMER3          (65)  /* ttc1-timer3,4,5 */ 
+65  SPI TIMER1(TIMER0_intr1_n)
+66  SPI TIMER1(TIMER0_intr2_n)
+67  SPI TIMER1(TIMER0_intr3_n)  */
+#define INT_LVL_ALT_TIMER3          (65)  /* ttc1-timer3,4,5 */
 
 
 #ifdef UART_1_AS_CONSOLE  /* logic_uart1 use phy_uart0 */
@@ -151,75 +151,75 @@ FMSH FMQL interrupt level and vectors
 #define INT_VEC_UART1             IVEC_TO_INUM(INT_LVL_UART1)  /* 76 SPI UART1 */
 
 
-#define INT_VEC_ALT_TIMER0		  IVEC_TO_INUM(INT_LVL_ALT_TIMER0)
-#define INT_VEC_ALT_TIMER3		  IVEC_TO_INUM(INT_LVL_ALT_TIMER3)
+#define INT_VEC_ALT_TIMER0        IVEC_TO_INUM(INT_LVL_ALT_TIMER0)
+#define INT_VEC_ALT_TIMER3        IVEC_TO_INUM(INT_LVL_ALT_TIMER3)
 
-#define INT_VEC_GTC_TIMER		  IVEC_TO_INUM(29)      /* 29 PPI Secure Physical Timer event(PPI1) 电平	 */
+#define INT_VEC_GTC_TIMER         IVEC_TO_INUM(29)      /* 29 PPI Secure Physical Timer event(PPI1) 电平   */
 
-#define INT_VEC_EMAC0             IVEC_TO_INUM(51)      /* 51	SPI	GMAC0 */
-#define INT_VEC_EMAC1             IVEC_TO_INUM(72)      /* 72	SPI	GMAC1 */
+#define INT_VEC_EMAC0             IVEC_TO_INUM(51)      /* 51   SPI GMAC0 */
+#define INT_VEC_EMAC1             IVEC_TO_INUM(72)      /* 72   SPI GMAC1 */
 
 
 #ifdef SD_CTRL1_AS_EMMC
-#define INT_VEC_SDMMC_0           IVEC_TO_INUM(73)      /* 52	SPI	SDMCC0 */
+#define INT_VEC_SDMMC_0           IVEC_TO_INUM(73)      /* 52   SPI SDMCC0 */
 #else
-#define INT_VEC_SDMMC_0           IVEC_TO_INUM(52)      /* 52	SPI	SDMCC0 */
+#define INT_VEC_SDMMC_0           IVEC_TO_INUM(52)      /* 52   SPI SDMCC0 */
 #endif
-#define INT_VEC_SDMMC_1           IVEC_TO_INUM(73)      /* 73	SPI	SDMCC1 */
+#define INT_VEC_SDMMC_1           IVEC_TO_INUM(73)      /* 73   SPI SDMCC1 */
 
 
-	
-#define INT_VEC_WD0               IVEC_TO_INUM(41)      /* 41	SPI	WDT(WDT_intr_n)	 */
 
-#define INT_VEC_I2C0              IVEC_TO_INUM(53)     /* 53	SPI	I2C0	 */
-#define INT_VEC_I2C1              IVEC_TO_INUM(74)     /* 74	SPI	I2C1	 */
+#define INT_VEC_WD0               IVEC_TO_INUM(41)      /* 41   SPI WDT(WDT_intr_n)  */
 
-#define INT_VEC_USB0              IVEC_TO_INUM(50)     /* 50	SPI	USB0	 */
-#define INT_VEC_USB1              IVEC_TO_INUM(71)     /* 71	SPI	USB1	 */
+#define INT_VEC_I2C0              IVEC_TO_INUM(53)     /* 53    SPI I2C0     */
+#define INT_VEC_I2C1              IVEC_TO_INUM(74)     /* 74    SPI I2C1     */
+
+#define INT_VEC_USB0              IVEC_TO_INUM(50)     /* 50    SPI USB0     */
+#define INT_VEC_USB1              IVEC_TO_INUM(71)     /* 71    SPI USB1     */
 
 /*
-49	SPI	GPIO0	
-68	SPI	GPIO1		
-69	SPI	GPIO2		
-70	SPI	GPIO3	*/
+49  SPI GPIO0
+68  SPI GPIO1
+69  SPI GPIO2
+70  SPI GPIO3   */
 #define INT_VEC_GPIO_BANK_A       IVEC_TO_INUM(49)       /* BANK_A Interrupt */
 #define INT_VEC_GPIO_BANK_B       IVEC_TO_INUM(68)       /* BANK_B Interrupt */
 #define INT_VEC_GPIO_BANK_C       IVEC_TO_INUM(69)       /* BANK_C Interrupt */
 #define INT_VEC_GPIO_BANK_D       IVEC_TO_INUM(70)       /* BANK_D Interrupt */
 
-#define INT_VEC_SPIINT0            IVEC_TO_INUM(51)     /* 54	SPI	SPI0 */
-#define INT_VEC_SPIINT1            IVEC_TO_INUM(75)     /* 75	SPI	SPI1 */
+#define INT_VEC_SPIINT0            IVEC_TO_INUM(51)     /* 54   SPI SPI0 */
+#define INT_VEC_SPIINT1            IVEC_TO_INUM(75)     /* 75   SPI SPI1 */
 
-/*#define CAN0_INT_ID		56U*/
-/*#define CAN1_INT_ID		77U*/
-#define INT_VEC_CAN_INT0            IVEC_TO_INUM(56)     /* 56	SPI	CAN0 */
-#define INT_VEC_CAN_INT1            IVEC_TO_INUM(77)     /* 77	SPI	CAN1 */
+/*#define CAN0_INT_ID       56U*/
+/*#define CAN1_INT_ID       77U*/
+#define INT_VEC_CAN_INT0            IVEC_TO_INUM(56)     /* 56  SPI CAN0 */
+#define INT_VEC_CAN_INT1            IVEC_TO_INUM(77)     /* 77  SPI CAN1 */
 
 
 /*
 PL -> PS irq:
 ------------------------------
-57 	irqf2p[0] 	High Level 	—
-58 	irqf2p[1] 	High Level 	—
-59 	irqf2p[2] 	High Level 	—
-60 	irqf2p[3] 	High Level 	—
-61 	irqf2p[4] 	High Level 	
-62 	irqf2p[5] 	High Level 	—
-63 	irqf2p[6] 	High Level 	—
-64 	irqf2p[7] 	High Level	
+57  irqf2p[0]   High Level  —
+58  irqf2p[1]   High Level  —
+59  irqf2p[2]   High Level  —
+60  irqf2p[3]   High Level  —
+61  irqf2p[4]   High Level
+62  irqf2p[5]   High Level  —
+63  irqf2p[6]   High Level  —
+64  irqf2p[7]   High Level
 
-84 	irqf2p[8] 	High Level 	—
-85 	irqf2p[9] 	High Level 	—
-86 	irqf2p[10] 	High Level 	—
-87 	irqf2p[11] 	High Level 	—
-88 	irqf2p[12] 	High Level 	—
-89 	irqf2p[13] 	High Level 	—
-90 	irqf2p[14] 	High Level 	—
-91 	irqf2p[15] 	High Level	
+84  irqf2p[8]   High Level  —
+85  irqf2p[9]   High Level  —
+86  irqf2p[10]  High Level  —
+87  irqf2p[11]  High Level  —
+88  irqf2p[12]  High Level  —
+89  irqf2p[13]  High Level  —
+90  irqf2p[14]  High Level  —
+91  irqf2p[15]  High Level
 ------------------------------
 地址配置如下：
-	4000_0000 to 7FFF_FFFF PL PL General Purpose Port #0 to the PL, M_AXI_GP0
-	8000_0000 to BFFF_FFFF PL PL General Purpose Port #1 to the PL, M_AXI_GP1
+    4000_0000 to 7FFF_FFFF PL PL General Purpose Port #0 to the PL, M_AXI_GP0
+    8000_0000 to BFFF_FFFF PL PL General Purpose Port #1 to the PL, M_AXI_GP1
 */
 #define INT_VEC_IRQF2P_0            IVEC_TO_INUM(57)
 #define INT_VEC_IRQF2P_1            IVEC_TO_INUM(58)
@@ -295,13 +295,13 @@ QSPI
 spi
 */
 #define SPI0_BASE_ADRS          (0xE0001000)
-#define SPI1_BASE_ADRS          (0xE0021000) 
+#define SPI1_BASE_ADRS          (0xE0021000)
 
 /*
 can
 */
 #define CAN0_BASE_ADRS          (0xE0005000)
-#define CAN1_BASE_ADRS          (0xE0006000) 
+#define CAN1_BASE_ADRS          (0xE0006000)
 
 /*
 nfc
@@ -328,18 +328,18 @@ GPIO
 #define GPIO_3_BASE_ADRS        (0xE0003400)
 
 /*
-49	SPI	GPIO0	
-68	SPI	GPIO1		
-69	SPI	GPIO2		
-70	SPI	GPIO3	*/
+49  SPI GPIO0
+68  SPI GPIO1
+69  SPI GPIO2
+70  SPI GPIO3   */
 #define INT_VEC_GPIO_BANK_A           IVEC_TO_INUM(49)       /* BANK_A Interrupt */
 #define INT_VEC_GPIO_BANK_B           IVEC_TO_INUM(68)       /* BANK_B Interrupt */
 #define INT_VEC_GPIO_BANK_C           IVEC_TO_INUM(69)       /* BANK_C Interrupt */
 #define INT_VEC_GPIO_BANK_D           IVEC_TO_INUM(70)       /* BANK_D Interrupt */
 
 
-/* 
-SD/MMC 
+/*
+SD/MMC
 */
 #define SDMMC_CLK_400_KHZ          400000    /* 400 KHZ */
 #define SDMMC_CLK_50_MHZ         50000000    /* 50 MHZ  */
@@ -361,14 +361,14 @@ SD/MMC
 /*#define FM_SDMMC_CLK_DIVIDED_VAL       (FM_SDMMC_CLK_VAL / 10)    // 5M*/
 
 
-/* 
-USB 
+/*
+USB
 */
 #define USB_0_BASE_ADRS         (0xE0045000)
 #define USB_1_BASE_ADRS         (0xE0046000)
 
 /* Timer */
-#define GTIMER_ADDR_BASE	    (0xE0008000)
+#define GTIMER_ADDR_BASE        (0xE0008000)
 
 
 /* frequency of counter/timers */
@@ -432,7 +432,7 @@ USB
 #define FMQL_REGISTER_WRITE(reg, data) (*(volatile UINT32 *)(reg) = (data))
 
 #define FMQL_SR_REGISTER_READ(reg, val) FMQL_REGISTER_READ(reg)
-    
+
 #define FMQL_SR_REGISTER_WRITE(reg, data)                        \
     do {                                                                \
     FMQL_REGISTER_WRITE (FMQL_SR_UNLOCK, FMQL_SR_UNLOCK_ALL);\
@@ -538,122 +538,122 @@ USB
 */
 
 #if 0
-/*
-   PPI
---------
-中断ID	类型	中断说明	触发方式	验证结果
-25	PPI	Virtual Maintenance Interrupt (PPI6)	电平	
-26	PPI	Hypervisor Timer event (PPI5)	电平	
-27	PPI	Virtual Timer event (PPI4)	电平	
-28	PPI	Legacy nFIQ signal (PPI0)	电平，低电平有效	PASS
-29	PPI	Secure Physical Timer event (PPI1)	电平	
-30	PPI	Non-secure Physical Timer event (PPI2)	电平	
-31	PPI	Legacy nIRQ signal (PPI3) 	电平，低电平有效	PASS
-*/
+    /*
+    PPI
+    --------
+    中断ID    类型  中断说明    触发方式    验证结果
+    25  PPI Virtual Maintenance Interrupt (PPI6)    电平
+    26  PPI Hypervisor Timer event (PPI5)   电平
+    27  PPI Virtual Timer event (PPI4)  电平
+    28  PPI Legacy nFIQ signal (PPI0)   电平，低电平有效    PASS
+    29  PPI Secure Physical Timer event (PPI1)  电平
+    30  PPI Non-secure Physical Timer event (PPI2)  电平
+    31  PPI Legacy nIRQ signal (PPI3)   电平，低电平有效    PASS
+    */
 
-/*
-	SPI
---------
-中断ID	类型	具体应用	触发方式	验证结果
-40	SPI	DEVC		
-41	SPI	WDT(WDT_intr_n)		
-42	SPI	TIMER0(TIMER0_intr1_n)		
-43	SPI	TIMER0(TIMER0_intr2_n)		
-44	SPI	TIMER0(TIMER0_intr3_n)		
-45	SPI	DMA		
-46	SPI	QSPI0		
-47	SPI	QSPI1		
-48	SPI	NFC		
-49	SPI	GPIO0		
-50	SPI	USB0		
-51	SPI	GMAC0		
-52	SPI	SDMCC0		
-53	SPI	I2C0		
-54	SPI	SPI0		
-55	SPI	UART0		
-56	SPI	CAN0
+    /*
+     SPI
+    --------
+    中断ID    类型  具体应用    触发方式    验证结果
+    40  SPI DEVC
+    41  SPI WDT(WDT_intr_n)
+    42  SPI TIMER0(TIMER0_intr1_n)
+    43  SPI TIMER0(TIMER0_intr2_n)
+    44  SPI TIMER0(TIMER0_intr3_n)
+    45  SPI DMA
+    46  SPI QSPI0
+    47  SPI QSPI1
+    48  SPI NFC
+    49  SPI GPIO0
+    50  SPI USB0
+    51  SPI GMAC0
+    52  SPI SDMCC0
+    53  SPI I2C0
+    54  SPI SPI0
+    55  SPI UART0
+    56  SPI CAN0
 
-57	SPI	PL0		
-58	SPI	PL1		
-59	SPI	PL2		
-60	SPI	PL3		
-61	SPI	PL4		
-62	SPI	PL5		
-63	SPI	PL6		
-64	SPI	PL7	
+    57  SPI PL0
+    58  SPI PL1
+    59  SPI PL2
+    60  SPI PL3
+    61  SPI PL4
+    62  SPI PL5
+    63  SPI PL6
+    64  SPI PL7
 
-65	SPI	TIMER1(TIMER0_intr1_n)		
-66	SPI	TIMER1(TIMER0_intr2_n)		
-67	SPI	TIMER1(TIMER0_intr3_n)		
-68	SPI	GPIO1		
-69	SPI	GPIO2		
-70	SPI	GPIO3		
-71	SPI	USB1		
-72	SPI	GMAC1		
-73	SPI	SDMCC1		
-74	SPI	I2C1		
-75	SPI	SPI1		
-76	SPI	UART1		
-77	SPI	CAN1	
+    65  SPI TIMER1(TIMER0_intr1_n)
+    66  SPI TIMER1(TIMER0_intr2_n)
+    67  SPI TIMER1(TIMER0_intr3_n)
+    68  SPI GPIO1
+    69  SPI GPIO2
+    70  SPI GPIO3
+    71  SPI USB1
+    72  SPI GMAC1
+    73  SPI SDMCC1
+    74  SPI I2C1
+    75  SPI SPI1
+    76  SPI UART1
+    77  SPI CAN1
 
-84	SPI	PL8		
-85	SPI	PL9		
-86	SPI	PL10		
-87	SPI	PL11		
-88	SPI	PL12		
-89	SPI	PL13		
-90	SPI	PL14		
-91	SPI	PL15	
-*/
+    84  SPI PL8
+    85  SPI PL9
+    86  SPI PL10
+    87  SPI PL11
+    88  SPI PL12
+    89  SPI PL13
+    90  SPI PL14
+    91  SPI PL15
+    */
 
-#define FPS_DDR3MEM_BASEADDR         (0x00100000)
-#define FPS_GIC_BASEADDR             (0xF8900000)
+    #define FPS_DDR3MEM_BASEADDR         (0x00100000)
+    #define FPS_GIC_BASEADDR             (0xF8900000)
 
-/* AHB */
-#define FPS_AHB2APB0_BASEADDR        (0xE0000000)
-#define FPS_AHB2APB1_BASEADDR        (0xE0020000)
-#define FPS_CSU_BASEADDR             (0xE0040000)
-#define FPS_SMC_CTL_BASEADDR         (0xE0041000)
-#define FPS_SMC_NORSRAM0_BASEADDR    (0xE2000000)
-#define FPS_SMC_NORSRAM1_BASEADDR    (0xE4000000)
-#define FPS_QSPI0_D_BASEADDR         (0xE8000000)
-#define FPS_QSPI1_D_BASEADDR         (0xE9000000)
-#define FPS_NFC_S_BASEADDR           (0xE0042000)
-#define FPS_SDMMC0_BASEADDR          (0xE0043000)
-#define FPS_SDMMC1_BASEADDR          (0xE0044000)
-#define FPS_USB0_BASEADDR            (0xE0045000)
-#define FPS_USB1_BASEADDR            (0xE0046000)
-#define FPS_GMAC0_BASEADDR           (0xE0047000)
-#define FPS_GMAC1_BASEADDR           (0xE0049000)
-#define FPS_DMA_BASEADDR             (0xE004B000)
-#define FPS_AHB_SRAM_BASEADDR        (0xE1FE0000)
+    /* AHB */
+    #define FPS_AHB2APB0_BASEADDR        (0xE0000000)
+    #define FPS_AHB2APB1_BASEADDR        (0xE0020000)
+    #define FPS_CSU_BASEADDR             (0xE0040000)
+    #define FPS_SMC_CTL_BASEADDR         (0xE0041000)
+    #define FPS_SMC_NORSRAM0_BASEADDR    (0xE2000000)
+    #define FPS_SMC_NORSRAM1_BASEADDR    (0xE4000000)
+    #define FPS_QSPI0_D_BASEADDR         (0xE8000000)
+    #define FPS_QSPI1_D_BASEADDR         (0xE9000000)
+    #define FPS_NFC_S_BASEADDR           (0xE0042000)
+    #define FPS_SDMMC0_BASEADDR          (0xE0043000)
+    #define FPS_SDMMC1_BASEADDR          (0xE0044000)
+    #define FPS_USB0_BASEADDR            (0xE0045000)
+    #define FPS_USB1_BASEADDR            (0xE0046000)
+    #define FPS_GMAC0_BASEADDR           (0xE0047000)
+    #define FPS_GMAC1_BASEADDR           (0xE0049000)
+    #define FPS_DMA_BASEADDR             (0xE004B000)
+    #define FPS_AHB_SRAM_BASEADDR        (0xE1FE0000)
 
-/* APB0 */
-#define FPS_QSPI0_BASEADDR           (0xE0000000)
-#define FPS_SPI0_BASEADDR            (0xE0001000)
+    /* APB0 */
+    #define FPS_QSPI0_BASEADDR           (0xE0000000)
+    #define FPS_SPI0_BASEADDR            (0xE0001000)
 
-#define FPS_I2C0_BASEADDR            (0xE0002000)
+    #define FPS_I2C0_BASEADDR            (0xE0002000)
 
-#define FPS_GPIO_BASEADDR            (0xE0003000)
+    #define FPS_GPIO_BASEADDR            (0xE0003000)
 
-#define FPS_UART0_BASEADDR           (0xE0004000)
-#define FPS_CAN0_BASEADDR            (0xE0005000)
-#define FPS_CAN1_BASEADDR            (0xE0006000)
+    #define FPS_UART0_BASEADDR           (0xE0004000)
+    #define FPS_CAN0_BASEADDR            (0xE0005000)
+    #define FPS_CAN1_BASEADDR            (0xE0006000)
 
-#define FPS_TIMER0_BASEADDR          (0xE0007000)
-#define FPS_GTC_BASEADDR             (0xE0008000)  /* arm-gen-timer */
-#define FPS_PRCG_BASEADDR            (0xE0009000)
+    #define FPS_TIMER0_BASEADDR          (0xE0007000)
+    #define FPS_GTC_BASEADDR             (0xE0008000)  /* arm-gen-timer */
+    #define FPS_PRCG_BASEADDR            (0xE0009000)
 
-/* APB1 */
-#define FPS_QSPI1_BASEADDR           (0xE0020000)
-#define FPS_SPI1_BASEADDR            (0xE0021000)
+    /* APB1 */
+    #define FPS_QSPI1_BASEADDR           (0xE0020000)
+    #define FPS_SPI1_BASEADDR            (0xE0021000)
 
-#define FPS_I2C1_BASEADDR            (0xE0022000)
-#define FPS_UART1_BASEADDR           (0xE0023000)
-#define FPS_TIMER1_BASEADDR          (0xE0024000)
-#define FPS_WDT_BASEADDR             (0xE0025000)
-#define FPS_SLCR_BASEADDR            (0xE0026000)
-#define FPS_DDR3_CTL_BASEADDR        (0xE0027000)
+    #define FPS_I2C1_BASEADDR            (0xE0022000)
+    #define FPS_UART1_BASEADDR           (0xE0023000)
+    #define FPS_TIMER1_BASEADDR          (0xE0024000)
+    #define FPS_WDT_BASEADDR             (0xE0025000)
+    #define FPS_SLCR_BASEADDR            (0xE0026000)
+    #define FPS_DDR3_CTL_BASEADDR        (0xE0027000)
 
 #endif
 

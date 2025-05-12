@@ -27,13 +27,13 @@
 #define BACKLOG   256
 
 #ifdef DEBUG
-  #define DEBUG_PRINT(fmt, ...) \
+#define DEBUG_PRINT(fmt, ...) \
     do { \
       printf(stderr, "[DEBUG] %s:%d:%s(): " fmt "\n", \
               __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
     } while(0)
 #else
-  #define DEBUG_PRINT(fmt, ...) do {} while(0)  // 无操作
+#define DEBUG_PRINT(fmt, ...) do {} while(0)  // 无操作
 #endif
 
 typedef enum
@@ -378,7 +378,7 @@ void multi_tcp_data_servers_loop(int unused)
                     uart->data_count = 0;
                     set_state(&uart->sock_data_state, STATE_TCP_CONN, i, "DATA", uart->sock_data_port);
                     DEBUG_PRINT("uart[%d] sock_data (data_port %u) client connected, fd=%d\n",
-                           i, uart->sock_data_port, client_fd);
+                                i, uart->sock_data_port, client_fd);
                 }
             }
 
@@ -389,12 +389,12 @@ void multi_tcp_data_servers_loop(int unused)
                 if (n > 0)
                 {
                     uart->data_count += n;
-                    if(ring_buffer_is_full(&uart->data_tx))
+                    if (ring_buffer_is_full(&uart->data_tx))
                     {
-                    	printf("error:full %d\r\n",i);
+                        printf("error:full %d\r\n", i);
                     }
                     uart_ring_buffer_enqueue(&uart->data_tx, sock_data_tmp, n);
-                    
+
                     set_state(&uart->sock_data_state, STATE_TCP_CONN, i, "DATA", uart->sock_data_port);
                 }
                 else if (n == 0)
@@ -454,7 +454,7 @@ void multi_uart_tx_loop(int unused)
     TimeCounter tc;
     UINT32 ticks, ms;
     ring_buffer_size_t rx_ready[NUM_PORTS];
-    for (i = 0; i < NUM_PORTS; ++i) rx_ready[i]=0;
+    for (i = 0; i < NUM_PORTS; ++i) rx_ready[i] = 0;
     while (1)
     {
         for (i = 0; i < NUM_PORTS; ++i)
@@ -464,21 +464,22 @@ void multi_uart_tx_loop(int unused)
 //            if (uart->sock_cmd_state == STATE_TCP_CONN && uart->sock_data_state == STATE_TCP_CONN) {
             if (uart->sock_data_state == STATE_TCP_CONN)
             {
-                    	if(0 == rx_ready[i]){
-                    		rx_ready[i] = uart_ring_buffer_dequeue(&uart->data_tx, &uart_fpga_txbuf[i][0], UART_FPGA_TX_BUFFER);
-                    	}
-//                    	if(!axi16550_TxReady(i)) continue;
-                        if (rx_ready[i] > 0)
-                        {
-                            // 串口发送
-                            txled(i, 1);
-                            timeStart(&tc);
-                            int sent = axi16550Send(i, (uint8_t *)&uart_fpga_txbuf[i][0], rx_ready[i]);
-                            timeEnd(&tc, &ticks, &ms);
+                if (0 == rx_ready[i])
+                {
+                    rx_ready[i] = uart_ring_buffer_dequeue(&uart->data_tx, &uart_fpga_txbuf[i][0], UART_FPGA_TX_BUFFER);
+                }
+//                      if(!axi16550_TxReady(i)) continue;
+                if (rx_ready[i] > 0)
+                {
+                    // 串口发送
+                    txled(i, 1);
+                    timeStart(&tc);
+                    int sent = axi16550Send(i, (uint8_t *)&uart_fpga_txbuf[i][0], rx_ready[i]);
+                    timeEnd(&tc, &ticks, &ms);
 //                            printf("%d - %u ,\n", i, ticks);
-                            txled(i, 0);
-                            rx_ready[i] = 0;
-                        }
+                    txled(i, 0);
+                    rx_ready[i] = 0;
+                }
             }
             // 其它状态不发送
         }

@@ -25,7 +25,7 @@
 //#define     ASPP_CMD_POLLING            (0x27 )  //POLLING
 //#define     ASPP_CMD_ALIVE              (0x28)  //ALIVE
 //#define     ASPP_CMD_WAIT_OQUEUE        (0x2f)  //WAIT_OQUEUE
-//#define     ASPP_CMD_FLUSH              (0x14)  //FLUSH 
+//#define     ASPP_CMD_FLUSH              (0x14)  //FLUSH
 //
 //#define ASPP_NOTIFY_PARITY   0x01
 //#define ASPP_NOTIFY_FRAMING  0x02
@@ -85,13 +85,13 @@
 //    fcntl(sockfd, F_SETFL, flags | O_NONBLOCK);
 //}
 //
-//int socket_send_to_middle(int sock_fd, char *buf, int buf_len) 
+//int socket_send_to_middle(int sock_fd, char *buf, int buf_len)
 //{
 //    for(int i=0; i<buf_len; i++)
 //    {
 //         printf("buf[%d]:%x\n", i, buf[i]);
 //    }
-//    
+//
 //    int ret = send(sock_fd, buf, buf_len, 0);
 //    if (ret < 0) {
 //        perror("send");
@@ -106,7 +106,7 @@
 //    pack_buf[0] = buf[0];
 //}
 //
-//int  init_usart(int client_socket, char *buf, int buf_len) 
+//int  init_usart(int client_socket, char *buf, int buf_len)
 //{
 //    int ret;
 //
@@ -120,7 +120,7 @@
 //
 //    char pack_buf[5] = {0};
 //    //提取串口参数
-//   
+//
 //    //设置串口波特率
 //    int baud_rate = bauderate_table[(int)buf[2]];
 //    usart_params.baud_rate = baud_rate;
@@ -162,13 +162,13 @@
 //    }
 //
 //    usart_params.parity = parity;
-//  
+//
 //    //设置XonXoff
 //    xon_xoff = buf[9];
 //    usart_params.xon_xoff = xon_xoff;
 //    printf("xon_xoff: %d\n", xon_xoff);
 //
-//    
+//
 //    //调用AXI_api设置串口相关寄存器
 //
 //    //打包数据
@@ -176,7 +176,7 @@
 //    pack_buf[1] = 0x3;
 //    pack_buf[2] = 0x0;
 //    pack_buf[3] = 0x0;
-//    pack_buf[4] = 0x0; 
+//    pack_buf[4] = 0x0;
 //    //返回数据给中间件
 //    ret = socket_send_to_middle(client_socket, pack_buf, sizeof(pack_buf));
 //    if(ret < 0)
@@ -186,14 +186,14 @@
 //    }
 //
 //    return 0;
-//    
+//
 //}
 //
 //int  usart_set_baudrate(int client_socket, char *buf, int buf_len)
 //{
 //    int ret;
 //    unsigned int baud_rate;
-//    
+//
 //
 //    //提取波特率:假设高位在前
 //    baud_rate = buf[2] << 24 | buf[3] << 16 | buf[4] << 8 | buf[5];
@@ -345,14 +345,14 @@
 ////发送break信号函数
 //void axi16550SendBreak(unsigned int channel) {
 //    unsigned int lcr = userAxiCfgRead(channel, AXI_16550_LCR);
-//    
+//
 //    // 使能break信号
 //    lcr |= (1 << 6);
 //    userAxiCfgWrite(channel, AXI_16550_LCR, lcr);
-//    
+//
 //    // 保持break状态至少一个字符时间（示例1ms）
 //    taskDelay(1);
-//    
+//
 //    // 清除break信号
 //    lcr &= ~(1 << 6);
 //    userAxiCfgWrite(channel, AXI_16550_LCR, lcr);
@@ -408,7 +408,7 @@
 //   //打包数据
 //    pack_buf[0] = ASPP_CMD_ALIVE;
 //    pack_buf[1] = 0x0;
-//    
+//
 //    //返回数据给中间件
 //    ret = socket_send_to_middle(client_socket, pack_buf, sizeof(pack_buf));
 //    if(ret < 0)
@@ -431,7 +431,7 @@
 //    pack_buf[1] = 0x02;
 //    pack_buf[2] = 0x00;
 //    pack_buf[3] = 0x00;
-//    
+//
 //    //返回数据给中间件
 //    ret = socket_send_to_middle(client_socket, pack_buf, sizeof(pack_buf));
 //    if(ret < 0)
@@ -466,13 +466,13 @@
 //
 //
 //
-//void handle_command(int client_socket, char *buf, int buf_len) 
+//void handle_command(int client_socket, char *buf, int buf_len)
 //{
 //
 //    /*解析数据*/
 //    unsigned char cmd = buf[0];
 //    unsigned char data_len = buf[1];
-//    
+//
 //    switch(cmd)
 //    {
 //        case ASPP_CMD_PORT_INIT:
@@ -483,7 +483,7 @@
 //
 //        case ASPP_CMD_NOTIFY:
 //        {
-//            
+//
 //            break;
 //        }
 //
@@ -530,7 +530,7 @@
 //        }
 //
 //        case ASPP_CMD_STOP_BREAK:
-//        {   
+//        {
 //            usart_set_stop_break(client_socket, buf, data_len);
 //
 //            break;
@@ -544,7 +544,7 @@
 //
 //        case ASPP_CMD_WAIT_OQUEUE:
 //        {
-//        	usart_report_queue(client_socket, buf, data_len);
+//          usart_report_queue(client_socket, buf, data_len);
 //            break;
 //        }
 //
@@ -560,7 +560,7 @@
 //            printf("Unknown command: %d\n", cmd);
 //            break;
 //        }
-//            
+//
 //
 //
 //    }
@@ -617,9 +617,9 @@
 ////        {
 ////            client_num++;
 ////            printf("Get connect from client %d : %s\n",  client_num, inet_ntoa(address.sin_addr));
-////            
+////
 ////            //每来一个连接，就创建一个线程处理
-////            
+////
 ////            // 创建第一个任务（优先级 50，堆栈大小 64KB）
 ////            // TASK_ID taskId1 = taskSpawn(
 ////            //     "MyTask1",            // 任务名称
@@ -637,13 +637,13 @@
 ////            while (1)
 ////            {
 ////                valread = read(new_socket, buffer, BUFFER_SIZE);
-////                if (valread == 0) 
+////                if (valread == 0)
 ////                {
 ////                    printf("Host disconnected, socket fd is %d\n", new_socket);
 ////                    close(new_socket);
 ////                    break;
-////                } 
-////                else if (valread < 0) 
+////                }
+////                else if (valread < 0)
 ////                {
 ////                    {
 ////                        //printf("read\n");
@@ -651,8 +651,8 @@
 ////                        //break;
 ////                        continue;
 ////                    }
-////                } 
-////                else 
+////                }
+////                else
 ////                {
 ////                    //buffer[valread] = '\0';
 ////                    //printf("Received: %s\n", buffer);
@@ -660,7 +660,7 @@
 ////                }
 ////            }
 ////        }
-////       
+////
 ////    }
 ////
 ////    close(new_socket);
@@ -676,18 +676,18 @@
 //
 //    printf("New connection: sock %d\n", client_socket);
 //    set_nonblocking(client_socket);
-//    
+//
 //    //调用AXI_api设置串口相关寄存器
 //    unsigned char send_buf[4] = {0x26, 0x00, 0x00, 0x81};
 //        int send_len = sizeof(send_buf);
-//        
+//
 //        if (send(client_socket, send_buf, send_len, 0) != send_len) {
 //            perror("send failed");
 //            close(client_socket);
 //            return;
 //        }
 //        printf("Sent 0x26000081 to client %d\n", client_socket);
-//        
+//
 //    while (1) {
 //        valread = recv(client_socket, buffer, BUFFER_SIZE, 0);
 //        if (valread == 0) {
@@ -753,7 +753,7 @@
 //        }
 //
 //        // 创建客户端处理任务
-//        taskSpawn("clientTask", 100, 0, 20000, 
+//        taskSpawn("clientTask", 100, 0, 20000,
 //                  (FUNCPTR)FixedPortClient, new_socket, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 //    }
 //

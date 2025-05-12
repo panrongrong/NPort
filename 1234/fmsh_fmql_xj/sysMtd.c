@@ -68,16 +68,16 @@ SEE ALSO:
 #define TFFS_FLASH_64M_SIZE  (64)
 
 #ifdef TFFS_FLASH_16M
-#define TFFS_FLASH_SIZE TFFS_FLASH_16M_SIZE
+    #define TFFS_FLASH_SIZE TFFS_FLASH_16M_SIZE
 
 #elif TFFS_FLASH_32M
-#define TFFS_FLASH_SIZE TFFS_FLASH_32M_SIZE
+    #define TFFS_FLASH_SIZE TFFS_FLASH_32M_SIZE
 
 #elif TFFS_FLASH_64M
-#define TFFS_FLASH_SIZE TFFS_FLASH_64M_SIZE
+    #define TFFS_FLASH_SIZE TFFS_FLASH_64M_SIZE
 
-else
-#define TFFS_FLASH_SIZE TFFS_FLASH_8M_SIZE   // default
+    else
+    #define TFFS_FLASH_SIZE TFFS_FLASH_8M_SIZE   // default
 #endif
 
 
@@ -88,36 +88,36 @@ else
 #ifndef DRV_FM_QSPI  /* without qspi & tffs*/
 
 STATUS tffs_qspiFlashPageWrite
-    (
+(
     UINT32         addr,           /* byte offset into flash memory */
-    char *      buf,            /* buffer */
+    char       *buf,            /* buffer */
     int         byteLen         /* size of bytes */
-    )
+)
 {
-	return OK;
+    return OK;
 }
 
-	
+
 STATUS tffs_qspiFlashRead
-    (
+(
     UINT32         offset,         /* The address to read */
-    char *      readBuffer,     /* A pointer to a location to read the data */
+    char       *readBuffer,     /* A pointer to a location to read the data */
     int         byteLen         /* The size to read */
-    )
+)
 {
-	return OK;
+    return OK;
 }
 
-STATUS tffs_qspiFlashSectorErase_Idx (UINT32 log_idx)
+STATUS tffs_qspiFlashSectorErase_Idx(UINT32 log_idx)
 {
-	return OK;
+    return OK;
 }
-	
+
 #endif
 
 
 #include "./bsp_drv/qspi/qspi_2_vx/nor/vxQspi_Norflash.h"
-extern vxT_QSPI * g_pQspi0;
+extern vxT_QSPI *g_pQspi0;
 
 /******************************************************************************
 *
@@ -131,45 +131,45 @@ extern vxT_QSPI * g_pQspi0;
 */
 
 LOCAL FLStatus sysMtdRead
-    (
-    FLFlash *   pVol,
+(
+    FLFlash    *pVol,
     CardAddress address,
-    void FAR1 * buffer,
+    void FAR1 *buffer,
     int         length,
     int         dummy
-    )
+)
 {
     STATUS  status;
-	UINT32 unaligned;
-	
+    UINT32 unaligned;
+
 #if 0
 #ifdef FLASH_LOW_8M_RESERVD
-	/* base_addr: offset-0x800000, reserve low 8M area for uboot parameters */
-	/* for base_addr: 0x80_0000 flash_area as tffs_area*/
-	unaligned = address + FLASH_RSV_8M_SIZE;
+    /* base_addr: offset-0x800000, reserve low 8M area for uboot parameters */
+    /* for base_addr: 0x80_0000 flash_area as tffs_area*/
+    unaligned = address + FLASH_RSV_8M_SIZE;
 #else
-	unaligned = address;
+    unaligned = address;
 #endif
 
 #else
-	if (address < 0x1000000)  /* 16M*/
-	{
-		unaligned = address;
-		qspiFlash_Set_Seg_0_16M(g_pQspi0);
-	}
-	else
-	{
-		unaligned = address - 0x1000000;	/* base_addr: offset-0		*/
-		qspiFlash_Set_Seg_16_32M(g_pQspi0);
-	}
+    if (address < 0x1000000)  /* 16M*/
+    {
+        unaligned = address;
+        qspiFlash_Set_Seg_0_16M(g_pQspi0);
+    }
+    else
+    {
+        unaligned = address - 0x1000000;    /* base_addr: offset-0      */
+        qspiFlash_Set_Seg_16_32M(g_pQspi0);
+    }
 
 #endif
 
-    status = tffs_qspiFlashRead ((int)unaligned, (char *)buffer, length);
-	
+    status = tffs_qspiFlashRead((int)unaligned, (char *)buffer, length);
+
 #ifdef DEBUG_PRINT
-		DEBUG_PRINT("sysMtdRead address:0x%X len:%d-buf:0x%X.  \n\n",
-				address, length, buffer, 0, 0, 0);
+    DEBUG_PRINT("sysMtdRead address:0x%X len:%d-buf:0x%X.  \n\n",
+                address, length, buffer, 0, 0, 0);
 #endif
 
     return (status == OK ? flOK : flReadFault);
@@ -187,13 +187,13 @@ LOCAL FLStatus sysMtdRead
 */
 
 LOCAL FLStatus sysMtdWrite
-    (
+(
     FLFlash         vol,
     CardAddress     address,
     const void FAR1 *buffer,
     int             length,
     int             overwrite
-    )
+)
 {
     UINT32  unaligned;
     UINT8  *buf = (UINT8 *)buffer;
@@ -202,40 +202,40 @@ LOCAL FLStatus sysMtdWrite
     int     offset = 0;
 
 #ifdef DEBUG_PRINT
-DEBUG_PRINT("\nsysMtdWrite address:0x%x length:0x%x, overwrite(%d).\n",
-            address, length, overwrite, 0, 0, 0);
+    DEBUG_PRINT("\nsysMtdWrite address:0x%x length:0x%x, overwrite(%d).\n",
+                address, length, overwrite, 0, 0, 0);
 #endif
 
-	if (flWriteProtected(vol.socket))
-    {    
-    	return flWriteProtect;
+    if (flWriteProtected(vol.socket))
+    {
+        return flWriteProtect;
     }
     /*
-	*/
+    */
 
     /* calculate the program addr, make sure it's aligned */
 #if 0
 
-	#ifdef FLASH_LOW_8M_RESERVD
-		/* base_addr: offset-0x800000, reserve low 8M area for uboot parameters */
-		/* for base_addr: 0x80_0000 flash_area as tffs_area*/
-		unaligned = address + FLASH_RSV_8M_SIZE;  
-	#else
-		unaligned = address;    /* base_addr: offset-0		*/
-	#endif
+#ifdef FLASH_LOW_8M_RESERVD
+    /* base_addr: offset-0x800000, reserve low 8M area for uboot parameters */
+    /* for base_addr: 0x80_0000 flash_area as tffs_area*/
+    unaligned = address + FLASH_RSV_8M_SIZE;
 #else
-	if (address < 0x1000000)  /* 16M*/
-	{
-		unaligned = address;
-		qspiFlash_Set_Seg_0_16M(g_pQspi0);
-	}
-	else
-	{
-		unaligned = address - 0x1000000;	/* base_addr: offset-0		*/
-		qspiFlash_Set_Seg_16_32M(g_pQspi0);
-	}
+    unaligned = address;    /* base_addr: offset-0      */
 #endif
-	
+#else
+    if (address < 0x1000000)  /* 16M*/
+    {
+        unaligned = address;
+        qspiFlash_Set_Seg_0_16M(g_pQspi0);
+    }
+    else
+    {
+        unaligned = address - 0x1000000;    /* base_addr: offset-0      */
+        qspiFlash_Set_Seg_16_32M(g_pQspi0);
+    }
+#endif
+
 
     /* address is not page align */
     if ((UINT32)unaligned % PAGE_SIZE)
@@ -246,7 +246,7 @@ DEBUG_PRINT("\nsysMtdWrite address:0x%x length:0x%x, overwrite(%d).\n",
             {
                 return flWriteFault;
             }
-			
+
             left = 0;
         }
         else
@@ -256,7 +256,7 @@ DEBUG_PRINT("\nsysMtdWrite address:0x%x length:0x%x, overwrite(%d).\n",
             {
                 return flWriteFault;
             }
-			
+
             left = length - left;
             offset = length - left;
         }
@@ -265,9 +265,9 @@ DEBUG_PRINT("\nsysMtdWrite address:0x%x length:0x%x, overwrite(%d).\n",
     /* continue page write */
     while (left / PAGE_SIZE)
     {
-        if (tffs_qspiFlashPageWrite (unaligned + offset, buf + offset, PAGE_SIZE) != flOK)
+        if (tffs_qspiFlashPageWrite(unaligned + offset, buf + offset, PAGE_SIZE) != flOK)
             return flWriteFault;
-		
+
         left -= PAGE_SIZE;
         offset = length - left;
     }
@@ -280,38 +280,38 @@ DEBUG_PRINT("\nsysMtdWrite address:0x%x length:0x%x, overwrite(%d).\n",
     }
 
 #if 0 /* ALT_MODE_1*/
-    bufRead = malloc (length);
+    bufRead = malloc(length);
 
     if (bufRead == NULL)
         return flWriteFault;
 
-    if (tffs_qspiFlashRead ((int)address, (char *)bufRead, length) == ERROR)
-        {
-        free (bufRead);
+    if (tffs_qspiFlashRead((int)address, (char *)bufRead, length) == ERROR)
+    {
+        free(bufRead);
         return flWriteFault;
-        }
+    }
 
-    if (tffscmp (bufRead, buffer, length))
-        {
+    if (tffscmp(bufRead, buffer, length))
+    {
 
 #ifdef DEBUG_PRINT
         DEBUG_PRINT("\nDebug: CFISCS write in verification failed!!! \n", 0, 0, 0,
-                0, 0, 0);
+                    0, 0, 0);
         /*
         DEBUG_PRINT("\nvol.map (&vol, address, 0)@0x%x buffer@0x%x\n",
                 vol.map (&vol, address, 0), buffer, 0, 0, 0, 0);
-		*/
+        */
 #endif
-        free (bufRead);
+        free(bufRead);
         return flWriteFault;
-        }
+    }
 
-    free (bufRead);
+    free(bufRead);
 #endif
 
 #ifdef DEBUG_PRINT
     DEBUG_PRINT("sysMtdWrite address:0x%x length:0x%x, overwrite(%d)-buf:0x%X.\n\n",
-            address, length, overwrite, buffer, 0, 0);
+                address, length, overwrite, buffer, 0, 0);
 #endif
 
     return flOK;
@@ -329,11 +329,11 @@ DEBUG_PRINT("\nsysMtdWrite address:0x%x length:0x%x, overwrite(%d).\n",
 */
 
 LOCAL FLStatus sysMtdErase
-    (
+(
     FLFlash vol,
     int     firstEraseBlock,
     int     numberOfEraseBlocks
-    )
+)
 {
     FLStatus status = flOK;
     int      iBlock;
@@ -341,31 +341,31 @@ LOCAL FLStatus sysMtdErase
 
 #ifdef DEBUG_PRINT
     DEBUG_PRINT("\n sysMtdErase firstblock %d numberOfEraseBlocks %d.\n",
-            firstEraseBlock, numberOfEraseBlocks, 0, 0, 0, 0);
+                firstEraseBlock, numberOfEraseBlocks, 0, 0, 0, 0);
 #endif
 
     if (flWriteProtected(vol.socket))
     {
         return flWriteProtect;
     }
-	
+
 #ifdef FLASH_LOW_8M_RESERVD
-	/* for base_addr: 0x80_0000 flash_area as tffs_area*/
-	firstEraseBlock += FLASH_RSV_8M_SIZE / vol.erasableBlockSize;
+    /* for base_addr: 0x80_0000 flash_area as tffs_area*/
+    firstEraseBlock += FLASH_RSV_8M_SIZE / vol.erasableBlockSize;
 #endif
 
 #if ALT_MODE_1  /* alt*/
-	sector = firstEraseBlock;
+    sector = firstEraseBlock;
 #endif
 
 
     for (iBlock = sector;
-         (iBlock < (sector + numberOfEraseBlocks)) && status == flOK;
-         iBlock++)
+            (iBlock < (sector + numberOfEraseBlocks)) && status == flOK;
+            iBlock++)
     {
-		DEBUG_PRINT("sysMtdErase sector:%d / %d \n", iBlock, numberOfEraseBlocks, 0, 0, 0, 0);
+        DEBUG_PRINT("sysMtdErase sector:%d / %d \n", iBlock, numberOfEraseBlocks, 0, 0, 0, 0);
 
-		status = tffs_qspiFlashSectorErase_Idx(iBlock);
+        status = tffs_qspiFlashSectorErase_Idx(iBlock);
     }
 
 #ifdef DEBUG_PRINT
@@ -383,54 +383,54 @@ LOCAL FLStatus sysMtdErase
 *
 */
 
-LOCAL void FAR0* qspiFlash_Map
-    (
-    FLFlash* pVol,
+LOCAL void FAR0 *qspiFlash_Map
+(
+    FLFlash *pVol,
     CardAddress address,
     int length
-    )
+)
 {
 #if ALT_MODE_1
 
     UINT32 flashBaseAddr = 0;
-    void FAR0* pFlash = NULL;
+    void FAR0 *pFlash = NULL;
 
-	#if 0 /* ok*/
-	   /* flashBaseAddr = (pVol->socket->window.baseAddress << 12);*/
-	   #if 0 	   	
-	    pFlash = (void FAR0*)(FLASH_DATA_BASE_ADRS + address);
-	   #else
-	   		if (address > 0xff0000)
-   			{
-				pFlash = (void FAR0*)(FLASH_DATA_BASE_ADRS + address - 0x1000000);
-   			}
-			else
-			{
-				pFlash = (void FAR0*)(FLASH_DATA_BASE_ADRS + address);
-			}
-	   #endif
+#if 0 /* ok*/
+    /* flashBaseAddr = (pVol->socket->window.baseAddress << 12);*/
+#if 0
+    pFlash = (void FAR0 *)(FLASH_DATA_BASE_ADRS + address);
+#else
+    if (address > 0xff0000)
+    {
+        pFlash = (void FAR0 *)(FLASH_DATA_BASE_ADRS + address - 0x1000000);
+    }
+    else
+    {
+        pFlash = (void FAR0 *)(FLASH_DATA_BASE_ADRS + address);
+    }
+#endif
 
-	#else 
-	    /*flashBaseAddr = (pVol->socket->window.baseAddress << 12);*/
-		if (address < 0x1000000)  /* 16M*/
-		{
-			pFlash = (void FAR0*)(FLASH_DATA_BASE_ADRS + address);
-			qspiFlash_Set_Seg_0_16M(g_pQspi0);
-		}
-		else
-		{
-			pFlash = (void FAR0*)(FLASH_DATA_BASE_ADRS + address - 0x1000000);	/* 32M - 16M*/
-			qspiFlash_Set_Seg_16_32M(g_pQspi0);
-		}	
-	#endif
-	
-#ifdef DEBUG_PRINT	
-    DEBUG_PRINT("\n qspiFlash_Map address:0x%x length:0x%x\n", address, length, 0,0,0,0);	
+#else
+    /*flashBaseAddr = (pVol->socket->window.baseAddress << 12);*/
+    if (address < 0x1000000)  /* 16M*/
+    {
+        pFlash = (void FAR0 *)(FLASH_DATA_BASE_ADRS + address);
+        qspiFlash_Set_Seg_0_16M(g_pQspi0);
+    }
+    else
+    {
+        pFlash = (void FAR0 *)(FLASH_DATA_BASE_ADRS + address - 0x1000000); /* 32M - 16M*/
+        qspiFlash_Set_Seg_16_32M(g_pQspi0);
+    }
+#endif
+
+#ifdef DEBUG_PRINT
+    DEBUG_PRINT("\n qspiFlash_Map address:0x%x length:0x%x\n", address, length, 0, 0, 0, 0);
 #endif
 
 #endif
 
-    return(pFlash);
+    return (pFlash);
 }
 
 /*******************************************************************************
@@ -445,12 +445,12 @@ LOCAL void FAR0* qspiFlash_Map
 */
 
 FLStatus sysMtdIdentify
-    (
+(
     FLFlash vol
-    )
+)
 {
-	int tffS_size_mode = 0;
-	
+    int tffS_size_mode = 0;
+
 #ifdef DEBUG_PRINT
     DEBUG_PRINT("Debug: entering CFISCS identification routine.\n", 0, 0, 0, 0, 0, 0);
 #endif
@@ -459,33 +459,33 @@ FLStatus sysMtdIdentify
     vol.type = 0x1902; /* Vendor and Device ID : S25FL256S:0x4D190201,Spansion */
     vol.erasableBlockSize = 0x10000;  /* 64K FLASH_SECTOR_SIZE;*/
 
-	/**/
-	/* TFFS_FLASH_8M_SIZE,  TFFS_FLASH_16M_SIZE*/
-	/**/	
-	tffS_size_mode = TFFS_FLASH_SIZE;
+    /**/
+    /* TFFS_FLASH_8M_SIZE,  TFFS_FLASH_16M_SIZE*/
+    /**/
+    tffS_size_mode = TFFS_FLASH_SIZE;
 
-	switch (tffS_size_mode)
-	{
-	case TFFS_FLASH_8M_SIZE:
-		/* 8M for test - ok */
-		vol.chipSize = 0x800000;
-		break;
-	
-	case TFFS_FLASH_16M_SIZE:
-		/* 16M for test - ok */
-		vol.chipSize = 0x1000000; 
-		break;
-	
-	case TFFS_FLASH_32M_SIZE:
-		/* 32M for test */
-		vol.chipSize = 0x2000000; 
-		break;
-	
-	case TFFS_FLASH_64M_SIZE:
-		/* 64M for test */
-		vol.chipSize = 0x4000000; 
-		break;		
-	}
+    switch (tffS_size_mode)
+    {
+        case TFFS_FLASH_8M_SIZE:
+            /* 8M for test - ok */
+            vol.chipSize = 0x800000;
+            break;
+
+        case TFFS_FLASH_16M_SIZE:
+            /* 16M for test - ok */
+            vol.chipSize = 0x1000000;
+            break;
+
+        case TFFS_FLASH_32M_SIZE:
+            /* 32M for test */
+            vol.chipSize = 0x2000000;
+            break;
+
+        case TFFS_FLASH_64M_SIZE:
+            /* 64M for test */
+            vol.chipSize = 0x4000000;
+            break;
+    }
 
     vol.interleaving = 1;
     vol.noOfChips = 1;
@@ -500,4 +500,4 @@ FLStatus sysMtdIdentify
     return flOK;
 }
 
-	
+

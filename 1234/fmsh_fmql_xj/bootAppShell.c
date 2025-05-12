@@ -19,7 +19,7 @@ modification history
                  off of EDR
 01s,14jan11,pch  CQ250052: back out 01q as underlying problem has been fixed
 01r,26apr10,j_l  Fix entry address print in bootAppBootFileLoad() and
-		 copyright date change.
+         copyright date change.
 01q,03feb10,pgh  Fix console read file descriptor.
 01p,10dec09,pgh  64-bit conversion.
 01o,30jul09,pgh  Expand number of devices
@@ -30,16 +30,16 @@ modification history
 01j,15jan08,pgh  Fix help formatting.
 01i,23oct07,h_k  updated Copyright info in printBootLogo(). (CQ:109120)
 01h,23apr07,jmt  Defect 93088 - networking not setup correctly for some
-		 bootline updates
+         bootline updates
 01g,02mar07,jmt  Move devs command to bootFsLoad.c
 01f,23feb07,jmt  Add devs command
 01e,06feb07,jmt  Add bootAppPrintf to optimize size
 01d,25jan07,jmt  Update network settings after bootline update.
 01c,14aug06,jmt  Fix problem with bootAppGo parameter parsing
-		 Move LoadAndGo to bootApp.c
+         Move LoadAndGo to bootApp.c
 01b,20jul06,jmt  Add banner print to shell init function
-		 Modify LoadAndGo command to use loose matching.
-		 vxTestV2 uses loose version for testing.
+         Modify LoadAndGo command to use loose matching.
+         vxTestV2 uses loose version for testing.
 01a,07jul05,jmt  written
 */
 
@@ -122,43 +122,43 @@ INCLUDE FILES: bootApp.h vxWorks.h
 
 /* defines */
 
-#define MAX_HELP_ENTRIES	    50 /* maximum number of help entries */
+#define MAX_HELP_ENTRIES        50 /* maximum number of help entries */
 #define HELP_SIZE                   ((MAX_HELP_ENTRIES+1) * 2 * sizeof (char *))
 #define MAX_DEV_FORMAT_HELP_ENTRIES 20 /* max # of Device Format help entries */
-#define HELP_DEV_FORMAT_SIZE	    ((MAX_DEV_FORMAT_HELP_ENTRIES + 1) \
-				     * sizeof (char *))
-#define MAX_FLAGS_HELP_ENTRIES	    32 /* maximum number of flag help entries */
-#define HELP_FLAG_SIZE		    ((MAX_FLAGS_HELP_ENTRIES + 1) \
-				     * sizeof (char *))
-#define MAX_PRINT_DEVS_ENTRIES	    50 /* max # of Print devices help entries */
-#define MAX_PRINT_DEVS_SIZE	    (MAX_PRINT_DEVS_ENTRIES \
-				     * sizeof (bootVoidPrototype *))
+#define HELP_DEV_FORMAT_SIZE        ((MAX_DEV_FORMAT_HELP_ENTRIES + 1) \
+                     * sizeof (char *))
+#define MAX_FLAGS_HELP_ENTRIES      32 /* maximum number of flag help entries */
+#define HELP_FLAG_SIZE          ((MAX_FLAGS_HELP_ENTRIES + 1) \
+                     * sizeof (char *))
+#define MAX_PRINT_DEVS_ENTRIES      50 /* max # of Print devices help entries */
+#define MAX_PRINT_DEVS_SIZE     (MAX_PRINT_DEVS_ENTRIES \
+                     * sizeof (bootVoidPrototype *))
 
 /* globals */
 
 extern int sysStartType;
-extern bootPrintHeaderPrototype * bootAppPrintHeaderFunc;
-extern bootShellAutobootPrototype * bootShellAutobootFunc;
-extern bootShellProcPrototype * bootAppShellFunc;
-extern bootShellHelpAddPrototype * bootShellHelpAddFunc;
-extern bootShellDevFormatHelpAddPrototype * bootShellDevFormatHelpAddFunc;
-extern bootShellFlagHelpAddPrototype * bootShellFlagHelpAddFunc;
-extern bootShellPrintfPrototype * bootShellPrintfFunc;
-extern bootShellPrintDevsAddPrototype * bootShellPrintDevAddFunc;
-extern bootNetSettingsUpdatePrototype * bootNetSettingsUpdateFunc;
+extern bootPrintHeaderPrototype *bootAppPrintHeaderFunc;
+extern bootShellAutobootPrototype *bootShellAutobootFunc;
+extern bootShellProcPrototype *bootAppShellFunc;
+extern bootShellHelpAddPrototype *bootShellHelpAddFunc;
+extern bootShellDevFormatHelpAddPrototype *bootShellDevFormatHelpAddFunc;
+extern bootShellFlagHelpAddPrototype *bootShellFlagHelpAddFunc;
+extern bootShellPrintfPrototype *bootShellPrintfFunc;
+extern bootShellPrintDevsAddPrototype *bootShellPrintDevAddFunc;
+extern bootNetSettingsUpdatePrototype *bootNetSettingsUpdateFunc;
 
-extern int bootAppBootFileLoadAndGo (char * cmd);
-extern STATUS usrBootLineCrack (char * bootString, BOOT_PARAMS * pParams);
+extern int bootAppBootFileLoadAndGo(char *cmd);
+extern STATUS usrBootLineCrack(char *bootString, BOOT_PARAMS *pParams);
 extern BOOL printBootShellPrompt;
 
 /* locals */
 
 static char bootShellKey = 0;
 
-static char * helpMsg[(MAX_HELP_ENTRIES + 1) * 2];
-static char * helpDevFormatMsg[MAX_DEV_FORMAT_HELP_ENTRIES + 1];
-static char * helpFlagMsg[MAX_FLAGS_HELP_ENTRIES + 1];
-static bootVoidPrototype * helpPrintDevsFuncs[MAX_PRINT_DEVS_ENTRIES];
+static char *helpMsg[(MAX_HELP_ENTRIES + 1) * 2];
+static char *helpDevFormatMsg[MAX_DEV_FORMAT_HELP_ENTRIES + 1];
+static char *helpFlagMsg[MAX_FLAGS_HELP_ENTRIES + 1];
+static bootVoidPrototype *helpPrintDevsFuncs[MAX_PRINT_DEVS_ENTRIES];
 int    numberOfHelpEntries;
 int    numberOfDevFormatHelpEntries;
 int    numberOfPrintDevsEntries;
@@ -168,30 +168,30 @@ static struct timeval bootSelectTimeout;
 /* forward declarations */
 
 STATUS bootAppShellInit(void);
-LOCAL char * bootAppShell (char * cmd, int length);
-LOCAL STATUS bootAppPrintHeader (int startType);
-LOCAL void bootAppShellAutoboot (int timeout);
-LOCAL void bootAppShellHelpAdd (char * helpProto, char * helpDesc);
-LOCAL void bootAppShellDevFormatHelpAdd (char * helpDesc);
-LOCAL void bootAppShellFlagHelpAdd (UINT32 flag, char * helpDesc);
+LOCAL char *bootAppShell(char *cmd, int length);
+LOCAL STATUS bootAppPrintHeader(int startType);
+LOCAL void bootAppShellAutoboot(int timeout);
+LOCAL void bootAppShellHelpAdd(char *helpProto, char *helpDesc);
+LOCAL void bootAppShellDevFormatHelpAdd(char *helpDesc);
+LOCAL void bootAppShellFlagHelpAdd(UINT32 flag, char *helpDesc);
 LOCAL void bootAppShellPrintf(char *, _Vx_usr_arg_t, _Vx_usr_arg_t,
-				      _Vx_usr_arg_t, _Vx_usr_arg_t,
-				      _Vx_usr_arg_t, _Vx_usr_arg_t);
-LOCAL void bootAppShellPrintDevsAdd(bootVoidPrototype * pPrintDevsFunc);
+                              _Vx_usr_arg_t, _Vx_usr_arg_t,
+                              _Vx_usr_arg_t, _Vx_usr_arg_t);
+LOCAL void bootAppShellPrintDevsAdd(bootVoidPrototype *pPrintDevsFunc);
 
-LOCAL void bootAppExcMsgPrint (char *string);
-LOCAL int printBootLogo (char * cmd);
-LOCAL char autoboot (int timeout);
+LOCAL void bootAppExcMsgPrint(char *string);
+LOCAL int printBootLogo(char *cmd);
+LOCAL char autoboot(int timeout);
 
 /* local command handlers */
 
-LOCAL int printBootLogo (char * cmd);
-LOCAL int bootHelp (char * cmd);
-LOCAL int bootAppSysExcMsgPrint (char * cmd);
-LOCAL int bootAppParamsShow (char * cmd);
-LOCAL int bootAppParamsChange (char * cmd);
-LOCAL int bootAppBootFileLoad (char * cmd);
-LOCAL int bootAppGo (char * cmd);
+LOCAL int printBootLogo(char *cmd);
+LOCAL int bootHelp(char *cmd);
+LOCAL int bootAppSysExcMsgPrint(char *cmd);
+LOCAL int bootAppParamsShow(char *cmd);
+LOCAL int bootAppParamsChange(char *cmd);
+LOCAL int bootAppBootFileLoad(char *cmd);
+LOCAL int bootAppGo(char *cmd);
 
 /*******************************************************************************
 *
@@ -208,7 +208,7 @@ LOCAL int bootAppGo (char * cmd);
 * \NOMANUAL
 */
 STATUS bootAppShellInit()
-    {
+{
     extern int sysStartType;
 
     /* initialize help message area */
@@ -234,41 +234,41 @@ STATUS bootAppShellInit()
     bootShellAutobootFunc = (bootShellAutobootPrototype *) bootAppShellAutoboot;
     bootShellHelpAddFunc = (bootShellHelpAddPrototype *) bootAppShellHelpAdd;
     bootShellDevFormatHelpAddFunc =
-	(bootShellDevFormatHelpAddPrototype *) bootAppShellDevFormatHelpAdd;
+        (bootShellDevFormatHelpAddPrototype *) bootAppShellDevFormatHelpAdd;
     bootShellFlagHelpAddFunc =
-	(bootShellFlagHelpAddPrototype *) bootAppShellFlagHelpAdd;
+        (bootShellFlagHelpAddPrototype *) bootAppShellFlagHelpAdd;
     bootShellPrintfFunc = (bootShellPrintfPrototype *) bootAppShellPrintf;
     bootShellPrintDevAddFunc =
-	(bootShellPrintDevsAddPrototype *) bootAppShellPrintDevsAdd;
+        (bootShellPrintDevsAddPrototype *) bootAppShellPrintDevsAdd;
 
     /* initialize commands */
     bootCommandHandlerAdd("?", bootHelp, BOOT_CMD_MATCH_STRICT,
-			    "?", "- print this list");
+                          "?", "- print this list");
     bootCommandHandlerAdd("h", bootHelp, BOOT_CMD_MATCH_STRICT,
-			    NULL, NULL);
+                          NULL, NULL);
     /* "@" already registered */
     bootShellHelpAddFunc("@",  "- boot (load and go)");
     bootCommandHandlerAdd("p", bootAppParamsShow, BOOT_CMD_MATCH_STRICT,
-			    "p",  "- print boot params");
+                          "p",  "- print boot params");
     bootCommandHandlerAdd("c", bootAppParamsChange, BOOT_CMD_MATCH_STRICT,
-			    "c",  "- change boot params");
+                          "c",  "- change boot params");
     bootCommandHandlerAdd("l", bootAppBootFileLoad, BOOT_CMD_MATCH_STRICT,
-			    "l",  "- load boot file");
+                          "l",  "- load boot file");
     bootCommandHandlerAdd("g", bootAppGo, BOOT_CMD_MATCH_STRICT,
-			    "g adrs",  "- go to adrs");
+                          "g adrs",  "- go to adrs");
     bootCommandHandlerAdd("e", bootAppSysExcMsgPrint, BOOT_CMD_MATCH_STRICT,
-			    "e", "- print fatal exception");
+                          "e", "- print fatal exception");
     bootCommandHandlerAdd("v", printBootLogo, BOOT_CMD_MATCH_STRICT,
-			    "v", "- print boot logo with version");
+                          "v", "- print boot logo with version");
     bootCommandHandlerAdd("$", bootAppBootFileLoadAndGo, BOOT_CMD_MATCH_LOOSE,
-			    NULL,NULL);
+                          NULL, NULL);
 
     /* add bootline help */
-    bootDevFormatHelpAdd (
-	    "\nBootline Format:\n"
-	    "  $dev(0,procnum)host:/file h=# e=# b=# g=# u=usr [pw=passwd] f=#"
-	    "\n                          tn=targetname s=script o=other"
-	    "\n\nFile System Boot Device Formats:");
+    bootDevFormatHelpAdd(
+        "\nBootline Format:\n"
+        "  $dev(0,procnum)host:/file h=# e=# b=# g=# u=usr [pw=passwd] f=#"
+        "\n                          tn=targetname s=script o=other"
+        "\n\nFile System Boot Device Formats:");
 
     /* initialize flag help */
     /* Flag 0x01 not currently used
@@ -280,10 +280,10 @@ STATUS bootAppShellInit()
     bootFlagHelpAdd(0x400, "  System in debug mode");
 
     /* print header */
-    bootAppPrintHeader (sysStartType);
+    bootAppPrintHeader(sysStartType);
 
     return (OK);
-    }
+}
 
 /*******************************************************************************
 *
@@ -299,25 +299,25 @@ STATUS bootAppShellInit()
 * \NOMANUAL
 */
 LOCAL STATUS bootAppPrintHeader
-    (
+(
     int startType       /* boot start type for system */
-    )
-    {
+)
+{
     /* only print Boot logo during cold boot */
     if (startType & BOOT_CLEAR)
-       printBootLogo (NULL);
+        printBootLogo(NULL);
 
-     /*
-     * print out any new exception message.  The first byte is zeroed after
-     * printing so that we won't print it again automatically.  However, the
-     * 'e' command will still print out the remainder.
-     */
+    /*
+    * print out any new exception message.  The first byte is zeroed after
+    * printing so that we won't print it again automatically.  However, the
+    * 'e' command will still print out the remainder.
+    */
 
-    bootAppExcMsgPrint (sysExcMsg);
+    bootAppExcMsgPrint(sysExcMsg);
     *sysExcMsg = EOS;       /* indicate exception message is old */
 
     return (OK);
-    }
+}
 
 /*******************************************************************************
 *
@@ -334,66 +334,66 @@ LOCAL STATUS bootAppPrintHeader
 * \NOMANUAL
 */
 
-LOCAL char * bootAppShell
-    (
-    char * line,    /* command line input buffer */
+LOCAL char *bootAppShell
+(
+    char *line,     /* command line input buffer */
     int    length   /* length of input buffer */
-    )
-    {
+)
+{
     char *pLine;
 
     if (bootShellKey == '@')
-	{
-	line [0] = bootShellKey;
-	line [1] = EOS;
-	bootShellKey = 0;
-	}
+    {
+        line [0] = bootShellKey;
+        line [1] = EOS;
+        bootShellKey = 0;
+    }
     else
-	{
+    {
 
-	/* check for valid bootReadFds */
-	if (FD_ISSET(STD_IN, &bootReadFds) == 0)
-	    {
-	    /* STD_IN is not part of set, add it. */
-	    FD_ZERO(&bootReadFds);
-	    FD_SET(STD_IN, &bootReadFds);
-	    }
+        /* check for valid bootReadFds */
+        if (FD_ISSET(STD_IN, &bootReadFds) == 0)
+        {
+            /* STD_IN is not part of set, add it. */
+            FD_ZERO(&bootReadFds);
+            FD_SET(STD_IN, &bootReadFds);
+        }
 
-	if (select(FD_SETSIZE, &bootReadFds, NULL, NULL, &bootSelectTimeout)
-	    > 0)
-	    {
-	    (void)fioRdString (STD_IN, line, (size_t)length);
+        if (select(FD_SETSIZE, &bootReadFds, NULL, NULL, &bootSelectTimeout)
+                > 0)
+        {
+            (void)fioRdString(STD_IN, line, (size_t)length);
 
-	    /* setup for new shell prompt.
-	     * In case a return was hit without a command
-	     */
-	    printBootShellPrompt = TRUE;
-	    }
-	else
-	    {
-	    line[0] = EOS;
-	    }
-	}
+            /* setup for new shell prompt.
+             * In case a return was hit without a command
+             */
+            printBootShellPrompt = TRUE;
+        }
+        else
+        {
+            line[0] = EOS;
+        }
+    }
 
     /* take blanks off end of line */
 
     if (strlen(line) > 0)
-	{
-	pLine = line + strlen (line) - 1;       /* point at last char */
-	while ((pLine >= line) && (*pLine == ' '))
-	    {
-	    *pLine = EOS;
-	    pLine--;
-	    }
-	}
+    {
+        pLine = line + strlen(line) - 1;        /* point at last char */
+        while ((pLine >= line) && (*pLine == ' '))
+        {
+            *pLine = EOS;
+            pLine--;
+        }
+    }
 
     /* take blanks off beginning of line */
 
     pLine = line;
-    bootSpaceSkip (&pLine);
+    bootSpaceSkip(&pLine);
 
     return pLine;
-    }
+}
 
 /*******************************************************************************
 *
@@ -410,19 +410,19 @@ LOCAL char * bootAppShell
 */
 
 LOCAL void bootAppShellHelpAdd
-    (
-    char * helpProto,  /* command prototype string */
-    char * helpDesc    /* help description for command */
-    )
-    {
+(
+    char *helpProto,   /* command prototype string */
+    char *helpDesc     /* help description for command */
+)
+{
     if ((numberOfHelpEntries < MAX_HELP_ENTRIES) && (helpProto != NULL))
-	{
-	    /* save help Prototype and Description */
-	    helpMsg[2*numberOfHelpEntries] = helpProto;
-	    helpMsg[2*numberOfHelpEntries + 1] = helpDesc;
-	    numberOfHelpEntries++;
-	}
+    {
+        /* save help Prototype and Description */
+        helpMsg[2 * numberOfHelpEntries] = helpProto;
+        helpMsg[2 * numberOfHelpEntries + 1] = helpDesc;
+        numberOfHelpEntries++;
     }
+}
 
 /*******************************************************************************
 *
@@ -439,18 +439,18 @@ LOCAL void bootAppShellHelpAdd
 */
 
 LOCAL void bootAppShellDevFormatHelpAdd
-    (
-    char * helpDesc    /* format description for device */
-    )
-    {
+(
+    char *helpDesc     /* format description for device */
+)
+{
     if ((numberOfDevFormatHelpEntries < MAX_DEV_FORMAT_HELP_ENTRIES) &&
-	(helpDesc != NULL))
-	{
-	    /* save Device Format Description */
-	    helpDevFormatMsg[numberOfDevFormatHelpEntries] = helpDesc;
-	    numberOfDevFormatHelpEntries++;
-	}
+            (helpDesc != NULL))
+    {
+        /* save Device Format Description */
+        helpDevFormatMsg[numberOfDevFormatHelpEntries] = helpDesc;
+        numberOfDevFormatHelpEntries++;
     }
+}
 
 /*******************************************************************************
 *
@@ -467,24 +467,24 @@ LOCAL void bootAppShellDevFormatHelpAdd
 */
 
 LOCAL void bootAppShellFlagHelpAdd
-    (
+(
     UINT32 flag,      /* boot flag */
-    char * helpDesc   /* help description for flag */
-    )
-    {
+    char *helpDesc    /* help description for flag */
+)
+{
     int     bit = 0;
     UINT32  tempFlag = flag;
 
     /* Determine which bit flag this string applies to. */
     while ((tempFlag & 1) == 0)
-	{
-	tempFlag >>= 1;
-	bit++;
-	}
+    {
+        tempFlag >>= 1;
+        bit++;
+    }
 
     /* save help Description */
     helpFlagMsg[bit] = helpDesc;
-    }
+}
 
 /*******************************************************************************
 *
@@ -501,16 +501,16 @@ LOCAL void bootAppShellFlagHelpAdd
 * \NOMANUAL
 */
 LOCAL void bootAppShellPrintDevsAdd
-    (
-    bootVoidPrototype * pPrintDevsFunc  /* Print device function */
-    )
-    {
+(
+    bootVoidPrototype *pPrintDevsFunc   /* Print device function */
+)
+{
     if (numberOfPrintDevsEntries < MAX_PRINT_DEVS_ENTRIES)
-	{
-	helpPrintDevsFuncs[numberOfPrintDevsEntries] = pPrintDevsFunc;
-	numberOfPrintDevsEntries++;
-	}
+    {
+        helpPrintDevsFuncs[numberOfPrintDevsEntries] = pPrintDevsFunc;
+        numberOfPrintDevsEntries++;
     }
+}
 
 /*******************************************************************************
 *
@@ -527,18 +527,18 @@ LOCAL void bootAppShellPrintDevsAdd
 */
 
 LOCAL void bootAppShellPrintf
-    (
-    char *          x,  /* print format string */
+(
+    char           *x,  /* print format string */
     _Vx_usr_arg_t   a,  /* first print argument */
     _Vx_usr_arg_t   b,  /* second print argument */
     _Vx_usr_arg_t   c,  /* third print argument */
     _Vx_usr_arg_t   d,  /* fourth print argument */
     _Vx_usr_arg_t   e,  /* fifth print argument */
     _Vx_usr_arg_t   f   /* sixth print argument */
-    )
-    {
+)
+{
     (void) printf(x, a, b, c, d, e, f);
-    }
+}
 
 /*******************************************************************************
 *
@@ -555,18 +555,18 @@ LOCAL void bootAppShellPrintf
 */
 
 LOCAL void bootAppExcMsgPrint
-    (
+(
     char *string
-    )
-    {
-    bootAppPrintf ("\n", 0,0,0,0,0,0);
+)
+{
+    bootAppPrintf("\n", 0, 0, 0, 0, 0, 0);
 
-    while (isascii ((UINT) * string) && (isprint ((UINT) * string) ||
-			isspace ((UINT) * string)))
-	bootAppPrintf ("%c", (_Vx_usr_arg_t)*string++, 0,0,0,0,0);
+    while (isascii((UINT) * string) && (isprint((UINT) * string) ||
+                                        isspace((UINT) * string)))
+        bootAppPrintf("%c", (_Vx_usr_arg_t)*string++, 0, 0, 0, 0, 0);
 
-    bootAppPrintf ("\n", 0,0,0,0,0,0);
-    }
+    bootAppPrintf("\n", 0, 0, 0, 0, 0, 0);
+}
 
 /******************************************************************************
 *
@@ -582,24 +582,24 @@ LOCAL void bootAppExcMsgPrint
 */
 
 LOCAL int printBootLogo
-    (
-    char * cmd
-    )
-    {
-    bootAppPrintf ("\n\n\n\n\n\n\n\n\n\n\n",0,0,0,0,0,0);
-    bootAppPrintf ("%28s%s", (_Vx_usr_arg_t)"",
-		   (_Vx_usr_arg_t)"VxWorks System Boot",0,0,0,0);
+(
+    char *cmd
+)
+{
+    bootAppPrintf("\n\n\n\n\n\n\n\n\n\n\n", 0, 0, 0, 0, 0, 0);
+    bootAppPrintf("%28s%s", (_Vx_usr_arg_t)"",
+                  (_Vx_usr_arg_t)"VxWorks System Boot", 0, 0, 0, 0);
     bootAppPrintf
-	("\n\n\nCopyright 1984-%4.4s  Wind River Systems, Inc.\n\n\n\n\n\n",
-	 (_Vx_usr_arg_t)(creationDate + 7),0,0,0,0,0);
-    bootAppPrintf ("CPU: %s\n", (_Vx_usr_arg_t)((void *)sysModel()),0,0,0,0,0);
-    bootAppPrintf ("Version: %s\n", (_Vx_usr_arg_t) vxWorksVersion,0,0,0,0,0);
-    bootAppPrintf ("BSP version: %s\n", (_Vx_usr_arg_t)((void *)sysBspRev()),
-		   0,0,0,0,0);
-    bootAppPrintf ("Creation date: %s\n\n", (_Vx_usr_arg_t) creationDate,
-		   0,0,0,0,0);
+    ("\n\n\nCopyright 1984-%4.4s  Wind River Systems, Inc.\n\n\n\n\n\n",
+     (_Vx_usr_arg_t)(creationDate + 7), 0, 0, 0, 0, 0);
+    bootAppPrintf("CPU: %s\n", (_Vx_usr_arg_t)((void *)sysModel()), 0, 0, 0, 0, 0);
+    bootAppPrintf("Version: %s\n", (_Vx_usr_arg_t) vxWorksVersion, 0, 0, 0, 0, 0);
+    bootAppPrintf("BSP version: %s\n", (_Vx_usr_arg_t)((void *)sysBspRev()),
+                  0, 0, 0, 0, 0);
+    bootAppPrintf("Creation date: %s\n\n", (_Vx_usr_arg_t) creationDate,
+                  0, 0, 0, 0, 0);
     return BOOT_STATUS_COMPLETE;
-    }
+}
 
 /******************************************************************************
 *
@@ -621,32 +621,32 @@ LOCAL int printBootLogo
 */
 
 LOCAL void bootAppShellAutoboot
-    (
+(
     int timeout     /* timeout time in seconds */
-    )
-    {
+)
+{
     BOOT_PARAMS params;
 
     /* start autoboot, unless no-autoboot specified */
 
-    bootStringToStruct (sysBootLine, &params);
+    bootStringToStruct(sysBootLine, &params);
     sysFlags = params.flags;
 
     if (!(sysStartType & BOOT_NO_AUTOBOOT) &&
-	!(sysFlags & SYSFLG_NO_AUTOBOOT))
-	{
-	if ((sysStartType & BOOT_QUICK_AUTOBOOT) ||
-	    (sysFlags & SYSFLG_QUICK_AUTOBOOT))
-	    {
-	    timeout = 1;
-	    }
+            !(sysFlags & SYSFLG_NO_AUTOBOOT))
+    {
+        if ((sysStartType & BOOT_QUICK_AUTOBOOT) ||
+                (sysFlags & SYSFLG_QUICK_AUTOBOOT))
+        {
+            timeout = 1;
+        }
 
-	bootShellKey = autoboot (timeout);   /* doesn't return if successful */
-	}
+        bootShellKey = autoboot(timeout);    /* doesn't return if successful */
+    }
 
     /* did not autoboot, return */
-    bootAppPrintf ("\n",0,0,0,0,0,0);
-    }
+    bootAppPrintf("\n", 0, 0, 0, 0, 0, 0);
+}
 
 /******************************************************************************
 *
@@ -665,78 +665,78 @@ LOCAL void bootAppShellAutoboot
 */
 
 LOCAL char autoboot
-    (
+(
     int timeout     /* timeout time in seconds */
-    )
-    {
+)
+{
     _Vx_usr_arg_t   timeLeft;
     int             bytesRead = 0;
     int             i;
-    void *          entry;
+    void           *entry;
     char            key;
 
     /*(void) ioctl (STD_IN, FIOBAUDRATE, CONSOLE_BAUD_RATE);*/
-    (void) ioctl (STD_IN, FIOSETOPTIONS,
-		  OPT_ECHO | OPT_CRMOD | OPT_TANDEM | OPT_7_BIT);
+    (void) ioctl(STD_IN, FIOSETOPTIONS,
+                 OPT_ECHO | OPT_CRMOD | OPT_TANDEM | OPT_7_BIT);
 
     if (timeout > 0)
-	{
-	bootAppPrintf ("\nPress any key to stop auto-boot...\n",0,0,0,0,0,0);
+    {
+        bootAppPrintf("\nPress any key to stop auto-boot...\n", 0, 0, 0, 0, 0, 0);
 
-	/* Loop looking for a char, or timeout after specified seconds */
+        /* Loop looking for a char, or timeout after specified seconds */
 
-	for (timeLeft = timeout; (timeLeft > 0) && (bytesRead == 0); timeLeft--)
-	    {
-	    bootAppPrintf ("%2d\r", timeLeft,0,0,0,0,0);
-	    for (i = 10; i > 0; i--)
-		{
-		(void) ioctl (STD_IN, FIONREAD, (_Vx_usr_arg_t) &bytesRead);
-		if (bytesRead != 0)
-		    break;
+        for (timeLeft = timeout; (timeLeft > 0) && (bytesRead == 0); timeLeft--)
+        {
+            bootAppPrintf("%2d\r", timeLeft, 0, 0, 0, 0, 0);
+            for (i = 10; i > 0; i--)
+            {
+                (void) ioctl(STD_IN, FIONREAD, (_Vx_usr_arg_t) &bytesRead);
+                if (bytesRead != 0)
+                    break;
 
-		taskDelay(sysClkRateGet() / 10);
-		}
-	    }
-	}
+                taskDelay(sysClkRateGet() / 10);
+            }
+        }
+    }
 
     if (bytesRead == 0)    /* nothing typed so auto-boot */
-	{
-	/* put the console back in line mode so it echoes (so's you can bang
-	 * on it to see if it's still alive) */
+    {
+        /* put the console back in line mode so it echoes (so's you can bang
+         * on it to see if it's still alive) */
 
-	(void) ioctl (STD_IN, FIOSETOPTIONS, OPT_TERMINAL);
+        (void) ioctl(STD_IN, FIOSETOPTIONS, OPT_TERMINAL);
 
-	bootAppPrintf ("\nauto-booting...\n\n",0,0,0,0,0,0);
+        bootAppPrintf("\nauto-booting...\n\n", 0, 0, 0, 0, 0, 0);
 
-	if (bootLoad (sysBootLine, &entry) == OK)
-	    executeImage (entry);             /* ... and never return */
-	else
-	    {
-	    bootAppPrintf ("Can't load boot file!!\n",0,0,0,0,0,0);
-	    taskDelay (sysClkRateGet ());   /* pause a second */
-	    reboot (BOOT_NO_AUTOBOOT);      /* something is awry */
-	    }
+        if (bootLoad(sysBootLine, &entry) == OK)
+            executeImage(entry);              /* ... and never return */
+        else
+        {
+            bootAppPrintf("Can't load boot file!!\n", 0, 0, 0, 0, 0, 0);
+            taskDelay(sysClkRateGet());     /* pause a second */
+            reboot(BOOT_NO_AUTOBOOT);       /* something is awry */
+        }
 
-	/* should never get here */
-	key = (char) ERROR;
-	}
+        /* should never get here */
+        key = (char) ERROR;
+    }
     else
-	{
+    {
 
-	/*
-     *  read the key that stopped autoboot 
-     *  don't need return from function call
-     */
+        /*
+         *  read the key that stopped autoboot
+         *  don't need return from function call
+         */
 
-	(void) read (STD_IN, &key, 1);
-	key = (char)((int)key & 0x7f);       /* mask off parity in raw mode */
-	}
+        (void) read(STD_IN, &key, 1);
+        key = (char)((int)key & 0x7f);       /* mask off parity in raw mode */
+    }
 
     /* put it back into line mode */
-    (void) ioctl (STD_IN, FIOSETOPTIONS, OPT_TERMINAL);
+    (void) ioctl(STD_IN, FIOSETOPTIONS, OPT_TERMINAL);
 
     return (key);
-    }
+}
 
 /*******************************************************************************
 *
@@ -756,53 +756,53 @@ LOCAL char autoboot
 */
 
 LOCAL int bootHelp
-    (
-    char * cmd
-    )
-    {
+(
+    char *cmd
+)
+{
     FAST char **pMsg;
     int offset;
     UINT32 flag;
 
     /* print command help */
-    bootAppPrintf ("\nCommands:\n",0,0,0,0,0,0);
+    bootAppPrintf("\nCommands:\n", 0, 0, 0, 0, 0, 0);
     for (pMsg = helpMsg; *pMsg != NULL; pMsg += 2)
-	{
-	bootAppPrintf (" %-21s %s\n", (_Vx_usr_arg_t) *pMsg,
-				      (_Vx_usr_arg_t) *(pMsg + 1),
-				      0,0,0,0);
-	}
+    {
+        bootAppPrintf(" %-21s %s\n", (_Vx_usr_arg_t) *pMsg,
+                      (_Vx_usr_arg_t) * (pMsg + 1),
+                      0, 0, 0, 0);
+    }
 
     /* print Device Format help */
     for (pMsg = helpDevFormatMsg; *pMsg != NULL; pMsg += 1)
-	{
-	bootAppPrintf (" %s\n", (_Vx_usr_arg_t) *pMsg, 0,0,0,0,0);
-	}
+    {
+        bootAppPrintf(" %s\n", (_Vx_usr_arg_t) *pMsg, 0, 0, 0, 0, 0);
+    }
 
     /* print boot flags */
-    bootAppPrintf("\nBoot Flags:\n",0,0,0,0,0,0);
+    bootAppPrintf("\nBoot Flags:\n", 0, 0, 0, 0, 0, 0);
     flag = 1;
     for (offset = 0; offset < MAX_FLAGS_HELP_ENTRIES; offset++, flag <<= 1)
-	{
-	if (helpFlagMsg[offset] != NULL)
-	bootAppPrintf ("  0x%4.4x - %s\n", (_Vx_usr_arg_t) flag,
-					   (_Vx_usr_arg_t) helpFlagMsg[offset],
-					   0,0,0,0);
-	}
+    {
+        if (helpFlagMsg[offset] != NULL)
+            bootAppPrintf("  0x%4.4x - %s\n", (_Vx_usr_arg_t) flag,
+                          (_Vx_usr_arg_t) helpFlagMsg[offset],
+                          0, 0, 0, 0);
+    }
 
     /* print the devices */
 
-    bootAppPrintf ("\nAvailable Boot Devices:",0,0,0,0,0,0);
+    bootAppPrintf("\nAvailable Boot Devices:", 0, 0, 0, 0, 0, 0);
     for (offset = 0; offset < numberOfPrintDevsEntries; offset++)
-	{
-	/* call print devices function */
-	if (helpPrintDevsFuncs[offset] != NULL)
-	    helpPrintDevsFuncs[offset]();
-	}
-
-    bootAppPrintf ("\n",0,0,0,0,0,0);
-    return BOOT_STATUS_COMPLETE;
+    {
+        /* call print devices function */
+        if (helpPrintDevsFuncs[offset] != NULL)
+            helpPrintDevsFuncs[offset]();
     }
+
+    bootAppPrintf("\n", 0, 0, 0, 0, 0, 0);
+    return BOOT_STATUS_COMPLETE;
+}
 
 /******************************************************************************
 *
@@ -819,13 +819,13 @@ LOCAL int bootHelp
 */
 
 LOCAL int bootAppSysExcMsgPrint
-    (
-    char * cmd
-    )
-    {
-    bootAppExcMsgPrint(sysExcMsg+1);
+(
+    char *cmd
+)
+{
+    bootAppExcMsgPrint(sysExcMsg + 1);
     return BOOT_STATUS_COMPLETE;
-    }
+}
 
 /******************************************************************************
 *
@@ -842,13 +842,13 @@ LOCAL int bootAppSysExcMsgPrint
 */
 
 LOCAL int bootAppParamsShow
-    (
-    char * cmd
-    )
-    {
-    bootParamsShow (sysBootLine);
+(
+    char *cmd
+)
+{
+    bootParamsShow(sysBootLine);
     return BOOT_STATUS_COMPLETE;
-    }
+}
 
 /******************************************************************************
 *
@@ -869,50 +869,50 @@ LOCAL int bootAppParamsShow
 */
 
 LOCAL int bootAppParamsChange
-    (
-    char * cmd
-    )
-    {
+(
+    char *cmd
+)
+{
     STATUS  rtv;
     BOOT_PARAMS oldBootParams;
 
-    bootParamsPrompt (sysBootLine);
+    bootParamsPrompt(sysBootLine);
     if (strlen(sysBootLine) <= BOOT_CMD_MAX_LINE)
-	{
-	rtv = sysNvRamSet (sysBootLine, (int)strlen(sysBootLine) + 1, 0);
-	if (rtv == ERROR)
-	    {
-	    bootAppPrintf("\nNOTE: Bootline not saved to NVRAM\n",0,0,0,0,0,0);
-	    }
+    {
+        rtv = sysNvRamSet(sysBootLine, (int)strlen(sysBootLine) + 1, 0);
+        if (rtv == ERROR)
+        {
+            bootAppPrintf("\nNOTE: Bootline not saved to NVRAM\n", 0, 0, 0, 0, 0, 0);
+        }
 
-	if (bootNetSettingsUpdateFunc != NULL)
-	    {
-	    /* save old network settings */
-	    memcpy(&oldBootParams, &sysBootParams, sizeof(BOOT_PARAMS));
-	    }
+        if (bootNetSettingsUpdateFunc != NULL)
+        {
+            /* save old network settings */
+            memcpy(&oldBootParams, &sysBootParams, sizeof(BOOT_PARAMS));
+        }
 
-	rtv = usrBootLineCrack(sysBootLine, &sysBootParams);
-	if (rtv == ERROR)
-	    {
-	    bootAppPrintf("\nNOTE: Error parsing Bootline.  "
-			  "Settings may be corrupted.\n",0,0,0,0,0,0);
-	    return BOOT_STATUS_COMPLETE;
-	    }
+        rtv = usrBootLineCrack(sysBootLine, &sysBootParams);
+        if (rtv == ERROR)
+        {
+            bootAppPrintf("\nNOTE: Error parsing Bootline.  "
+                          "Settings may be corrupted.\n", 0, 0, 0, 0, 0, 0);
+            return BOOT_STATUS_COMPLETE;
+        }
 
-	/* update network settings */
-	if (bootNetSettingsUpdateFunc != NULL)
-	    {
-	    /* networking enabled, setup network settings */
-	    (void) bootNetSettingsUpdateFunc(&oldBootParams, &sysBootParams);
-	    }
-	}
+        /* update network settings */
+        if (bootNetSettingsUpdateFunc != NULL)
+        {
+            /* networking enabled, setup network settings */
+            (void) bootNetSettingsUpdateFunc(&oldBootParams, &sysBootParams);
+        }
+    }
     else
-	bootAppPrintf("\nWARNING:Bootline longer than BOOT_LINE_SIZE "
-		      "(%d bytes). Not saved to NVRAM\n",
-		      (_Vx_usr_arg_t) BOOT_CMD_MAX_LINE,0,0,0,0,0);
+        bootAppPrintf("\nWARNING:Bootline longer than BOOT_LINE_SIZE "
+                      "(%d bytes). Not saved to NVRAM\n",
+                      (_Vx_usr_arg_t) BOOT_CMD_MAX_LINE, 0, 0, 0, 0, 0);
 
     return BOOT_STATUS_COMPLETE;
-    }
+}
 
 /******************************************************************************
 *
@@ -932,27 +932,27 @@ LOCAL int bootAppParamsChange
 */
 
 LOCAL int bootAppBootFileLoad
-    (
-    char * cmd
-    )
-    {
-    void * entry;
+(
+    char *cmd
+)
+{
+    void *entry;
 
     /* skip the command name and point to first parameter */
-    bootCmdNameSkip (&cmd, 1);
+    bootCmdNameSkip(&cmd, 1);
 
-    if (bootLoad (cmd, &entry) == OK)
-	{
-	bootAppPrintf ("entry = %p\n", (_Vx_usr_arg_t) entry,0,0,0,0,0);
-	}
+    if (bootLoad(cmd, &entry) == OK)
+    {
+        bootAppPrintf("entry = %p\n", (_Vx_usr_arg_t) entry, 0, 0, 0, 0, 0);
+    }
     else
-	{
-	taskDelay (sysClkRateGet ());   /* pause a second */
-	reboot (BOOT_NO_AUTOBOOT);      /* something is awry */
-	}
+    {
+        taskDelay(sysClkRateGet());     /* pause a second */
+        reboot(BOOT_NO_AUTOBOOT);       /* something is awry */
+    }
 
     return BOOT_STATUS_COMPLETE;
-    }
+}
 
 /******************************************************************************
 *
@@ -969,19 +969,19 @@ LOCAL int bootAppBootFileLoad
 */
 
 LOCAL int bootAppGo
-    (
-    char * cmd
-    )
-    {
-    void *  entry;
+(
+    char *cmd
+)
+{
+    void   *entry;
 
     /* skip the command name and point to first parameter */
-    bootCmdNameSkip (&cmd, 1);
+    bootCmdNameSkip(&cmd, 1);
 
-    if (bootGetArg (&cmd, (_Vx_usr_arg_t *) &entry, HEX, !OPT) == OK)
-	{
-	executeImage (entry);
-	}
+    if (bootGetArg(&cmd, (_Vx_usr_arg_t *) &entry, HEX, !OPT) == OK)
+    {
+        executeImage(entry);
+    }
 
     return BOOT_STATUS_COMPLETE;
-    }
+}

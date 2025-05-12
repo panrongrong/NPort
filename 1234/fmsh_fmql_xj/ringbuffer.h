@@ -48,15 +48,16 @@ typedef struct ring_buffer_t ring_buffer_t;
  * The buffer contains a buffer array
  * as well as metadata for the ring buffer.
  */
-struct ring_buffer_t {
-  /** Buffer memory. */
-  char *buffer;
-  /** Buffer mask. */
-  ring_buffer_size_t buffer_mask;
-  /** Index of tail. */
-  ring_buffer_size_t tail_index;
-  /** Index of head. */
-  ring_buffer_size_t head_index;
+struct ring_buffer_t
+{
+    /** Buffer memory. */
+    char *buffer;
+    /** Buffer mask. */
+    ring_buffer_size_t buffer_mask;
+    /** Index of tail. */
+    ring_buffer_size_t tail_index;
+    /** Index of head. */
+    ring_buffer_size_t head_index;
 };
 
 /**
@@ -115,8 +116,9 @@ uint8_t ring_buffer_peek(ring_buffer_t *buffer, char *data, ring_buffer_size_t i
  * @param buffer The buffer for which it should be returned whether it is empty.
  * @return 1 if empty; 0 otherwise.
  */
-inline uint8_t ring_buffer_is_empty(ring_buffer_t *buffer) {
-  return (buffer->head_index == buffer->tail_index);
+inline uint8_t ring_buffer_is_empty(ring_buffer_t *buffer)
+{
+    return (buffer->head_index == buffer->tail_index);
 }
 
 /**
@@ -124,8 +126,9 @@ inline uint8_t ring_buffer_is_empty(ring_buffer_t *buffer) {
  * @param buffer The buffer for which it should be returned whether it is full.
  * @return 1 if full; 0 otherwise.
  */
-inline uint8_t ring_buffer_is_full(ring_buffer_t *buffer) {
-  return ((buffer->head_index - buffer->tail_index) & RING_BUFFER_MASK(buffer)) == RING_BUFFER_MASK(buffer);
+inline uint8_t ring_buffer_is_full(ring_buffer_t *buffer)
+{
+    return ((buffer->head_index - buffer->tail_index) & RING_BUFFER_MASK(buffer)) == RING_BUFFER_MASK(buffer);
 }
 
 /**
@@ -133,8 +136,9 @@ inline uint8_t ring_buffer_is_full(ring_buffer_t *buffer) {
  * @param buffer The buffer for which the number of items should be returned.
  * @return The number of items in the ring buffer.
  */
-inline ring_buffer_size_t ring_buffer_num_items(ring_buffer_t *buffer) {
-  return ((buffer->head_index - buffer->tail_index) & RING_BUFFER_MASK(buffer));
+inline ring_buffer_size_t ring_buffer_num_items(ring_buffer_t *buffer)
+{
+    return ((buffer->head_index - buffer->tail_index) & RING_BUFFER_MASK(buffer));
 }
 
 #ifdef __cplusplus

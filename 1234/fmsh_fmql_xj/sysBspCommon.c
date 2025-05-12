@@ -8,7 +8,7 @@
  * of an applicable Wind River license agreement.
  */
 
- /*
+/*
 modification history
 --------------------
 01a,18feb11,z_l created.
@@ -26,15 +26,15 @@ in BSP.
 IMPORT char end [];                         /* end of system, created by ld */
 
 #ifndef _ARCH_SUPPORTS_PROTECT_INTERRUPT_STACK
-IMPORT VOIDFUNCPTR _func_armIntStackSplit;  /* ptr to fn to split stack */
+    IMPORT VOIDFUNCPTR _func_armIntStackSplit;  /* ptr to fn to split stack */
 #endif /* !_ARCH_SUPPORTS_PROTECT_INTERRUPT_STACK */
 
 /* globals */
 
 int    sysBus      = 0;               /* system bus type (VME_BUS, etc) */
 int    sysCpu      = CPU;             /* system CPU type (e.g. ARMARCH7)*/
-char * sysBootLine = BOOT_LINE_ADRS;  /* address of boot line */
-char * sysExcMsg   = EXC_MSG_ADRS;    /* catastrophic message area */
+char *sysBootLine = BOOT_LINE_ADRS;   /* address of boot line */
+char *sysExcMsg   = EXC_MSG_ADRS;     /* catastrophic message area */
 int    sysProcNum  = 0;               /* processor number of this CPU */
 
 /*******************************************************************************
@@ -46,10 +46,10 @@ int    sysProcNum  = 0;               /* processor number of this CPU */
 * RETURNS: A pointer to a string identifying the board and CPU.
 */
 
-char *sysModel (void)
-    {
+char *sysModel(void)
+{
     return SYS_MODEL;
-    }
+}
 
 /*******************************************************************************
 *
@@ -62,10 +62,10 @@ char *sysModel (void)
 * RETURNS: A pointer to the BSP version/revision string.
 */
 
-char * sysBspRev (void)
-    {
+char *sysBspRev(void)
+{
     return (BSP_VERSION BSP_REV);
-    }
+}
 
 /*******************************************************************************
 *
@@ -85,45 +85,45 @@ char * sysBspRev (void)
 * SEE ALSO: sysMemTop()
 */
 
-char * sysPhysMemTop (void)
+char *sysPhysMemTop(void)
 {
-    static char * physTop = NULL;
+    static char *physTop = NULL;
 
     if (physTop == NULL)
     {
-    #if 1 /* origin*/
-        physTop = (char *)(LOCAL_MEM_LOCAL_ADRS + LOCAL_MEM_SIZE); 
-	
-    #else  /* jc*/
-	     /*
-		 ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-		 ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-		 ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-		      ]]]]]]]]]]]  ]]]]     ]]]]]]]]]]       ]]              ]]]]         (R)
-		 ]     ]]]]]]]]]  ]]]]]]     ]]]]]]]]       ]]               ]]]]            
-		 ]]     ]]]]]]]  ]]]]]]]]     ]]]]]] ]     ]]                ]]]]            
-		 ]]]     ]]]]] ]    ]]]  ]     ]]]] ]]]   ]]]]]]]]]  ]]]] ]] ]]]]  ]]   ]]]]]
-		 ]]]]     ]]]  ]]    ]  ]]]     ]] ]]]]] ]]]]]]   ]] ]]]]]]] ]]]] ]]   ]]]]  
-		 ]]]]]     ]  ]]]]     ]]]]]      ]]]]]]]] ]]]]   ]] ]]]]    ]]]]]]]    ]]]] 
-		 ]]]]]]      ]]]]]     ]]]]]]    ]  ]]]]]  ]]]]   ]] ]]]]    ]]]]]]]]    ]]]]
-		 ]]]]]]]    ]]]]]  ]    ]]]]]]  ]    ]]]   ]]]]   ]] ]]]]    ]]]] ]]]]    ]]]]
-		 ]]]]]]]]  ]]]]]  ]]]    ]]]]]]]      ]     ]]]]]]]  ]]]]    ]]]]  ]]]] ]]]]]
-		 ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-		 ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]       Development System
-		 ]]]]]]]]]]]]]]]]]]]]]]]]]]]]
-		 ]]]]]]]]]]]]]]]]]]]]]]]]]]]       VxWorks 6.9 SMP
-		 ]]]]]]]]]]]]]]]]]]]]]]]]]]       KERNEL: WIND version 2.13
-		 ]]]]]]]]]]]]]]]]]]]]]]]]]       Copyright Wind River Systems, Inc., 1984-2018
+#if 1 /* origin*/
+        physTop = (char *)(LOCAL_MEM_LOCAL_ADRS + LOCAL_MEM_SIZE);
 
-		 CPU: FMSH FMQL ARMv7 MPCore.  Processor #0.
-		 Memory Size: 0x3ff00000 (1023Mb).  BSP version 6.9/0.
-		 Created: Mar  9 2021 09:51:14
-		 ED&R Policy Mode: Deployed
-		 WDB Comm Type: WDB_COMM_END
-		 WDB: Ready.
-		 */
+#else  /* jc*/
+        /*
+        ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+        ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+        ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+             ]]]]]]]]]]]  ]]]]     ]]]]]]]]]]       ]]              ]]]]         (R)
+        ]     ]]]]]]]]]  ]]]]]]     ]]]]]]]]       ]]               ]]]]
+        ]]     ]]]]]]]  ]]]]]]]]     ]]]]]] ]     ]]                ]]]]
+        ]]]     ]]]]] ]    ]]]  ]     ]]]] ]]]   ]]]]]]]]]  ]]]] ]] ]]]]  ]]   ]]]]]
+        ]]]]     ]]]  ]]    ]  ]]]     ]] ]]]]] ]]]]]]   ]] ]]]]]]] ]]]] ]]   ]]]]
+        ]]]]]     ]  ]]]]     ]]]]]      ]]]]]]]] ]]]]   ]] ]]]]    ]]]]]]]    ]]]]
+        ]]]]]]      ]]]]]     ]]]]]]    ]  ]]]]]  ]]]]   ]] ]]]]    ]]]]]]]]    ]]]]
+        ]]]]]]]    ]]]]]  ]    ]]]]]]  ]    ]]]   ]]]]   ]] ]]]]    ]]]] ]]]]    ]]]]
+        ]]]]]]]]  ]]]]]  ]]]    ]]]]]]]      ]     ]]]]]]]  ]]]]    ]]]]  ]]]] ]]]]]
+        ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+        ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]       Development System
+        ]]]]]]]]]]]]]]]]]]]]]]]]]]]]
+        ]]]]]]]]]]]]]]]]]]]]]]]]]]]       VxWorks 6.9 SMP
+        ]]]]]]]]]]]]]]]]]]]]]]]]]]       KERNEL: WIND version 2.13
+        ]]]]]]]]]]]]]]]]]]]]]]]]]       Copyright Wind River Systems, Inc., 1984-2018
+
+        CPU: FMSH FMQL ARMv7 MPCore.  Processor #0.
+        Memory Size: 0x3ff00000 (1023Mb).  BSP version 6.9/0.
+        Created: Mar  9 2021 09:51:14
+        ED&R Policy Mode: Deployed
+        WDB Comm Type: WDB_COMM_END
+        WDB: Ready.
+        */
         physTop = (char *)(0x40000000);   /* for test:1G => Memory Size: 0x3ff00000 (1023Mb).*/
-    #endif
+#endif
     }
 
     return physTop;
@@ -143,21 +143,21 @@ char * sysPhysMemTop (void)
 * RETURNS: The address of the top of VxWorks memory.
 */
 
-char * sysMemTop (void)
-    {
-    static char * memTop = NULL;
+char *sysMemTop(void)
+{
+    static char *memTop = NULL;
 
     if (memTop == NULL)
-        {
+    {
 #ifdef  INCLUDE_EDR_PM
-        memTop = (char *)sysPhysMemTop () - USER_RESERVED_MEM - PM_RESERVED_MEM;
+        memTop = (char *)sysPhysMemTop() - USER_RESERVED_MEM - PM_RESERVED_MEM;
 #else
-        memTop = (char *)sysPhysMemTop () - USER_RESERVED_MEM;
+        memTop = (char *)sysPhysMemTop() - USER_RESERVED_MEM;
 #endif /* INCLUDE_EDR_PM */
-        }
+    }
 
     return (memTop);
-    }
+}
 
 /*******************************************************************************
 *
@@ -171,16 +171,16 @@ char * sysMemTop (void)
 * SEE ALSO: sysProcNumSet()
 */
 
-int sysProcNumGet (void)
-    {
+int sysProcNumGet(void)
+{
     return sysProcNum;
-    }
+}
 
 /*******************************************************************************
 *
 * sysProcNumSet - set the processor number
 *
-* This routine sets the processor number for the CPU board.  Processor numbers 
+* This routine sets the processor number for the CPU board.  Processor numbers
 * should be unique on a single backplane.
 *
 * NOTE
@@ -192,12 +192,12 @@ int sysProcNumGet (void)
 */
 
 void sysProcNumSet
-    (
+(
     int procNum     /* processor number */
-    )
-    {
+)
+{
     sysProcNum = procNum;
-    }
+}
 
 /*******************************************************************************
 *
@@ -207,10 +207,10 @@ void sysProcNumSet
 *
 * RETURNS: system clock frequency
 */
-UINT32 sysClkFreqGet (void)
-    {
+UINT32 sysClkFreqGet(void)
+{
     return SYS_CLK_FREQ;
-    }
+}
 
 /*******************************************************************************
 *
@@ -221,25 +221,12 @@ UINT32 sysClkFreqGet (void)
 * \NOMANUAL
 */
 
-SIO_CHAN * bspSerialChanGet
-    (
+SIO_CHAN *bspSerialChanGet
+(
     int channel /* serial channel */
-    )
-    {
+)
+{
     return ((SIO_CHAN *) ERROR);
-    }
-
-/*******************************************************************************
-*
-* bspSerialChanGet - get a serial channel
-*
-* RETURNS: ERROR
-*
-* \NOMANUAL
-*/
-UINT32 regprint(UINT32 ad){
-	printf("0x%x\n",(*(volatile UINT32 *)(ad)));
-	return OK;
 }
 
 /*******************************************************************************
@@ -250,29 +237,49 @@ UINT32 regprint(UINT32 ad){
 *
 * \NOMANUAL
 */
-UINT32 mm(UINT32 ad,UINT32 val){
-	*(volatile UINT32 *)(ad)=val;
-	return OK;
+UINT32 regprint(UINT32 ad)
+{
+    printf("0x%x\n", (*(volatile UINT32 *)(ad)));
+    return OK;
 }
 
-UINT32 prints(UINT32 addr){
-	printf("%s\n",(char*)addr);
-	return OK;
+/*******************************************************************************
+*
+* bspSerialChanGet - get a serial channel
+*
+* RETURNS: ERROR
+*
+* \NOMANUAL
+*/
+UINT32 mm(UINT32 ad, UINT32 val)
+{
+    *(volatile UINT32 *)(ad) = val;
+    return OK;
 }
 
-UINT32 read32(UINT32 addr){
-	return *(volatile UINT32 *)(addr);
+UINT32 prints(UINT32 addr)
+{
+    printf("%s\n", (char *)addr);
+    return OK;
 }
 
-UINT32 read32p(UINT32 *addr){
-	return *addr;
+UINT32 read32(UINT32 addr)
+{
+    return *(volatile UINT32 *)(addr);
 }
 
-void write32(UINT32 addr,UINT32 val){
-	*(volatile UINT32 *)(addr)=val;
+UINT32 read32p(UINT32 *addr)
+{
+    return *addr;
 }
 
-void write32p(UINT32 val, UINT32 *addr){
-	*addr=val;
+void write32(UINT32 addr, UINT32 val)
+{
+    *(volatile UINT32 *)(addr) = val;
+}
+
+void write32p(UINT32 val, UINT32 *addr)
+{
+    *addr = val;
 }
 
