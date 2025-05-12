@@ -26,6 +26,15 @@
 
 #define BACKLOG   256
 
+#ifdef DEBUG
+  #define DEBUG_PRINT(fmt, ...) \
+    do { \
+      printf(stderr, "[DEBUG] %s:%d:%s(): " fmt "\n", \
+              __FILE__, __LINE__, __func__, ##__VA_ARGS__); \
+    } while(0)
+#else
+  #define DEBUG_PRINT(fmt, ...) do {} while(0)  // 无操作
+#endif
 
 typedef enum
 {
@@ -60,27 +69,29 @@ const int portcmd_array[] = {966, 967, 968, 969, 970, 971, 972, 973, 974, 975, 9
 
 
 #define TCP_SERVER_TASK_PRIO        (95)
+
 #define UART_TX_TASK_PRIO           (85)
 #define UART_RX_TASK_PRIO           (75)
-#define UART_RX_FORWARD_TASK_PRIO   (75)
+#define UART_RX_FORWARD_TASK_PRIO   (92)
 
 /*  */
-#define UART_TX_TASK_MIN_DELAY              (1)
-#define UART_RX_TASK_MIN_DELAY              (1)
-#define UART_RX_FORWARD_TASK_MIN_DELAY      (5)
+#define UART_TX_TASK_MIN_DELAY              (2)
+#define UART_RX_TASK_MIN_DELAY              (2)
+#define UART_RX_FORWARD_TASK_MIN_DELAY      (20)
 
 #define TCP_SERVER_TASK_STACK 4096
 #define UART_TASK_STACK 8192
 
 #define UART_FPGA_RX_BUFFER             (2048)
-#define UART_FPGA_TX_BUFFER             (512)
+#define UART_FPGA_TX_BUFFER             (256+16)
 static char uart_fpga_rxbuf[UART_FPGA_RX_BUFFER];
-static char uart_fpga_txbuf[UART_FPGA_TX_BUFFER];
+static char uart_fpga_txbuf[NUM_PORTS][UART_FPGA_TX_BUFFER];
+static char uart_fpga_txbuf_tmp[UART_FPGA_TX_BUFFER];
 
-#define NET_BUFFER            (4096)
+#define NET_BUFFER            (8192*2)
 static char net_tx_buf[NET_BUFFER];
 
-#define SOCK_DATA_BUFFER        (8192)
+#define SOCK_DATA_BUFFER        (8192*2)
 static char sock_data_tmp[SOCK_DATA_BUFFER];
 
 #define SOCK_cmd_BUFFER        (256)
@@ -181,7 +192,7 @@ int bind_tcp_server_socket(int sock_fd, int port)
     server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     server_addr.sin_port = htons(port);
 
-    printf("bind sock: %d  port %d \n", sock_fd, port);
+    DEBUG_PRINT("bind sock: %d  port %d \n", sock_fd, port);
     int ret = bind(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr));
     if (ret < 0)
     {
@@ -193,7 +204,7 @@ int bind_tcp_server_socket(int sock_fd, int port)
 
 int listen_tcp_server_socket(int sock_fd)
 {
-    printf("listen sock: %d \n", sock_fd);
+    DEBUG_PRINT("listen sock: %d \n", sock_fd);
     int ret = listen(sock_fd, BACKLOG);
     if (ret < 0)
     {
@@ -223,7 +234,7 @@ void multi_tcp_cmd_servers_loop(int unused)
         uart_instances[i].sock_cmd_state = STATE_TCP_OPEN;
     }
     taskDelay(30);
-    printf("tcp cmd loop start ... \n");
+    DEBUG_PRINT("tcp cmd loop start ... \n");
     while (1)
     {
         fd_set rfds;
@@ -317,7 +328,7 @@ void multi_tcp_data_servers_loop(int unused)
 
     taskDelay(25);
 
-    printf("tcp data loop start ...\n");
+    DEBUG_PRINT("tcp data loop start ...\n");
 
     while (1)
     {
@@ -366,7 +377,7 @@ void multi_tcp_data_servers_loop(int unused)
                     uart->data_client_fd = client_fd;
                     uart->data_count = 0;
                     set_state(&uart->sock_data_state, STATE_TCP_CONN, i, "DATA", uart->sock_data_port);
-                    printf("uart[%d] sock_data (data_port %u) client connected, fd=%d\n",
+                    DEBUG_PRINT("uart[%d] sock_data (data_port %u) client connected, fd=%d\n",
                            i, uart->sock_data_port, client_fd);
                 }
             }
@@ -378,13 +389,18 @@ void multi_tcp_data_servers_loop(int unused)
                 if (n > 0)
                 {
                     uart->data_count += n;
+                    if(ring_buffer_is_full(&uart->data_tx))
+                    {
+                    	printf("error:full %d\r\n",i);
+                    }
                     uart_ring_buffer_enqueue(&uart->data_tx, sock_data_tmp, n);
+                    
                     set_state(&uart->sock_data_state, STATE_TCP_CONN, i, "DATA", uart->sock_data_port);
                 }
                 else if (n == 0)
                 {
                     // 正常断开
-                    printf("uart[%d] DATA client closed (fd=%d)\n", i, uart->data_client_fd);
+                    DEBUG_PRINT("uart[%d] DATA client closed (fd=%d)\n", i, uart->data_client_fd);
                     set_state(&uart->sock_data_state, STATE_TCP_CLOSE, i, "DATA", uart->sock_data_port);
                 }
                 else
@@ -430,7 +446,6 @@ int calc_poll_delay_ticks(unsigned int baud_rate)
     return ticks;
 }
 
-// 多UART动态tx出队/发送任务
 void multi_uart_tx_loop(int unused)
 {
     int i;
@@ -438,6 +453,8 @@ void multi_uart_tx_loop(int unused)
     printf("uart_tx_loop running .... \n");
     TimeCounter tc;
     UINT32 ticks, ms;
+    ring_buffer_size_t rx_ready[NUM_PORTS];
+    for (i = 0; i < NUM_PORTS; ++i) rx_ready[i]=0;
     while (1)
     {
         for (i = 0; i < NUM_PORTS; ++i)
@@ -447,28 +464,21 @@ void multi_uart_tx_loop(int unused)
 //            if (uart->sock_cmd_state == STATE_TCP_CONN && uart->sock_data_state == STATE_TCP_CONN) {
             if (uart->sock_data_state == STATE_TCP_CONN)
             {
-                // 可选：确认data_tx缓冲区有数据
-                size_t avail = uart->data_tx.head_index - uart->data_tx.tail_index;
-                if (avail > 0)
-                {
-                    // 取数据（根据串口效率推荐一次最大发送量256字节）
-//                  if(axi16550_TxReady(i)){
-                    if (1)
-                    {
-                        ring_buffer_size_t n = uart_ring_buffer_dequeue(&uart->data_tx, uart_fpga_txbuf, UART_FPGA_TX_BUFFER);
-                        //                  printf("tail:%d head:%d \n ",uart_instances[i].data_tx.tail_index,uart_instances[i].data_tx.head_index);
-                        if (n > 0)
+                    	if(0 == rx_ready[i]){
+                    		rx_ready[i] = uart_ring_buffer_dequeue(&uart->data_tx, &uart_fpga_txbuf[i][0], UART_FPGA_TX_BUFFER);
+                    	}
+//                    	if(!axi16550_TxReady(i)) continue;
+                        if (rx_ready[i] > 0)
                         {
                             // 串口发送
                             txled(i, 1);
-                            int sent = axi16550Send(i, (uint8_t *)uart_fpga_txbuf, n);
-                            // 可计数或错误处理
-                            //printf("[%d],uart[ %d ] : %d send n:%d... \n", __LINE__, i, sent,n);
-//                            printf("t: %u , %u ms\n", ticks, ms);
+                            timeStart(&tc);
+                            int sent = axi16550Send(i, (uint8_t *)&uart_fpga_txbuf[i][0], rx_ready[i]);
+                            timeEnd(&tc, &ticks, &ms);
+//                            printf("%d - %u ,\n", i, ticks);
                             txled(i, 0);
+                            rx_ready[i] = 0;
                         }
-                    }
-                }
             }
             // 其它状态不发送
         }
@@ -480,7 +490,7 @@ void multi_uart_tx_loop(int unused)
             if (t < min_ticks) min_ticks = t;
         }
         if (min_ticks < UART_TX_TASK_MIN_DELAY) min_ticks = UART_TX_TASK_MIN_DELAY;
-        taskDelay(msToTicks(min_ticks)); // 动态适应各通道，未建连优先轮询最小
+        taskDelay(min_ticks); // 动态适应各通道，未建连优先轮询最小
     }
 }
 
@@ -522,7 +532,7 @@ void multi_uart_rx_loop(int unused)
         }
         if (min_ticks < UART_RX_TASK_MIN_DELAY) min_ticks = UART_RX_TASK_MIN_DELAY;
 //        printf("[%d],min_ticks[ %d ]. \n", __LINE__, min_ticks);
-        taskDelay(msToTicks(min_ticks));
+        taskDelay(msToTicks(UART_RX_TASK_MIN_DELAY));
     }
 }
 
@@ -548,7 +558,6 @@ void multi_uart_forward_loop(int unused)
                     int total = 0;
                     while (total < (int)n)
                     {
-//                          printf("%d,sock[%d]:[%d]\n",__LINE__,i,n);
                         int sent = send(uart->data_client_fd, net_tx_buf + total, n - total, 0);
                         if (sent <= 0) break; // socket关闭/异常
                         total += sent;
@@ -564,7 +573,7 @@ void multi_uart_forward_loop(int unused)
 //        }
         if (min_ticks < UART_RX_FORWARD_TASK_MIN_DELAY) min_ticks = UART_RX_FORWARD_TASK_MIN_DELAY;
 //        printf("[%d],min_ticks[ %d ]. \n", __LINE__, min_ticks);
-        taskDelay(msToTicks(min_ticks));
+        taskDelay(msToTicks(UART_RX_FORWARD_TASK_MIN_DELAY));
     }
 }
 

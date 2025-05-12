@@ -2,7 +2,7 @@
 
 
 /*
-GENERATED: Mon Apr 14 17:38:30 +0900 2025
+GENERATED: Fri May 09 20:27:07 +0900 2025
 DO NOT EDIT - file is regenerated whenever the project changes
 */
 
@@ -133,7 +133,6 @@ DO NOT EDIT - file is regenerated whenever the project changes
 #define INCLUDE_IO_SYSTEM
 #define INCLUDE_IPAIP
 #define INCLUDE_IPAIP_GLOBAL_CONFIGS
-#define INCLUDE_IPATTACH
 #define INCLUDE_IPCOM
 #define INCLUDE_IPCOM_SHELL_CMD
 #define INCLUDE_IPCOM_USE_AUTH
@@ -156,7 +155,6 @@ DO NOT EDIT - file is regenerated whenever the project changes
 #define INCLUDE_IPWRAP_GETIFADDRS
 #define INCLUDE_IPWRAP_IFCONFIG
 #define INCLUDE_IPWRAP_INETLIB
-#define INCLUDE_IPWRAP_IPPROTO
 #define INCLUDE_IPWRAP_PING
 #define INCLUDE_ISR_DEFER
 #define INCLUDE_JOB_DEFER
@@ -605,6 +603,7 @@ DO NOT EDIT - file is regenerated whenever the project changes
 #undef INCLUDE_GTF
 #undef INCLUDE_GTF_TIMER_START
 #undef INCLUDE_INETLIB
+#undef INCLUDE_IPATTACH
 #undef INCLUDE_MIB2_IF
 #undef INCLUDE_NET_POOL
 #undef INCLUDE_TFTP_CLIENT
@@ -1462,6 +1461,7 @@ DO NOT EDIT - file is regenerated whenever the project changes
 #undef INCLUDE_MBUF_UTIL2
 #undef INCLUDE_NETSTAT_UN_COMP
 #undef INCLUDE_NET_INIT
+#undef INCLUDE_IPWRAP_IPPROTO
 #undef INCLUDE_IP6ATTACH
 #undef INCLUDE_XDR_BOOL_T
 #undef INCLUDE_IPNET_SYSCTL
@@ -1688,9 +1688,9 @@ DO NOT EDIT - file is regenerated whenever the project changes
 #undef  ROM_WARM_ADRS
 #define ROM_WARM_ADRS (ROM_TEXT_ADRS + 4)
 #undef  STACK_SAVE
-#define STACK_SAVE 512
+#define STACK_SAVE 4096
 #undef  RAM_HIGH_ADRS
-#define RAM_HIGH_ADRS 0x1000000
+#define RAM_HIGH_ADRS 0x10000000
 #undef  RAM_LOW_ADRS
 #define RAM_LOW_ADRS 0x200000
 #undef  ROM_BASE_ADRS
@@ -1794,7 +1794,7 @@ DO NOT EDIT - file is regenerated whenever the project changes
 #undef  NUM_DRIVERS
 #define NUM_DRIVERS 20
 #undef  NUM_FILES
-#define NUM_FILES 50
+#define NUM_FILES 256
 #undef  MAX_LOG_MSGS
 #define MAX_LOG_MSGS 50
 #undef  LOG_MSG_UNBREAKABLE_TASK_NO_WAIT

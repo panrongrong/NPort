@@ -83,9 +83,9 @@ int axi16550Recv(unsigned int channel, uint8_t *buffer, uint32_t *len)
 int axi16550_TxReady(unsigned int channel)
 {
     if ((userAxiCfgRead(channel, AXI_16550_LSR) & LSR_THRE) == 0)
-        return 0;
+        return 0;  /* Not ready (THR or FIFO not empty) */
     else
-        return 1;
+        return 1;     /* Ready (THR or FIFO is empty) */
 }
 
 int axi16550Send(unsigned int channel, uint8_t *buffer, uint32_t len)
