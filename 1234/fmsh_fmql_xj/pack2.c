@@ -25,6 +25,8 @@
 
 
 #define BACKLOG   256
+#define LED_ON  1
+#define LED_OFF 0
 
 #ifdef DEBUG
 #define DEBUG_PRINT(fmt, ...) \
@@ -74,10 +76,14 @@ const int portcmd_array[] = {966, 967, 968, 969, 970, 971, 972, 973, 974, 975, 9
 #define UART_RX_TASK_PRIO           (75)
 #define UART_RX_FORWARD_TASK_PRIO   (92)
 
+#define SAMPLE_BYTES                 16  // 采样字节数基准
+
+
+
 /*  */
 #define UART_TX_TASK_MIN_DELAY              (2)
 #define UART_RX_TASK_MIN_DELAY              (2)
-#define UART_RX_FORWARD_TASK_MIN_DELAY      (20)
+#define UART_RX_FORWARD_TASK_MIN_DELAY      (10)
 
 #define TCP_SERVER_TASK_STACK 4096
 #define UART_TASK_STACK 8192
@@ -98,6 +104,8 @@ static char sock_data_tmp[SOCK_DATA_BUFFER];
 static char cmd_tmp[SOCK_cmd_BUFFER];
 
 UART_Config_Params uart_instances[NUM_PORTS];
+uart_led_stat_t uart_led_stats[NUM_PORTS];
+static int  sys_tick = 0;
 
 
 /*** 启动计时 ***/
@@ -106,6 +114,8 @@ void timeStart(TimeCounter *tc)
     tc->startTick = tickGet();
     tc->clkRate   = sysClkRateGet();
 }
+
+int calc_tx_buffer_limit(uint32_t baudrate, int tick_rate);
 
 /*** 结束计时并返回时间差 ***/
 void timeEnd(TimeCounter *tc, UINT32 *pTicks, UINT32 *pMs)
@@ -159,6 +169,61 @@ ring_buffer_size_t uart_ring_buffer_dequeue(ring_buffer_t *buffer, char *data, r
     return ring_buffer_dequeue_arr(buffer, data, len);
 }
 
+
+// 计算采样周期ticks数，根据波特率和任务延时计算
+static uint16_t calc_sample_period(uint32_t baudrate, uint32_t sys_tick_hz, int task_delay_tick)
+{
+    if (baudrate == 0) baudrate = 9600;
+    // 采样时间 = 传输 SAMPLE_BYTES 字节时间
+    uint32_t period_ticks = (SAMPLE_BYTES * 10 * sys_tick_hz + baudrate - 1) / baudrate; // 向上取整
+    if (period_ticks < 1) period_ticks = 1;
+
+    // 保证不小于任务延时，避免采样周期小于任务周期导致逻辑异常
+    if (period_ticks < (uint32_t)task_delay_tick)
+        period_ticks = task_delay_tick;
+
+    return (uint16_t)period_ticks;
+}
+
+// 采样周期内更新LED状态，根据利用率闪烁与常亮控制
+static void update_led_state(uart_led_stat_t *stat, int is_tx)
+{
+    uint16_t *count = is_tx ? &stat->tx_count : &stat->rx_count;
+    uint16_t *sample_tick = is_tx ? &stat->sample_tick_cnt_tx : &stat->sample_tick_cnt_rx;
+    uint16_t sample_period = is_tx ? stat->sample_period_ticks_tx : stat->sample_period_ticks_rx;
+    uint8_t *led_state = is_tx ? &stat->tx_led_state : &stat->rx_led_state;
+
+    (*sample_tick)++;
+    if ((*sample_tick) >= sample_period)
+    {
+        // 利用率百分比
+        uint16_t util_percent = (*count) * 100 / SAMPLE_BYTES;
+
+        if (util_percent >= 70)
+        {
+            *led_state = 1; // 高负载常亮
+        }
+        else if (util_percent >= 10)
+        {
+            // 快闪，状态取反
+            *led_state = (*led_state) ? 0 : 1;
+        }
+        else if (util_percent > 0)
+        {
+            // 慢闪，周期为两采样周期，前半亮后半灭
+            *led_state = ((*sample_tick) % (2 * sample_period)) < sample_period ? 1 : 0;
+        }
+        else
+        {
+            // 无负载灭灯
+            *led_state = 0;
+        }
+
+        // 清空计数，重置采样计时
+        *count = 0;
+        *sample_tick = 0;
+    }
+}
 
 
 void uart_info_send(uint8_t i)
@@ -233,8 +298,9 @@ void multi_tcp_cmd_servers_loop(int unused)
         uart_instances[i].cmd_client_fd = -1;
         uart_instances[i].sock_cmd_state = STATE_TCP_OPEN;
     }
+    sys_tick = sysClkRateGet();
     taskDelay(30);
-    DEBUG_PRINT("tcp cmd loop start ... \n");
+    printf("tcp cmd loop start ... \r\n sys_tick :%d \n", sys_tick);
     while (1)
     {
         fd_set rfds;
@@ -275,8 +341,6 @@ void multi_tcp_cmd_servers_loop(int unused)
                     uart->cmd_client_fd = client_fd;
                     uart_info_send(i);
                     set_state(&uart->sock_cmd_state, STATE_TCP_CONN, i, "CMD", uart->sock_cmd_port);
-                    printf("uart[%d] sock_cmd (cmd_port %u) client connected, fd=%d\n",
-                           i, uart->sock_cmd_port, client_fd);
                 }
             }
             if (uart->cmd_client_fd >= 0 && FD_ISSET(uart->cmd_client_fd, &rfds))
@@ -287,6 +351,11 @@ void multi_tcp_cmd_servers_loop(int unused)
                     uart_instances[i].cmd_count += n;
                     handle_command(uart, uart->cmd_client_fd, cmd_tmp, n, i);
                     // set_state(&uart->sock_cmd_state, STATE_RW_DATA, i, "CMD", uart->sock_cmd_port); // 如果有需要可加
+                    if (cmd_tmp[0] == ASPP_CMD_PORT_INIT)
+                    {
+                        uart->tx_buffer_limit = calc_tx_buffer_limit(uart_instances[i].config.baud_rate, sys_tick);
+                        printf("uart[%d] tx limit (%d)\n", i, uart->tx_buffer_limit);
+                    }
                 }
                 else if (n == 0)
                 {
@@ -446,6 +515,32 @@ int calc_poll_delay_ticks(unsigned int baud_rate)
     return ticks;
 }
 
+
+int calc_tx_buffer_limit(uint32_t baudrate, int tick_rate)
+{
+    if (baudrate == 0)
+        baudrate = 9600;  // 安全兜底
+
+    float tick_sec = 1.0f / tick_rate;
+    float period_sec = tick_sec * UART_TX_TASK_MIN_DELAY;
+
+    // 波特率字节数，安全倍数设为2倍（可调）
+    float safety_factor = 1.5f;
+
+    int max_bytes = (int)((baudrate * period_sec) / 10 * safety_factor);
+
+    // 取最大1，避免0
+    if (max_bytes < 1)
+        max_bytes = 1;
+
+    // 不超过环形缓冲最大区大小
+    if (max_bytes > UART_FPGA_TX_BUFFER)
+        max_bytes = UART_FPGA_TX_BUFFER;
+
+    return max_bytes;
+}
+
+
 void multi_uart_tx_loop(int unused)
 {
     int i;
@@ -453,8 +548,18 @@ void multi_uart_tx_loop(int unused)
     printf("uart_tx_loop running .... \n");
     TimeCounter tc;
     UINT32 ticks, ms;
+    uint32_t sys_tick_hz = sysClkRateGet();
     ring_buffer_size_t rx_ready[NUM_PORTS];
     for (i = 0; i < NUM_PORTS; ++i) rx_ready[i] = 0;
+
+    for (i = 0; i < NUM_PORTS; i++)
+    {
+        uart_led_stats[i].sample_period_ticks_tx = calc_sample_period(uart_instances[i].config.baud_rate, sys_tick_hz, UART_TX_TASK_MIN_DELAY);
+        uart_led_stats[i].tx_count = 0;
+        uart_led_stats[i].sample_tick_cnt_tx = 0;
+        uart_led_stats[i].tx_led_state = 0;
+    }
+
     while (1)
     {
         for (i = 0; i < NUM_PORTS; ++i)
@@ -466,32 +571,29 @@ void multi_uart_tx_loop(int unused)
             {
                 if (0 == rx_ready[i])
                 {
-                    rx_ready[i] = uart_ring_buffer_dequeue(&uart->data_tx, &uart_fpga_txbuf[i][0], UART_FPGA_TX_BUFFER);
+                    rx_ready[i] = uart_ring_buffer_dequeue(&uart->data_tx, &uart_fpga_txbuf[i][0], uart->tx_buffer_limit);
                 }
-//                      if(!axi16550_TxReady(i)) continue;
                 if (rx_ready[i] > 0)
                 {
-                    // 串口发送
-                    txled(i, 1);
+                    uart_led_stats[i].tx_count += rx_ready[i];
                     timeStart(&tc);
-                    int sent = axi16550Send(i, (uint8_t *)&uart_fpga_txbuf[i][0], rx_ready[i]);
+                    if (uart->config.baud_rate <= 9600)
+                    {
+                        axi16550Send(i, (uint8_t *)&uart_fpga_txbuf[i][0], rx_ready[i]);
+                    }
+                    else
+                    {
+                        axi16550Send(i, (uint8_t *)&uart_fpga_txbuf[i][0], rx_ready[i]);
+                    }
+
                     timeEnd(&tc, &ticks, &ms);
-//                            printf("%d - %u ,\n", i, ticks);
-                    txled(i, 0);
                     rx_ready[i] = 0;
                 }
             }
-            // 其它状态不发送
+            update_led_state(&uart_led_stats[i], 1);
+            txled(i, uart_led_stats[i].tx_led_state);
         }
-        // 根据不同通道的串口波特率，选本轮最短poll
-        int min_ticks = 20; // 最大上限（20ms）
-        for (i = 0; i < NUM_PORTS; ++i)
-        {
-            int t = calc_poll_delay_ticks(uart_instances[i].config.baud_rate);
-            if (t < min_ticks) min_ticks = t;
-        }
-        if (min_ticks < UART_TX_TASK_MIN_DELAY) min_ticks = UART_TX_TASK_MIN_DELAY;
-        taskDelay(min_ticks); // 动态适应各通道，未建连优先轮询最小
+        taskDelay(UART_TX_TASK_MIN_DELAY); // 动态适应各通道，未建连优先轮询最小
     }
 }
 
@@ -500,6 +602,14 @@ void multi_uart_rx_loop(int unused)
 {
     int i;
     uint32_t rxlen;
+    uint32_t sys_tick_hz = sysClkRateGet();
+    for (i = 0; i < NUM_PORTS; i++)
+    {
+        uart_led_stats[i].sample_period_ticks_rx = calc_sample_period(uart_instances[i].config.baud_rate, sys_tick_hz, UART_RX_TASK_MIN_DELAY);
+        uart_led_stats[i].rx_count = 0;
+        uart_led_stats[i].sample_tick_cnt_rx = 0;
+        uart_led_stats[i].rx_led_state = 0;
+    }
     taskDelay(10);
     printf("multi_uart_rx_loop started.\n");
     while (1)
@@ -514,26 +624,17 @@ void multi_uart_rx_loop(int unused)
                     rxlen = sizeof(uart_fpga_rxbuf);
                     if (axi16550Recv(i, uart_fpga_rxbuf, &rxlen) == 0 && rxlen > 0)
                     {
-//                      printf("[%d],rx[%d]:[%d]\n",__LINE__,i,rxlen);
-                        rxled(i, 1);
+                        uart_led_stats[i].rx_count += rxlen;
                         uart_ring_buffer_enqueue(&uart->data_rx, (char *)uart_fpga_rxbuf, rxlen);
-                        // 可统计接收字节等逻辑
-                        rxled(i, 0);
                     }
                 }
                 while (rxlen > 0);
             }
+            // 周期更新RX LED状态
+            update_led_state(&uart_led_stats[i], 0);
+            rxled(i, uart_led_stats[i].rx_led_state);
         }
-        // 动态delay, 各路最短
-        int min_ticks = UART_RX_TASK_MIN_DELAY;
-        for (i = 0; i < NUM_PORTS; ++i)
-        {
-            int t = calc_poll_delay_ticks(uart_instances[i].config.baud_rate);
-            if (t < min_ticks) min_ticks = t;
-        }
-        if (min_ticks < UART_RX_TASK_MIN_DELAY) min_ticks = UART_RX_TASK_MIN_DELAY;
-//        printf("[%d],min_ticks[ %d ]. \n", __LINE__, min_ticks);
-        taskDelay(msToTicks(UART_RX_TASK_MIN_DELAY));
+        taskDelay(UART_RX_TASK_MIN_DELAY);
     }
 }
 
@@ -574,7 +675,7 @@ void multi_uart_forward_loop(int unused)
 //        }
         if (min_ticks < UART_RX_FORWARD_TASK_MIN_DELAY) min_ticks = UART_RX_FORWARD_TASK_MIN_DELAY;
 //        printf("[%d],min_ticks[ %d ]. \n", __LINE__, min_ticks);
-        taskDelay(msToTicks(UART_RX_FORWARD_TASK_MIN_DELAY));
+        taskDelay(UART_RX_FORWARD_TASK_MIN_DELAY);
     }
 }
 

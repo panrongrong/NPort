@@ -4,8 +4,9 @@
 
 #include "ringbuffer.h"
 
-#define BUFFERCOM_SIZE  (65536*2*2)
+#define BUFFERCOM_SIZE  (65536*2*2*2*2)
 #define NUM_PORTS       16
+#define UART_HW_FIFO_SIZE               (4096)
 
 typedef struct usart_params1
 {
@@ -21,6 +22,18 @@ typedef struct usart_params1
     unsigned char IX_on;
     unsigned char IX_off; //XonXoff
 } usart_params1_t;
+
+typedef struct
+{
+    uint16_t tx_count;
+    uint16_t rx_count;
+    uint16_t sample_tick_cnt_tx;
+    uint16_t sample_tick_cnt_rx;
+    uint16_t sample_period_ticks_tx;
+    uint16_t sample_period_ticks_rx;
+    uint8_t tx_led_state;   // 0=灭,1=亮
+    uint8_t rx_led_state;   // 0=灭,1=亮
+} uart_led_stat_t;
 
 typedef struct
 {
@@ -53,7 +66,8 @@ typedef struct
     ring_buffer_t data_tx;
     ring_buffer_t data_rx;
 
-
+    /* tx chunk limit*/
+    int tx_buffer_limit;
 } UART_Config_Params;
 
 #endif
