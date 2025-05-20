@@ -6,7 +6,7 @@
 #include <tickLib.h>
 #include "pack2.h"
 
-#define AXI_UART_BASE(n)         (0x41200000 + 0x2000 * n) /* 基地址 */
+#define AXI_UART_BASE(n)         (0x41200000 + 0x2000 * n) /* ����ַ */
 #define AXI_16550_INT            (84)
 #define AXI_16550_CLK            (29491200)
 #define AXI_16550_CLK1           (32000000)
@@ -87,6 +87,22 @@ int axi16550_TxReady(unsigned int channel)
     else
         return 1;     /* Ready (THR or FIFO is empty) */
 }
+
+int axi16550SendNoWait(unsigned int channel, uint8_t *buffer, uint32_t len)
+{
+    int i = 0;
+    if (buffer == NULL || len < 0)
+    {
+        return -1;
+    }
+    for (i = 0; i < len; i++)
+    {
+        userAxiCfgWrite(channel, AXI_16550_THR, buffer[i]);
+    }
+    return 0;
+}
+
+
 
 int axi16550Send(unsigned int channel, uint8_t *buffer, uint32_t len)
 {
@@ -169,6 +185,12 @@ void axi16550Init(unsigned int channel, unsigned int baud)
     userAxiCfgWrite(channel, AXI_16550_MCR, 0x00); /* 0x00  normal -> 0x10 loopback */
     userAxiCfgWrite(channel, AXI_16550_IER, 0x00);
 
+}
+
+void axi16550FIFOInit(unsigned int channel)
+{
+    userAxiCfgWrite(channel, AXI_16550_FCR, 0x87);
+    userAxiCfgWrite(channel, AXI_16550_FCR, 0x81);
 }
 
 void axi165502CInit(UART_Config_Params *uart_instance, int channel)

@@ -31,39 +31,39 @@
 // #define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINT(fmt, ...) \
-    do { \
-      printf("[DEBUG] %d:%s(): " fmt "\n", \
-               __LINE__, __func__, ##__VA_ARGS__); \
-    } while(0)
+		do { \
+			printf("[DEBUG] %d:%s(): " fmt "\n", \
+					__LINE__, __func__, ##__VA_ARGS__); \
+		} while(0)
 #else
 #define DEBUG_PRINT(fmt, ...) do {} while(0)  // 无操作
 #endif
 
 typedef enum
 {
-    STATE_INIT = 0,
-    STATE_TCP_OPEN,
-    STATE_TCP_CONN,
-    STATE_TCP_CLOSE,
-    STATE_TCP_WAIT,
-    STATE_RW_DATA,
-    STATE_MAX
+	STATE_INIT = 0,
+	STATE_TCP_OPEN,
+	STATE_TCP_CONN,
+	STATE_TCP_CLOSE,
+	STATE_TCP_WAIT,
+	STATE_RW_DATA,
+	STATE_MAX
 } sock_state_enum;
 
 const char *STATE_NAMES[] =
 {
-    "STATE_INIT",        // 0
-    "STATE_TCP_OPEN",    // 1
-    "STATE_TCP_CONN",    // 2
-    "STATE_TCP_CLOSE",   // 3
-    "STATE_TCP_WAIT",    // 4
-    "STATE_RW_DATA",     // 5
+		"STATE_INIT",        // 0
+		"STATE_TCP_OPEN",    // 1
+		"STATE_TCP_CONN",    // 2
+		"STATE_TCP_CLOSE",   // 3
+		"STATE_TCP_WAIT",    // 4
+		"STATE_RW_DATA",     // 5
 };
 
 typedef struct
 {
-    UINT32 startTick;   // 起始 tick
-    int    clkRate;     // 系统时钟频率（tick/s）
+	UINT32 startTick;   // 起始 tick
+	int    clkRate;     // 系统时钟频率（tick/s）
 } TimeCounter;
 
 const int portdata_array[] = {950, 951, 952, 953, 954, 955, 956, 957, 958, 959, 960, 961, 962, 963, 964, 965};
@@ -113,8 +113,8 @@ static int  sys_tick = 0;
 /*** 启动计时 ***/
 void timeStart(TimeCounter *tc)
 {
-    tc->startTick = tickGet();
-    tc->clkRate   = sysClkRateGet();
+	tc->startTick = tickGet();
+	tc->clkRate   = sysClkRateGet();
 }
 
 int calc_tx_buffer_limit(uint32_t baudrate, int tick_rate);
@@ -122,871 +122,899 @@ int calc_tx_buffer_limit(uint32_t baudrate, int tick_rate);
 /*** 结束计时并返回时间差 ***/
 void timeEnd(TimeCounter *tc, UINT32 *pTicks, UINT32 *pMs)
 {
-    UINT32 endTick = tickGet();
-    *pTicks = endTick - tc->startTick;          // 计算 tick 差
-    *pMs    = (*pTicks * 1000) / tc->clkRate;  // 转换为毫秒
+	UINT32 endTick = tickGet();
+	*pTicks = endTick - tc->startTick;          // 计算 tick 差
+	*pMs    = (*pTicks * 1000) / tc->clkRate;  // 转换为毫秒
 }
 
 int msToTicks(int ms)
 {
-    return (ms * sysClkRateGet() + 999) / 1000;
+	return (ms * sysClkRateGet() + 999) / 1000;
 }
 
 // --------------------- OLED 任务 ------------------------
 void txled(int i, int action)
 {
-    // 确保传入的索引在范围内
-    if (i < 0 || i > 15) return;
+	// 确保传入的索引在范围内
+	if (i < 0 || i > 15) return;
 
-    uint32_t reg_address = 0x130 + (i * 4);  // 计算对应的寄存器地址
-    uint32_t value = (action == 1) ? 1 : 0;  // 根据动作设置LED状态
+	uint32_t reg_address = 0x130 + (i * 4);  // 计算对应的寄存器地址
+	uint32_t value = (action == 1) ? 1 : 0;  // 根据动作设置LED状态
 
-    PL_AXI_WriteReg(PL_AXI_BASE, reg_address, value);
+	PL_AXI_WriteReg(PL_AXI_BASE, reg_address, value);
 }
 
 void rxled(int i, int action)
 {
-    // 确保传入的索引在范围内
-    if (i < 0 || i > 15) return;
+	// 确保传入的索引在范围内
+	if (i < 0 || i > 15) return;
 
-    uint32_t reg_address = 0x230 + (i * 4);  // 计算对应的寄存器地址
-    uint32_t value = (action == 1) ? 1 : 0;  // 根据动作设置LED状态
+	uint32_t reg_address = 0x230 + (i * 4);  // 计算对应的寄存器地址
+	uint32_t value = (action == 1) ? 1 : 0;  // 根据动作设置LED状态
 
-    PL_AXI_WriteReg(PL_AXI_BASE, reg_address, value);
+	PL_AXI_WriteReg(PL_AXI_BASE, reg_address, value);
+}
+
+void Portled(int i, int action) {
+
+	if (i < 0 || i > 15) return;
+
+	uint32_t reg_address = 0x30 + (i * 4);  
+	uint32_t value = (action == 1) ? 1 : 0;  
+
+	PL_AXI_WriteReg(PL_AXI_BASE,reg_address, value);
 }
 
 // 入队封装
 void uart_ring_buffer_enqueue(ring_buffer_t *buffer, const char *data, ring_buffer_size_t size)
 {
-    if (buffer == NULL || data == NULL || size == 0)
-        return;
-    ring_buffer_queue_arr(buffer, data, size);
+	if (buffer == NULL || data == NULL || size == 0)
+		return;
+	ring_buffer_queue_arr(buffer, data, size);
 }
 
 // 出队封装
 ring_buffer_size_t uart_ring_buffer_dequeue(ring_buffer_t *buffer, char *data, ring_buffer_size_t len)
 {
-    if (buffer == NULL || data == NULL || len == 0)
-        return 0;
-    return ring_buffer_dequeue_arr(buffer, data, len);
+	if (buffer == NULL || data == NULL || len == 0)
+		return 0;
+	return ring_buffer_dequeue_arr(buffer, data, len);
 }
 
 
 // 计算采样周期ticks数，根据波特率和任务延时计算
 static uint16_t calc_sample_period(uint32_t baudrate, uint32_t sys_tick_hz, int task_delay_tick)
 {
-    if (baudrate == 0) baudrate = 9600;
-    // 采样时间 = 传输 SAMPLE_BYTES 字节时间
-    uint32_t period_ticks = (SAMPLE_BYTES * 10 * sys_tick_hz + baudrate - 1) / baudrate; // 向上取整
-    if (period_ticks < 1) period_ticks = 1;
+	if (baudrate == 0) baudrate = 9600;
+	// 采样时间 = 传输 SAMPLE_BYTES 字节时间
+	uint32_t period_ticks = (SAMPLE_BYTES * 10 * sys_tick_hz + baudrate - 1) / baudrate; // 向上取整
+	if (period_ticks < 1) period_ticks = 1;
 
-    // 保证不小于任务延时，避免采样周期小于任务周期导致逻辑异常
-    if (period_ticks < (uint32_t)task_delay_tick)
-        period_ticks = task_delay_tick;
+	// 保证不小于任务延时，避免采样周期小于任务周期导致逻辑异常
+	if (period_ticks < (uint32_t)task_delay_tick)
+		period_ticks = task_delay_tick;
 
-    return (uint16_t)period_ticks;
+	return (uint16_t)period_ticks;
 }
 
 // 采样周期内更新LED状态，根据利用率闪烁与常亮控制
 static void update_led_state(uart_led_stat_t *stat, int is_tx)
 {
-    uint16_t *count = is_tx ? &stat->tx_count : &stat->rx_count;
-    uint16_t *sample_tick = is_tx ? &stat->sample_tick_cnt_tx : &stat->sample_tick_cnt_rx;
-    uint16_t sample_period = is_tx ? stat->sample_period_ticks_tx : stat->sample_period_ticks_rx;
-    uint8_t *led_state = is_tx ? &stat->tx_led_state : &stat->rx_led_state;
+	uint16_t *count = is_tx ? &stat->tx_count : &stat->rx_count;
+	uint16_t *sample_tick = is_tx ? &stat->sample_tick_cnt_tx : &stat->sample_tick_cnt_rx;
+	uint16_t sample_period = is_tx ? stat->sample_period_ticks_tx : stat->sample_period_ticks_rx;
+	uint8_t *led_state = is_tx ? &stat->tx_led_state : &stat->rx_led_state;
 
-    (*sample_tick)++;
-    if ((*sample_tick) >= sample_period)
-    {
-        // 利用率百分比
-        uint16_t util_percent = (*count) * 100 / SAMPLE_BYTES;
+	(*sample_tick)++;
+	if ((*sample_tick) >= sample_period)
+	{
+		// 利用率百分比
+		uint16_t util_percent = (*count) * 100 / SAMPLE_BYTES;
 
-        if (util_percent >= 70)
-        {
-            *led_state = 1; // 高负载常亮
-        }
-        else if (util_percent >= 10)
-        {
-            // 快闪，状态取反
-            *led_state = (*led_state) ? 0 : 1;
-        }
-        else if (util_percent > 0)
-        {
-            // 慢闪，周期为两采样周期，前半亮后半灭
-            *led_state = ((*sample_tick) % (2 * sample_period)) < sample_period ? 1 : 0;
-        }
-        else
-        {
-            // 无负载灭灯
-            *led_state = 0;
-        }
+		if (util_percent >= 70)
+		{
+			*led_state = 1; // 高负载常亮
+		}
+		else if (util_percent >= 10)
+		{
+			// 快闪，状态取反
+			*led_state = (*led_state) ? 0 : 1;
+		}
+		else if (util_percent > 0)
+		{
+			// 慢闪，周期为两采样周期，前半亮后半灭
+			*led_state = ((*sample_tick) % (2 * sample_period)) < sample_period ? 1 : 0;
+		}
+		else
+		{
+			// 无负载灭灯
+			*led_state = 0;
+		}
 
-        // 清空计数，重置采样计时
-        *count = 0;
-        *sample_tick = 0;
-    }
+		// 清空计数，重置采样计时
+		*count = 0;
+		*sample_tick = 0;
+	}
 }
 
 
 void uart_info_send(uint8_t i)
 {
-    unsigned char send_buf[4] = {0x26, 0x00, 0x00, 0x81};
-    int send_len = sizeof(send_buf);
-    if (send(uart_instances[i].cmd_client_fd, send_buf, send_len, 0) != send_len)
-    {
-        perror("send failed");
-    }
+	unsigned char send_buf[4] = {0x26, 0x00, 0x00, 0x81};
+	int send_len = sizeof(send_buf);
+	if (send(uart_instances[i].cmd_client_fd, send_buf, send_len, 0) != send_len)
+	{
+		perror("send failed");
+	}
+}
+
+void hear_send(uint8_t i)
+{
+	unsigned char send_buf[3] = {0x27, 0x01, 0x24};	
+	int send_len = sizeof(send_buf);
+	if (send(uart_instances[i].cmd_client_fd, send_buf, send_len, 0) != send_len) {
+		perror("send failed");
+	}  
 }
 
 int create_tcp_server_socket(int *sock_fd)
 {
-    int sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock < 0)
-    {
-        perror("socket creation failed");
-        return -1;
-    }
-    *sock_fd = sock;
-    return 1;
+	int sock = socket(AF_INET, SOCK_STREAM, 0);
+	if (sock < 0)
+	{
+		perror("socket creation failed");
+		return -1;
+	}
+	*sock_fd = sock;
+	return 1;
 }
 
 
 int bind_tcp_server_socket(int sock_fd, int port)
 {
-    struct sockaddr_in server_addr;
-    memset((char *)&server_addr, 0, sizeof(server_addr));
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    server_addr.sin_port = htons(port);
+	struct sockaddr_in server_addr;
+	memset((char *)&server_addr, 0, sizeof(server_addr));
+	server_addr.sin_family = AF_INET;
+	server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	server_addr.sin_port = htons(port);
 
-    DEBUG_PRINT("bind sock: %d  port %d \n", sock_fd, port);
-    int ret = bind(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr));
-    if (ret < 0)
-    {
-        perror("bind failed");
-        return -1;
-    }
-    return 0;
+	DEBUG_PRINT("bind sock: %d  port %d \n", sock_fd, port);
+	int ret = bind(sock_fd, (struct sockaddr *)&server_addr, sizeof(server_addr));
+	if (ret < 0)
+	{
+		perror("bind failed");
+		return -1;
+	}
+	return 0;
 }
 
 int listen_tcp_server_socket(int sock_fd)
 {
-    DEBUG_PRINT("listen sock: %d \n", sock_fd);
-    int ret = listen(sock_fd, BACKLOG);
-    if (ret < 0)
-    {
-        perror("listen failed");
-        return -1;
-    }
-    return 0;
+	DEBUG_PRINT("listen sock: %d \n", sock_fd);
+	int ret = listen(sock_fd, BACKLOG);
+	if (ret < 0)
+	{
+		perror("listen failed");
+		return -1;
+	}
+	return 0;
 }
 
 // 状态变更helper
 void set_state(uint8_t *var, sock_state_enum new_state, int idx, const char *side, uint16_t port)
 {
-    if (*var != new_state)
-    {
-        // printf("[%s %d port %u] State: %s -> %s\n",
-        //     side, idx, port, STATE_NAMES[*var], STATE_NAMES[new_state]);
-        *var = new_state;
-    }
+	if (*var != new_state)
+	{
+		// printf("[%s %d port %u] State: %s -> %s\n",
+		//     side, idx, port, STATE_NAMES[*var], STATE_NAMES[new_state]);
+		*var = new_state;
+	}
 }
 // --------------------- sock_cmd 任务 ------------------------
 
 void check_tcp_cmd_timeouts(void)
 {
-    int i;
-    ULONG now = tickGet();
-    ULONG timeout_ticks = sysClkRateGet() * 60;  // 60秒空闲断开
+	int i;
+	ULONG now = tickGet();
+	ULONG timeout_ticks = sysClkRateGet() * 60;  // 60秒空闲断开
 
-    for (i = 0; i < NUM_PORTS; ++i)
-    {
-        UART_Config_Params *uart = &uart_instances[i];
+	for (i = 0; i < NUM_PORTS; ++i)
+	{
+		UART_Config_Params *uart = &uart_instances[i];
 
-        if (uart->cmd_client_fd >= 0)
-        {
-            if ((now - uart->last_activity_time) > timeout_ticks)
-            {
-                DEBUG_PRINT("uart[%d] cmd client timeout, closing fd=%d", i, uart->cmd_client_fd);
-                close(uart->cmd_client_fd);
-                uart->cmd_client_fd = -1;
-                uart->sock_cmd_state = STATE_TCP_OPEN;
-            }
-        }
-    }
+		if (uart->cmd_client_fd >= 0)
+		{
+			if ((now - uart->last_activity_time) > timeout_ticks)
+			{
+				DEBUG_PRINT("uart[%d] cmd client timeout, closing fd=%d", i, uart->cmd_client_fd);
+				close(uart->cmd_client_fd);
+				uart->cmd_client_fd = -1;
+				uart->sock_cmd_state = STATE_TCP_OPEN;
+			}
+		}
+	}
 }
 
 
 void multi_tcp_cmd_servers_loop(int unused)
 {
-    int i;
+	int i;
 
-    // 初始化每个串口cmd连接状态和fd
-    for (i = 0; i < NUM_PORTS; ++i)
-    {
-        uart_instances[i].cmd_client_fd = -1;
-        uart_instances[i].sock_cmd_state = STATE_TCP_OPEN;
-        uart_instances[i].last_activity_time = tickGet();
-        uart_instances[i].cmd_count = 0;
-    }
+	// 初始化每个串口cmd连接状态和fd
+	for (i = 0; i < NUM_PORTS; ++i)
+	{
+		uart_instances[i].cmd_client_fd = -1;
+		uart_instances[i].sock_cmd_state = STATE_TCP_OPEN;
+		uart_instances[i].last_activity_time = tickGet();
+		uart_instances[i].cmd_count = 0;
+	}
 
-    taskDelay(30);
-    printf("tcp cmd loop start ... sys_tick: %d\n", sysClkRateGet());
+	taskDelay(30);
+	printf("tcp cmd loop start ... sys_tick: %d\n", sysClkRateGet());
 
-    while (1)
-    {
-        fd_set rfds;
-        FD_ZERO(&rfds);
-        int max_fd = -1;
+	while (1)
+	{
+		fd_set rfds;
+		FD_ZERO(&rfds);
+		int max_fd = -1;
 
-        // 注册监听和客户端FD
-        for (i = 0; i < NUM_PORTS; ++i)
-        {
-            UART_Config_Params *uart = &uart_instances[i];
+		// 注册监听和客户端FD
+		for (i = 0; i < NUM_PORTS; ++i)
+		{
+			UART_Config_Params *uart = &uart_instances[i];
 
-            if (uart->sock_cmd > 0 && uart->cmd_client_fd < 0)
-            {
-                FD_SET(uart->sock_cmd, &rfds);
-                if (uart->sock_cmd > max_fd)
-                    max_fd = uart->sock_cmd;
-            }
+			if (uart->sock_cmd > 0 && uart->cmd_client_fd < 0)
+			{
+				FD_SET(uart->sock_cmd, &rfds);
+				if (uart->sock_cmd > max_fd)
+					max_fd = uart->sock_cmd;
+			}
 
-            if (uart->cmd_client_fd >= 0)
-            {
-                FD_SET(uart->cmd_client_fd, &rfds);
-                if (uart->cmd_client_fd > max_fd)
-                    max_fd = uart->cmd_client_fd;
-            }
-        }
+			if (uart->cmd_client_fd >= 0)
+			{
+				FD_SET(uart->cmd_client_fd, &rfds);
+				if (uart->cmd_client_fd > max_fd)
+					max_fd = uart->cmd_client_fd;
+			}
+		}
 
-        if (max_fd < 0)
-        {
-            // 无有效fd，避免空循环
-            taskDelay(10);
-            continue;
-        }
+		if (max_fd < 0)
+		{
+			// 无有效fd，避免空循环
+			taskDelay(10);
+			continue;
+		}
 
-        // select超时设置为1秒，防止任务长时间阻塞
-        struct timeval select_timeout;
-        select_timeout.tv_sec = 1;
-        select_timeout.tv_usec = 0;
+		// select超时设置为1秒，防止任务长时间阻塞
+		struct timeval select_timeout;
+		select_timeout.tv_sec = 1;
+		select_timeout.tv_usec = 0;
 
-        int ret = select(max_fd + 1, &rfds, NULL, NULL, &select_timeout);
-        if (ret < 0)
-        {
-            perror("select error (cmd)");
-            taskDelay(5);
-            continue;
-        }
-        else if (ret == 0)
-        {
-            // 超时，检查空闲连接，断开长时间无响应连接
-            check_tcp_cmd_timeouts();
-            continue;
-        }
+		int ret = select(max_fd + 1, &rfds, NULL, NULL, &select_timeout);
+		if (ret < 0)
+		{
+			perror("select error (cmd)");
+			taskDelay(5);
+			continue;
+		}
+		else if (ret == 0)
+		{
+			// 超时，检查空闲连接，断开长时间无响应连接
+			check_tcp_cmd_timeouts();
+			continue;
+		}
 
-        for (i = 0; i < NUM_PORTS; ++i)
-        {
-            UART_Config_Params *uart = &uart_instances[i];
+		for (i = 0; i < NUM_PORTS; ++i)
+		{
+			UART_Config_Params *uart = &uart_instances[i];
 
-            // 监听socket就绪，接收新链路
-            if (uart->sock_cmd > 0 && uart->cmd_client_fd < 0 && FD_ISSET(uart->sock_cmd, &rfds))
-            {
-                struct sockaddr_in caddr;
-                socklen_t clen = sizeof(caddr);
-                int client_fd = accept(uart->sock_cmd, (struct sockaddr *)&caddr, &clen);
-                if (client_fd >= 0)
-                {
-                    // 设置非阻塞
-                    int flags = fcntl(client_fd, F_GETFL, 0);
-                    fcntl(client_fd, F_SETFL, flags | O_NONBLOCK);
+			// 监听socket就绪，接收新链路
+			if (uart->sock_cmd > 0 && uart->cmd_client_fd < 0 && FD_ISSET(uart->sock_cmd, &rfds))
+			{
+				struct sockaddr_in caddr;
+				socklen_t clen = sizeof(caddr);
+				int client_fd = accept(uart->sock_cmd, (struct sockaddr *)&caddr, &clen);
+				if (client_fd >= 0)
+				{
+					// 设置非阻塞
+					int flags = fcntl(client_fd, F_GETFL, 0);
+					fcntl(client_fd, F_SETFL, flags | O_NONBLOCK);
 
-                    // TCP Keepalive使其死连接能被快速回收
-                    int enable = 1;
-                    setsockopt(client_fd, SOL_SOCKET, SO_KEEPALIVE, &enable, sizeof(enable));
+					// TCP Keepalive使其死连接能被快速回收
+					int enable = 1;
+					setsockopt(client_fd, SOL_SOCKET, SO_KEEPALIVE, &enable, sizeof(enable));
 #ifdef TCP_KEEPIDLE
-                    int idle = 60;
-                    setsockopt(client_fd, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle));
+					int idle = 60;
+					setsockopt(client_fd, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle));
 #endif
 #ifdef TCP_KEEPINTVL
-                    int interval = 10;
-                    setsockopt(client_fd, IPPROTO_TCP, TCP_KEEPINTVL, &interval, sizeof(interval));
+					int interval = 10;
+					setsockopt(client_fd, IPPROTO_TCP, TCP_KEEPINTVL, &interval, sizeof(interval));
 #endif
 #ifdef TCP_KEEPCNT
-                    int maxpkt = 3;
-                    setsockopt(client_fd, IPPROTO_TCP, TCP_KEEPCNT, &maxpkt, sizeof(maxpkt));
+					int maxpkt = 3;
+					setsockopt(client_fd, IPPROTO_TCP, TCP_KEEPCNT, &maxpkt, sizeof(maxpkt));
 #endif
 
-                    uart->cmd_client_fd = client_fd;
-                    uart->last_activity_time = tickGet();
-                    uart->cmd_count = 0;
-                    uart->sock_cmd_state = STATE_TCP_CONN;
-                    uart_info_send(i);
+					uart->cmd_client_fd = client_fd;
+					uart->last_activity_time = tickGet();
+					uart->cmd_count = 0;
+					uart->sock_cmd_state = STATE_TCP_CONN;
+					uart_info_send(i);
+					hear_send(i);
+					DEBUG_PRINT("uart[%d] cmd port %u client connected, fd=%d", i, uart->sock_cmd_port, client_fd);
+				}
+				else
+				{
+					perror("accept failed (cmd)");
+				}
+			}
 
-                    DEBUG_PRINT("uart[%d] cmd port %u client connected, fd=%d", i, uart->sock_cmd_port, client_fd);
-                }
-                else
-                {
-                    perror("accept failed (cmd)");
-                }
-            }
+			// 客户端socket可读，读取数据
+			if (uart->cmd_client_fd >= 0 && FD_ISSET(uart->cmd_client_fd, &rfds))
+			{
+				int n = recv(uart->cmd_client_fd, cmd_tmp, sizeof(cmd_tmp), 0);
+				if (n > 0)
+				{
+					uart->last_activity_time = tickGet();
+					uart->cmd_count += n;
+					handle_command(uart, uart->cmd_client_fd, cmd_tmp, n, i);
 
-            // 客户端socket可读，读取数据
-            if (uart->cmd_client_fd >= 0 && FD_ISSET(uart->cmd_client_fd, &rfds))
-            {
-                int n = recv(uart->cmd_client_fd, cmd_tmp, sizeof(cmd_tmp), 0);
-                if (n > 0)
-                {
-                    uart->last_activity_time = tickGet();
-                    uart->cmd_count += n;
-                    handle_command(uart, uart->cmd_client_fd, cmd_tmp, n, i);
+					if (cmd_tmp[0] == ASPP_CMD_PORT_INIT)
+					{
+						uart->tx_buffer_limit = calc_tx_buffer_limit(uart->config.baud_rate, sys_tick);
+						DEBUG_PRINT("uart[%d] tx limit updated to %d", i, uart->tx_buffer_limit);
+					}
+				}
+				else if (n == 0)
+				{
+					// 客户端正常关闭
+					DEBUG_PRINT("uart[%d] CMD client closed fd=%d", i, uart->cmd_client_fd);
+					close(uart->cmd_client_fd);
+					uart->cmd_client_fd = -1;
+					uart->sock_cmd_state = STATE_TCP_OPEN;
+					uart->cmd_count = 0;
+					uart->last_activity_time = 0;
+				}
+				else
+				{
+					int err = errno;
+					if (err == EAGAIN || err == EWOULDBLOCK)
+					{
+						// 非阻塞无数据，忽略
+					}
+					else if (err == EINTR)
+					{
+						// 被信号打断，安全重试
+					}
+					else
+					{
+						// 其他错误立即关闭连接
+						DEBUG_PRINT("uart[%d] recv error fd=%d errno=%d (%s), closing connection", i, uart->cmd_client_fd, err, strerror(err));
+						close(uart->cmd_client_fd);
+						uart->cmd_client_fd = -1;
+						uart->sock_cmd_state = STATE_TCP_OPEN;
+						uart->cmd_count = 0;
+						uart->last_activity_time = 0;
+					}
+				}
+			}
+		}
 
-                    if (cmd_tmp[0] == ASPP_CMD_PORT_INIT)
-                    {
-                        uart->tx_buffer_limit = calc_tx_buffer_limit(uart->config.baud_rate, sys_tick);
-                        DEBUG_PRINT("uart[%d] tx limit updated to %d", i, uart->tx_buffer_limit);
-                    }
-                }
-                else if (n == 0)
-                {
-                    // 客户端正常关闭
-                    DEBUG_PRINT("uart[%d] CMD client closed fd=%d", i, uart->cmd_client_fd);
-                    close(uart->cmd_client_fd);
-                    uart->cmd_client_fd = -1;
-                    uart->sock_cmd_state = STATE_TCP_OPEN;
-                    uart->cmd_count = 0;
-                    uart->last_activity_time = 0;
-                }
-                else
-                {
-                    int err = errno;
-                    if (err == EAGAIN || err == EWOULDBLOCK)
-                    {
-                        // 非阻塞无数据，忽略
-                    }
-                    else if (err == EINTR)
-                    {
-                        // 被信号打断，安全重试
-                    }
-                    else
-                    {
-                        // 其他错误立即关闭连接
-                        DEBUG_PRINT("uart[%d] recv error fd=%d errno=%d (%s), closing connection", i, uart->cmd_client_fd, err, strerror(err));
-                        close(uart->cmd_client_fd);
-                        uart->cmd_client_fd = -1;
-                        uart->sock_cmd_state = STATE_TCP_OPEN;
-                        uart->cmd_count = 0;
-                        uart->last_activity_time = 0;
-                    }
-                }
-            }
-        }
-
-        taskDelay(TCP_TASK_MIN_DELAY);
-    }
+		taskDelay(TCP_TASK_MIN_DELAY);
+	}
 }
 
 // --------------------- sock_data 任务 ------------------------
 void check_tcp_data_timeouts(void)
 {
-    int i;
-    ULONG now = tickGet();
-    ULONG timeout_ticks = sysClkRateGet() * 60;   // 60秒超时
+	int i;
+	ULONG now = tickGet();
+	ULONG timeout_ticks = sysClkRateGet() * 60;   // 60秒超时
 
-    for (i = 0; i < NUM_PORTS; i++)
-    {
-        UART_Config_Params *uart = &uart_instances[i];
+	for (i = 0; i < NUM_PORTS; i++)
+	{
+		UART_Config_Params *uart = &uart_instances[i];
 
-        if (uart->data_client_fd >= 0)
-        {
-            if ((now - uart->last_activity_time) > timeout_ticks)
-            {
-                DEBUG_PRINT("uart[%d] data client timeout, closing fd=%d", i, uart->data_client_fd);
-                close(uart->data_client_fd);
-                uart->data_client_fd = -1;
-                uart->sock_data_state = STATE_TCP_OPEN;
-            }
-        }
-    }
+		if (uart->data_client_fd >= 0)
+		{
+			if ((now - uart->last_activity_time) > timeout_ticks)
+			{
+				DEBUG_PRINT("uart[%d] data client timeout, closing fd=%d", i, uart->data_client_fd);
+				close(uart->data_client_fd);
+				uart->data_client_fd = -1;
+				uart->sock_data_state = STATE_TCP_OPEN;
+			}
+		}
+	}
 }
 
 
 void multi_tcp_data_servers_loop(int unused)
 {
-    int i;
+	int i;
 
-    // 每通道初始化
-    for (i = 0; i < NUM_PORTS; ++i)
-    {
-        uart_instances[i].data_client_fd = -1;
-        uart_instances[i].sock_data_state = STATE_TCP_OPEN;
-        uart_instances[i].last_activity_time = time(NULL);
-    }
+	// 每通道初始化
+	for (i = 0; i < NUM_PORTS; ++i)
+	{
+		uart_instances[i].data_client_fd = -1;
+		uart_instances[i].sock_data_state = STATE_TCP_OPEN;
+		uart_instances[i].last_activity_time = time(NULL);
+	}
 
-    taskDelay(25);
+	taskDelay(25);
 
-    DEBUG_PRINT("tcp data loop start ...\n");
+	DEBUG_PRINT("tcp data loop start ...\n");
 
-    while (1)
-    {
-        fd_set rfds;
-        FD_ZERO(&rfds);
-        int max_fd = -1;
+	while (1)
+	{
+		fd_set rfds;
+		FD_ZERO(&rfds);
+		int max_fd = -1;
 
-        // 监听所有处于监听态的sock_data和已连接fd
-        for (i = 0; i < NUM_PORTS; ++i)
-        {
-            UART_Config_Params *uart = &uart_instances[i];
-            if (uart->sock_data > 0 && uart->data_client_fd < 0)
-            {
-                FD_SET(uart->sock_data, &rfds);
-                if (uart->sock_data > max_fd)
-                    max_fd = uart->sock_data;
-            }
-            if (uart->data_client_fd >= 0)
-            {
-                FD_SET(uart->data_client_fd, &rfds);
-                if (uart->data_client_fd > max_fd)
-                    max_fd = uart->data_client_fd;
-            }
-        }
+		// 监听所有处于监听态的sock_data和已连接fd
+		for (i = 0; i < NUM_PORTS; ++i)
+		{
+			UART_Config_Params *uart = &uart_instances[i];
+			if (uart->sock_data > 0 && uart->data_client_fd < 0)
+			{
+				FD_SET(uart->sock_data, &rfds);
+				if (uart->sock_data > max_fd)
+					max_fd = uart->sock_data;
+			}
+			if (uart->data_client_fd >= 0)
+			{
+				FD_SET(uart->data_client_fd, &rfds);
+				if (uart->data_client_fd > max_fd)
+					max_fd = uart->data_client_fd;
+			}
+		}
 
-        if (max_fd < 0)
-        {
-            // 没有有效socket，稍作休眠继续
-            taskDelay(10);
-            continue;
-        }
+		if (max_fd < 0)
+		{
+			// 没有有效socket，稍作休眠继续
+			taskDelay(10);
+			continue;
+		}
 
-        // 设置select超时，避免永久阻塞
-        struct timeval select_timeout;
-        select_timeout.tv_sec = 1;    // 1秒超时
-        select_timeout.tv_usec = 0;
+		// 设置select超时，避免永久阻塞
+		struct timeval select_timeout;
+		select_timeout.tv_sec = 1;    // 1秒超时
+		select_timeout.tv_usec = 0;
 
-        // 永久阻塞等待I/O事件，有事件立刻处理，CPU期限内最优
-        int ret = select(max_fd + 1, &rfds, NULL, NULL, &select_timeout);
-        if (ret < 0)
-        {
-            perror("select error (data)");
-            taskDelay(5);
-            continue;
-        }
-        else if (ret == 0)
-        {
-            // 超时无事件，检查死连接
-            check_tcp_data_timeouts();
-            continue;
-        }
+		// 永久阻塞等待I/O事件，有事件立刻处理，CPU期限内最优
+		int ret = select(max_fd + 1, &rfds, NULL, NULL, &select_timeout);
+		if (ret < 0)
+		{
+			perror("select error (data)");
+			taskDelay(5);
+			continue;
+		}
+		else if (ret == 0)
+		{
+			// 超时无事件，检查死连接
+			check_tcp_data_timeouts();
+			continue;
+		}
+		
+		for (i = 0; i < NUM_PORTS; ++i)
+		{
+			UART_Config_Params *uart = &uart_instances[i];
+			// 1) 监听socket就绪，接受新连接
+			if (uart->sock_data > 0 && uart->data_client_fd < 0 && FD_ISSET(uart->sock_data, &rfds))
+			{
+				struct sockaddr_in caddr;
+				socklen_t clen = sizeof(caddr);
+				axi16550FIFOInit(i);
+				ring_buffer_init(&uart->data_rx, uart->rx_buffer, BUFFERCOM_SIZE);
+				ring_buffer_init(&uart->data_tx, uart->tx_buffer, BUFFERCOM_SIZE);
+				
+				int client_fd = accept(uart->sock_data, (struct sockaddr *)&caddr, &clen);
+				if (client_fd >= 0)
+				{
+					uart->data_client_fd = client_fd;
+					uart->data_count = 0;
+					uart->last_activity_time = tickGet();
+					uart->sock_data_state = STATE_TCP_CONN;
+					DEBUG_PRINT("uart[%d] sock_data port %u client connected, fd=%d", i, uart->sock_data_port, client_fd);
+					//add port LED set	
+					Portled(i, 1);
+					
 
-        for (i = 0; i < NUM_PORTS; ++i)
-        {
-            UART_Config_Params *uart = &uart_instances[i];
-            // 1) 监听socket就绪，接受新连接
-            if (uart->sock_data > 0 && uart->data_client_fd < 0 && FD_ISSET(uart->sock_data, &rfds))
-            {
-                struct sockaddr_in caddr;
-                socklen_t clen = sizeof(caddr);
-                int client_fd = accept(uart->sock_data, (struct sockaddr *)&caddr, &clen);
-                if (client_fd >= 0)
-                {
-                    uart->data_client_fd = client_fd;
-                    uart->data_count = 0;
-                    uart->last_activity_time = tickGet();
-                    uart->sock_data_state = STATE_TCP_CONN;
-                    DEBUG_PRINT("uart[%d] sock_data port %u client connected, fd=%d", i, uart->sock_data_port, client_fd);
+					// 设置非阻塞并启用TCP keepalive
+					int flags = fcntl(client_fd, F_GETFL, 0);
+					fcntl(client_fd, F_SETFL, flags | O_NONBLOCK);
 
-                    // 设置非阻塞并启用TCP keepalive
-                    int flags = fcntl(client_fd, F_GETFL, 0);
-                    fcntl(client_fd, F_SETFL, flags | O_NONBLOCK);
-
-                    int enable = 1;
-                    setsockopt(client_fd, SOL_SOCKET, SO_KEEPALIVE, &enable, sizeof(enable));
+					int enable = 1;
+					setsockopt(client_fd, SOL_SOCKET, SO_KEEPALIVE, &enable, sizeof(enable));
 #ifdef TCP_KEEPIDLE
-                    int idle = 60;
-                    setsockopt(client_fd, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle));
+					int idle = 60;
+					setsockopt(client_fd, IPPROTO_TCP, TCP_KEEPIDLE, &idle, sizeof(idle));
 #endif
 #ifdef TCP_KEEPINTVL
-                    int interval = 10;
-                    setsockopt(client_fd, IPPROTO_TCP, TCP_KEEPINTVL, &interval, sizeof(interval));
+					int interval = 10;
+					setsockopt(client_fd, IPPROTO_TCP, TCP_KEEPINTVL, &interval, sizeof(interval));
 #endif
 #ifdef TCP_KEEPCNT
-                    int maxpkt = 3;
-                    setsockopt(client_fd, IPPROTO_TCP, TCP_KEEPCNT, &maxpkt, sizeof(maxpkt));
+					int maxpkt = 3;
+					setsockopt(client_fd, IPPROTO_TCP, TCP_KEEPCNT, &maxpkt, sizeof(maxpkt));
 #endif
-                }
-            }
+				}
+			}
 
-            // 2. 数据接收与异常断开
-            // 2) 数据socket可读，接收数据
-            if (uart->data_client_fd >= 0 && FD_ISSET(uart->data_client_fd, &rfds))
-            {
-                int n = recv(uart->data_client_fd, sock_data_tmp, sizeof(sock_data_tmp), 0);
-                if (n > 0)
-                {
-                    uart->last_activity_time = tickGet();
-                    uart->data_count += n;
+			// 2. 数据接收与异常断开
+			// 2) 数据socket可读，接收数据
+			if (uart->data_client_fd >= 0 && FD_ISSET(uart->data_client_fd, &rfds))
+			{
+				int n = recv(uart->data_client_fd, sock_data_tmp, sizeof(sock_data_tmp), 0);
+				if (n > 0)
+				{
+					uart->last_activity_time = tickGet();
+					uart->data_count += n;
 
-                    if (ring_buffer_is_full(&uart->data_tx))
-                    {
-                        DEBUG_PRINT("uart[%d] data_tx ring buffer full, closing connection fd=%d", i, uart->data_client_fd);
-                        close(uart->data_client_fd);
-                        uart->data_client_fd = -1;
-                        uart->sock_data_state = STATE_TCP_OPEN;
+					if (ring_buffer_is_full(&uart->data_tx))
+					{
+						DEBUG_PRINT("uart[%d] data_tx ring buffer full, closing connection fd=%d", i, uart->data_client_fd);
+						close(uart->data_client_fd);
+						uart->data_client_fd = -1;
+						uart->sock_data_state = STATE_TCP_OPEN;
 
-                        ring_buffer_init(&uart->data_rx, uart->rx_buffer, BUFFERCOM_SIZE);
-                        ring_buffer_init(&uart->data_tx, uart->tx_buffer, BUFFERCOM_SIZE);
-                        continue;  // 跳过本次循环处理，避免后续逻辑访问无效fd
-                    }
+						ring_buffer_init(&uart->data_rx, uart->rx_buffer, BUFFERCOM_SIZE);
+						ring_buffer_init(&uart->data_tx, uart->tx_buffer, BUFFERCOM_SIZE);
+						continue;  // 跳过本次循环处理，避免后续逻辑访问无效fd
+					}
 
-                    uart_ring_buffer_enqueue(&uart->data_tx, sock_data_tmp, n);
-                    uart->sock_data_state = STATE_TCP_CONN;
-                }
-                else if (n == 0)
-                {
-                    DEBUG_PRINT("uart[%d] DATA client closed fd=%d", i, uart->data_client_fd);
-                    close(uart->data_client_fd);
-                    uart->data_client_fd = -1;
-                    uart->sock_data_state = STATE_TCP_OPEN;
+					uart_ring_buffer_enqueue(&uart->data_tx, sock_data_tmp, n);
+					uart->sock_data_state = STATE_TCP_CONN;
+				}
+				else if (n == 0)
+				{
+					DEBUG_PRINT("uart[%d] DATA client closed fd=%d", i, uart->data_client_fd);
+					close(uart->data_client_fd);
+					uart->data_client_fd = -1;
+					uart->sock_data_state = STATE_TCP_OPEN;
+					//Port LED Clr
+					Portled(i, 0);
+					ring_buffer_init(&uart->data_rx, uart->rx_buffer, BUFFERCOM_SIZE);
+					ring_buffer_init(&uart->data_tx, uart->tx_buffer, BUFFERCOM_SIZE);
+				}
+				else
+				{
+					int err = errno;
+					if (err == EAGAIN || err == EWOULDBLOCK)
+					{
+						// 非阻塞无数据，继续
+					}
+					else if (err == EINTR)
+					{
+						// 被信号中断，重试
+					}
+					else
+					{
+						DEBUG_PRINT("uart[%d] recv error fd=%d errno=%d (%s), closing connection", i, uart->data_client_fd, err, strerror(err));
+						close(uart->data_client_fd);
+						uart->data_client_fd = -1;
+						uart->sock_data_state = STATE_TCP_OPEN;
 
-                    ring_buffer_init(&uart->data_rx, uart->rx_buffer, BUFFERCOM_SIZE);
-                    ring_buffer_init(&uart->data_tx, uart->tx_buffer, BUFFERCOM_SIZE);
-                }
-                else
-                {
-                    int err = errno;
-                    if (err == EAGAIN || err == EWOULDBLOCK)
-                    {
-                        // 非阻塞无数据，继续
-                    }
-                    else if (err == EINTR)
-                    {
-                        // 被信号中断，重试
-                    }
-                    else
-                    {
-                        DEBUG_PRINT("uart[%d] recv error fd=%d errno=%d (%s), closing connection", i, uart->data_client_fd, err, strerror(err));
-                        close(uart->data_client_fd);
-                        uart->data_client_fd = -1;
-                        uart->sock_data_state = STATE_TCP_OPEN;
+						ring_buffer_init(&uart->data_rx, uart->rx_buffer, BUFFERCOM_SIZE);
+						ring_buffer_init(&uart->data_tx, uart->tx_buffer, BUFFERCOM_SIZE);
+					}
+				}
+			}
+		}  // end for ports
 
-                        ring_buffer_init(&uart->data_rx, uart->rx_buffer, BUFFERCOM_SIZE);
-                        ring_buffer_init(&uart->data_tx, uart->tx_buffer, BUFFERCOM_SIZE);
-                    }
-                }
-            }
-        }  // end for ports
-
-        // 每轮循环末小延时，防止CPU占满
-        taskDelay(TCP_TASK_MIN_DELAY);
-    }  // end while
+		// 每轮循环末小延时，防止CPU占满
+		taskDelay(TCP_TASK_MIN_DELAY);
+	}  // end while
 }
 
 
 // 动态计算建议tick延时
 int calc_poll_delay_ticks(unsigned int baud_rate)
 {
-    /* 一字节时间 = 10/baud_rate (10bit/byte: start+8data+stop) */
-    /* 动态：低速高延时，高速低延时，建议范围1ms~20ms */
-    unsigned int min_ms = 1, max_ms = 20;
-    unsigned int byte_time_us = baud_rate ? ((10 * 1000000U) / baud_rate) : 200000; // fallback: slow
-    unsigned int base_ms = (byte_time_us + 999) / 1000; // 上取整，字节耗时多少ms
-    if (base_ms < min_ms) base_ms = min_ms;
-    if (base_ms > max_ms) base_ms = max_ms;
-    // 系统tick
-    int sys_tick = sysClkRateGet();
-    int ticks = (base_ms * sys_tick + 999) / 1000; // 上取整ms->tick
-    if (ticks < 1) ticks = 1;
-    return ticks;
+	/* 一字节时间 = 10/baud_rate (10bit/byte: start+8data+stop) */
+	/* 动态：低速高延时，高速低延时，建议范围1ms~20ms */
+	unsigned int min_ms = 1, max_ms = 20;
+	unsigned int byte_time_us = baud_rate ? ((10 * 1000000U) / baud_rate) : 200000; // fallback: slow
+	unsigned int base_ms = (byte_time_us + 999) / 1000; // 上取整，字节耗时多少ms
+	if (base_ms < min_ms) base_ms = min_ms;
+	if (base_ms > max_ms) base_ms = max_ms;
+	// 系统tick
+	int sys_tick = sysClkRateGet();
+	int ticks = (base_ms * sys_tick + 999) / 1000; // 上取整ms->tick
+	if (ticks < 1) ticks = 1;
+	return ticks;
 }
 
 
 int calc_tx_buffer_limit(uint32_t baudrate, int tick_rate)
 {
-    if (baudrate == 0)
-        baudrate = 9600;  // 安全兜底
+	if (baudrate == 0)
+		baudrate = 9600;  // 安全兜底
 
-    float tick_sec = 1.0f / tick_rate;
-    float period_sec = tick_sec * UART_TX_TASK_MIN_DELAY;
+	float tick_sec = 1.0f / tick_rate;
+	float period_sec = tick_sec * UART_TX_TASK_MIN_DELAY;
 
-    // 波特率字节数，安全倍数设为2倍（可调）
-    float safety_factor = 1.5f;
+	// 波特率字节数，安全倍数设为2倍（可调）
+	float safety_factor = 1.5f;
 
-    int max_bytes = (int)((baudrate * period_sec) / 10 * safety_factor);
+	int max_bytes = (int)((baudrate * period_sec) / 10 * safety_factor);
 
-    // 取最大1，避免0
-    if (max_bytes < 1)
-        max_bytes = 1;
+	// 取最大1，避免0
+	if (max_bytes < 1)
+		max_bytes = 1;
 
-    // 不超过环形缓冲最大区大小
-    if (max_bytes > UART_FPGA_TX_BUFFER)
-        max_bytes = UART_FPGA_TX_BUFFER;
+	// 不超过环形缓冲最大区大小
+	if (max_bytes > UART_FPGA_TX_BUFFER)
+		max_bytes = UART_FPGA_TX_BUFFER;
 
-    return max_bytes;
+	return max_bytes;
 }
 
 
 void multi_uart_tx_loop(int unused)
 {
-    int i;
-    taskDelay(20);
-    printf("uart_tx_loop running .... \n");
-    TimeCounter tc;
-    UINT32 ticks, ms;
-    uint32_t sys_tick_hz = sysClkRateGet();
-    ring_buffer_size_t rx_ready[NUM_PORTS];
-    for (i = 0; i < NUM_PORTS; ++i) rx_ready[i] = 0;
+	int i;
+	taskDelay(20);
+	printf("uart_tx_loop running .... \n");
+	TimeCounter tc;
+	UINT32 ticks, ms;
+	uint32_t sys_tick_hz = sysClkRateGet();
+	ring_buffer_size_t rx_ready[NUM_PORTS];
+	for (i = 0; i < NUM_PORTS; ++i) rx_ready[i] = 0;
 
-    for (i = 0; i < NUM_PORTS; i++)
-    {
-        uart_led_stats[i].sample_period_ticks_tx = calc_sample_period(uart_instances[i].config.baud_rate, sys_tick_hz, UART_TX_TASK_MIN_DELAY);
-        uart_led_stats[i].tx_count = 0;
-        uart_led_stats[i].sample_tick_cnt_tx = 0;
-        uart_led_stats[i].tx_led_state = 0;
-    }
+	for (i = 0; i < NUM_PORTS; i++)
+	{
+		uart_led_stats[i].sample_period_ticks_tx = calc_sample_period(uart_instances[i].config.baud_rate, sys_tick_hz, UART_TX_TASK_MIN_DELAY);
+		uart_led_stats[i].tx_count = 0;
+		uart_led_stats[i].sample_tick_cnt_tx = 0;
+		uart_led_stats[i].tx_led_state = 0;
+	}
 
-    while (1)
-    {
-        for (i = 0; i < NUM_PORTS; ++i)
-        {
-            UART_Config_Params *uart = &uart_instances[i];
-            // 只有socket全部建立连接才发
-//            if (uart->sock_cmd_state == STATE_TCP_CONN && uart->sock_data_state == STATE_TCP_CONN) {
-            if (uart->sock_data_state == STATE_TCP_CONN)
-            {
-                if (0 == rx_ready[i])
-                {
-                    rx_ready[i] = uart_ring_buffer_dequeue(&uart->data_tx, &uart_fpga_txbuf[i][0], uart->tx_buffer_limit);
-                }
-                if (rx_ready[i] > 0)
-                {
-                    uart_led_stats[i].tx_count += rx_ready[i];
-                    timeStart(&tc);
-                    if (uart->config.baud_rate <= 9600)
-                    {
-                        axi16550Send(i, (uint8_t *)&uart_fpga_txbuf[i][0], rx_ready[i]);
-                    }
-                    else
-                    {
-                        axi16550Send(i, (uint8_t *)&uart_fpga_txbuf[i][0], rx_ready[i]);
-                    }
+	while (1)
+	{
+		for (i = 0; i < NUM_PORTS; ++i)
+		{
+			UART_Config_Params *uart = &uart_instances[i];
+			// 只有socket全部建立连接才发
+			//            if (uart->sock_cmd_state == STATE_TCP_CONN && uart->sock_data_state == STATE_TCP_CONN) {
+			if (uart->sock_data_state == STATE_TCP_CONN)
+			{
+				if (0 == rx_ready[i])
+				{
+					rx_ready[i] = uart_ring_buffer_dequeue(&uart->data_tx, &uart_fpga_txbuf[i][0], uart->tx_buffer_limit);
+				}
+				if (rx_ready[i] > 0)
+				{
+					uart_led_stats[i].tx_count += rx_ready[i];
+					timeStart(&tc);
+					if (uart->config.baud_rate <= 9600)
+					{
+						axi16550Send(i, (uint8_t *)&uart_fpga_txbuf[i][0], rx_ready[i]);
+					}
+					else
+					{
+						axi16550Send(i, (uint8_t *)&uart_fpga_txbuf[i][0], rx_ready[i]);
+					}
 
-                    timeEnd(&tc, &ticks, &ms);
-                    rx_ready[i] = 0;
-                }
-            }
-            update_led_state(&uart_led_stats[i], 1);
-            txled(i, uart_led_stats[i].tx_led_state);
-        }
-        taskDelay(UART_TX_TASK_MIN_DELAY); // 动态适应各通道，未建连优先轮询最小
-    }
+					timeEnd(&tc, &ticks, &ms);
+					rx_ready[i] = 0;
+				}
+			}
+			update_led_state(&uart_led_stats[i], 1);
+			txled(i, uart_led_stats[i].tx_led_state);
+		}
+		taskDelay(UART_TX_TASK_MIN_DELAY); // 动态适应各通道，未建连优先轮询最小
+	}
 }
 
 //---------  阶段一：高速poll UART收数据，写data_rx ----------
 void multi_uart_rx_loop(int unused)
 {
-    int i;
-    uint32_t rxlen;
-    uint32_t sys_tick_hz = sysClkRateGet();
-    for (i = 0; i < NUM_PORTS; i++)
-    {
-        uart_led_stats[i].sample_period_ticks_rx = calc_sample_period(uart_instances[i].config.baud_rate, sys_tick_hz, UART_RX_TASK_MIN_DELAY);
-        uart_led_stats[i].rx_count = 0;
-        uart_led_stats[i].sample_tick_cnt_rx = 0;
-        uart_led_stats[i].rx_led_state = 0;
-    }
-    taskDelay(10);
-    printf("multi_uart_rx_loop started.\n");
-    while (1)
-    {
-        for (i = 0; i < NUM_PORTS; ++i)
-        {
-            UART_Config_Params *uart = &uart_instances[i];
-            if (uart->sock_cmd_state == STATE_TCP_CONN && uart->sock_data_state == STATE_TCP_CONN)
-            {
-                do
-                {
-                    rxlen = sizeof(uart_fpga_rxbuf);
-                    if (axi16550Recv(i, uart_fpga_rxbuf, &rxlen) == 0 && rxlen > 0)
-                    {
-                        uart_led_stats[i].rx_count += rxlen;
-                        uart_ring_buffer_enqueue(&uart->data_rx, (char *)uart_fpga_rxbuf, rxlen);
-                    }
-                }
-                while (rxlen > 0);
-            }
-            // 周期更新RX LED状态
-            update_led_state(&uart_led_stats[i], 0);
-            rxled(i, uart_led_stats[i].rx_led_state);
-        }
-        taskDelay(UART_RX_TASK_MIN_DELAY);
-    }
+	int i;
+	uint32_t rxlen;
+	uint32_t sys_tick_hz = sysClkRateGet();
+	for (i = 0; i < NUM_PORTS; i++)
+	{
+		uart_led_stats[i].sample_period_ticks_rx = calc_sample_period(uart_instances[i].config.baud_rate, sys_tick_hz, UART_RX_TASK_MIN_DELAY);
+		uart_led_stats[i].rx_count = 0;
+		uart_led_stats[i].sample_tick_cnt_rx = 0;
+		uart_led_stats[i].rx_led_state = 0;
+	}
+	taskDelay(10);
+	printf("multi_uart_rx_loop started.\n");
+	while (1)
+	{
+		for (i = 0; i < NUM_PORTS; ++i)
+		{
+			UART_Config_Params *uart = &uart_instances[i];
+			if (uart->sock_cmd_state == STATE_TCP_CONN && uart->sock_data_state == STATE_TCP_CONN)
+			{
+				do
+				{
+					rxlen = sizeof(uart_fpga_rxbuf);
+					if (axi16550Recv(i, uart_fpga_rxbuf, &rxlen) == 0 && rxlen > 0)
+					{
+						uart_led_stats[i].rx_count += rxlen;
+						uart_ring_buffer_enqueue(&uart->data_rx, (char *)uart_fpga_rxbuf, rxlen);
+					}
+				}
+				while (rxlen > 0);
+			}
+			// 周期更新RX LED状态
+			update_led_state(&uart_led_stats[i], 0);
+			rxled(i, uart_led_stats[i].rx_led_state);
+		}
+		taskDelay(UART_RX_TASK_MIN_DELAY);
+	}
 }
 
 //-------- 阶段二：批量dequeue转发到data_client_fd -------
 void multi_uart_forward_loop(int unused)
 {
-    int i;
-    size_t n;
-    taskDelay(15);
-    printf("multi_uart_forward_loop started.\n");
-    while (1)
-    {
-        for (i = 0; i < NUM_PORTS; ++i)
-        {
-            UART_Config_Params *uart = &uart_instances[i];
-            if (uart->sock_data_state == STATE_TCP_CONN &&
-                    uart->data_client_fd >= 0)
-            {
-                // 一次批量发送，提升效率
-                n = uart_ring_buffer_dequeue(&uart->data_rx, net_tx_buf, sizeof(net_tx_buf));
-                if (n > 0)
-                {
-                    int total = 0;
-                    while (total < (int)n)
-                    {
-                        int sent = send(uart->data_client_fd, net_tx_buf + total, n - total, 0);
-                        if (sent <= 0) break; // socket关闭/异常
-                        total += sent;
-                    }
-                }
-            }
-        }
-        // 动态delay，同上（主要服务于低波特率场景）
-        int min_ticks = 20;
-//        for (i=0; i<NUM_PORTS; ++i) {
-//            int t = calc_poll_delay_ticks(uart_instances[i].config.baud_rate);
-//            if (t < min_ticks) min_ticks = t;
-//        }
-        if (min_ticks < UART_RX_FORWARD_TASK_MIN_DELAY) min_ticks = UART_RX_FORWARD_TASK_MIN_DELAY;
-//        printf("[%d],min_ticks[ %d ]. \n", __LINE__, min_ticks);
-        taskDelay(UART_RX_FORWARD_TASK_MIN_DELAY);
-    }
+	int i;
+	size_t n;
+	taskDelay(15);
+	printf("multi_uart_forward_loop started.\n");
+	while (1)
+	{
+		for (i = 0; i < NUM_PORTS; ++i)
+		{
+			UART_Config_Params *uart = &uart_instances[i];
+			if (uart->sock_data_state == STATE_TCP_CONN &&
+					uart->data_client_fd >= 0)
+			{
+				// 一次批量发送，提升效率
+				n = uart_ring_buffer_dequeue(&uart->data_rx, net_tx_buf, sizeof(net_tx_buf));
+				if (n > 0)
+				{
+					int total = 0;
+					while (total < (int)n)
+					{
+						int sent = send(uart->data_client_fd, net_tx_buf + total, n - total, 0);
+						if (sent <= 0) break; // socket关闭/异常
+						total += sent;
+					}
+				}
+			}
+		}
+		// 动态delay，同上（主要服务于低波特率场景）
+		int min_ticks = 20;
+		//        for (i=0; i<NUM_PORTS; ++i) {
+		//            int t = calc_poll_delay_ticks(uart_instances[i].config.baud_rate);
+		//            if (t < min_ticks) min_ticks = t;
+		//        }
+		if (min_ticks < UART_RX_FORWARD_TASK_MIN_DELAY) min_ticks = UART_RX_FORWARD_TASK_MIN_DELAY;
+		//        printf("[%d],min_ticks[ %d ]. \n", __LINE__, min_ticks);
+		taskDelay(UART_RX_FORWARD_TASK_MIN_DELAY);
+	}
 }
 
 void InitUartTask(UART_Config_Params *uart_instances, int num_ports)
 {
-    int ret = -1;
-    for (int i = 0; i < num_ports; i++)
-    {
-        // 初始化端口配置
-        uart_instances[i].sock_cmd_port = portcmd_array[i];
-        uart_instances[i].sock_data_port = portdata_array[i];
+	int ret = -1;
+	int i;
+	for (i = 0; i < num_ports; i++)
+	{
+		// 初始化端口配置
+		uart_instances[i].sock_cmd_port = portcmd_array[i];
+		uart_instances[i].sock_data_port = portdata_array[i];
 
-        uart_instances[i].sock_cmd_state = STATE_INIT;
-        uart_instances[i].sock_data_state = STATE_INIT;
-        uart_instances[i].cmd_client_fd = -1;
-        uart_instances[i].data_client_fd = -1;
+		uart_instances[i].sock_cmd_state = STATE_INIT;
+		uart_instances[i].sock_data_state = STATE_INIT;
+		uart_instances[i].cmd_client_fd = -1;
+		uart_instances[i].data_client_fd = -1;
 
-        uart_instances[i].cmd_count = 0;
-        uart_instances[i].data_count = 0;
+		uart_instances[i].cmd_count = 0;
+		uart_instances[i].data_count = 0;
 
-        ring_buffer_init(&uart_instances[i].data_rx, uart_instances[i].rx_buffer, BUFFERCOM_SIZE);
-        ring_buffer_init(&uart_instances[i].data_tx, uart_instances[i].tx_buffer, BUFFERCOM_SIZE);
+		ring_buffer_init(&uart_instances[i].data_rx, uart_instances[i].rx_buffer, BUFFERCOM_SIZE);
+		ring_buffer_init(&uart_instances[i].data_tx, uart_instances[i].tx_buffer, BUFFERCOM_SIZE);
 
-        // 创建消息队列
-        uart_instances[i].msg_queue = msgQCreate(16, 256, MSG_Q_FIFO);
-        if (uart_instances[i].msg_queue == NULL)
-        {
-            perror("[UART] msgQCreate failed");
-            continue;
-        }
+		// 创建消息队列
+		uart_instances[i].msg_queue = msgQCreate(16, 256, MSG_Q_FIFO);
+		if (uart_instances[i].msg_queue == NULL)
+		{
+			perror("[UART] msgQCreate failed");
+			continue;
+		}
 
-        /*  cmd socket init  */
-        ret = create_tcp_server_socket(&uart_instances[i].sock_cmd);
-        if (ret < 0)
-        {
-            printf("Failed to create sock_cmd.\n");
-            return -1;
-        }
+		/*  cmd socket init  */
+		ret = create_tcp_server_socket(&uart_instances[i].sock_cmd);
+		if (ret < 0)
+		{
+			printf("Failed to create sock_cmd.\n");
+			return -1;
+		}
 
-        if (bind_tcp_server_socket(uart_instances[i].sock_cmd, uart_instances[i].sock_cmd_port) < 0)
-        {
-            printf("Failed to bind socket for port %d\n", uart_instances[i].sock_cmd_port);
-            goto exit1;
-        }
+		if (bind_tcp_server_socket(uart_instances[i].sock_cmd, uart_instances[i].sock_cmd_port) < 0)
+		{
+			printf("Failed to bind socket for port %d\n", uart_instances[i].sock_cmd_port);
+			goto exit1;
+		}
 
-        if (listen_tcp_server_socket(uart_instances[i].sock_cmd) < 0)
-        {
-            printf("Failed to listen socket for port %d\n", uart_instances[i].sock_cmd_port);
-            goto exit1;
-        }
+		if (listen_tcp_server_socket(uart_instances[i].sock_cmd) < 0)
+		{
+			printf("Failed to listen socket for port %d\n", uart_instances[i].sock_cmd_port);
+			goto exit1;
+		}
 
-        /*  data socket init  */
-        ret = create_tcp_server_socket(&uart_instances[i].sock_data);
-        if (ret < 0)
-        {
-            printf("Failed to create sock_data.\n");
-            goto exit2;
-        }
+		/*  data socket init  */
+		ret = create_tcp_server_socket(&uart_instances[i].sock_data);
+		if (ret < 0)
+		{
+			printf("Failed to create sock_data.\n");
+			goto exit2;
+		}
 
-        if (bind_tcp_server_socket(uart_instances[i].sock_data, uart_instances[i].sock_data_port) < 0)
-        {
-            printf("Failed to bind socket for port %d\n", uart_instances[i].sock_data_port);
-            goto exit2;
-        }
+		if (bind_tcp_server_socket(uart_instances[i].sock_data, uart_instances[i].sock_data_port) < 0)
+		{
+			printf("Failed to bind socket for port %d\n", uart_instances[i].sock_data_port);
+			goto exit2;
+		}
 
-        if (listen_tcp_server_socket(uart_instances[i].sock_data) < 0)
-        {
-            printf("Failed to listen socket for port %d\n", uart_instances[i].sock_data_port);
+		if (listen_tcp_server_socket(uart_instances[i].sock_data) < 0)
+		{
+			printf("Failed to listen socket for port %d\n", uart_instances[i].sock_data_port);
 
-            goto exit2;
-        }
+			goto exit2;
+		}
 
-        continue;
+		continue;
 
-exit2:
-        close(uart_instances[i].sock_data);
-exit1:
-        close(uart_instances[i].sock_cmd);
-    }
+		exit2:
+		close(uart_instances[i].sock_data);
+		exit1:
+		close(uart_instances[i].sock_cmd);
+	}
 
-    int tid = taskSpawn("multi_tcp_cmd_servers_loop", TCP_SERVER_TASK_PRIO, 0, TCP_SERVER_TASK_STACK,
-                        (FUNCPTR)multi_tcp_cmd_servers_loop,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	int tid = taskSpawn("multi_tcp_cmd_servers_loop", TCP_SERVER_TASK_PRIO, 0, TCP_SERVER_TASK_STACK,
+			(FUNCPTR)multi_tcp_cmd_servers_loop,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
 
-    if (tid == ERROR)
-    {
-        perror("multi_tcp_cmd_loop failed");
-        goto exit;
-    }
+	if (tid == ERROR)
+	{
+		perror("multi_tcp_cmd_loop failed");
+		goto exit;
+	}
 
-    tid = taskSpawn("multi_tcp_data_servers_loop", TCP_SERVER_TASK_PRIO, 0, TCP_SERVER_TASK_STACK,
-                    (FUNCPTR)multi_tcp_data_servers_loop,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    if (tid == ERROR)
-    {
-        perror("multi_tcp_data_servers_loop failed");
-        goto exit;
-    }
+	tid = taskSpawn("multi_tcp_data_servers_loop", TCP_SERVER_TASK_PRIO, 0, TCP_SERVER_TASK_STACK,
+			(FUNCPTR)multi_tcp_data_servers_loop,  0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	if (tid == ERROR)
+	{
+		perror("multi_tcp_data_servers_loop failed");
+		goto exit;
+	}
 
-    tid =  taskSpawn("uartTxLoop", UART_TX_TASK_PRIO, 0, UART_TASK_STACK, (FUNCPTR)multi_uart_tx_loop, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    if (tid == ERROR)
-    {
-        perror("uartTxLoop failed");
-        goto exit;
-    }
+	tid =  taskSpawn("uartTxLoop", UART_TX_TASK_PRIO, 0, UART_TASK_STACK, (FUNCPTR)multi_uart_tx_loop, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	if (tid == ERROR)
+	{
+		perror("uartTxLoop failed");
+		goto exit;
+	}
 
-    tid =  taskSpawn("uartRxLoop",  UART_RX_TASK_PRIO, 0, UART_TASK_STACK, (FUNCPTR)multi_uart_rx_loop, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    if (tid == ERROR)
-    {
-        perror("uartRxLoop failed");
-        goto exit;
-    }
-    tid =  taskSpawn("uartNetFwd", UART_RX_FORWARD_TASK_PRIO, 0, UART_TASK_STACK, (FUNCPTR)multi_uart_forward_loop, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-    if (tid == ERROR)
-    {
-        perror("uartNetFwd failed");
-        goto exit;
-    }
-    goto success;
-exit:
-    perror("Init failed ... \n");
-success:
-    printf("Init Success ... \n");
+	tid =  taskSpawn("uartRxLoop",  UART_RX_TASK_PRIO, 0, UART_TASK_STACK, (FUNCPTR)multi_uart_rx_loop, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	if (tid == ERROR)
+	{
+		perror("uartRxLoop failed");
+		goto exit;
+	}
+	tid =  taskSpawn("uartNetFwd", UART_RX_FORWARD_TASK_PRIO, 0, UART_TASK_STACK, (FUNCPTR)multi_uart_forward_loop, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	if (tid == ERROR)
+	{
+		perror("uartNetFwd failed");
+		goto exit;
+	}
+	goto success;
+	exit:
+	perror("Init failed ... \n");
+	success:
+	printf("Init Success ... \n");
 }
 
 
 void startUartServer()
 {
-    taskSpawn("InitUartTask", 90, 0, 40000,
-              (FUNCPTR)InitUartTask, (long)(void *)uart_instances, NUM_PORTS, 0, 0, 0, 0, 0, 0, 0, 0);
+	taskSpawn("InitUartTask", 90, 0, 40000,
+			(FUNCPTR)InitUartTask, (long)(void *)uart_instances, NUM_PORTS, 0, 0, 0, 0, 0, 0, 0, 0);
 }
