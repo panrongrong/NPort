@@ -28,7 +28,7 @@
 #define LED_ON  1
 #define LED_OFF 0
 
-// #define DEBUG
+#define DEBUG
 #ifdef DEBUG
 #define DEBUG_PRINT(fmt, ...) \
 		do { \
@@ -109,6 +109,8 @@ UART_Config_Params uart_instances[NUM_PORTS];
 uart_led_stat_t uart_led_stats[NUM_PORTS];
 static int  sys_tick = 0;
 
+#define HEARTBEAT_INTERVAL_SEC 5  // 5秒间隔
+#define MAX_HEARTBEAT_TASKS 16    // 最大任务数
 
 /*** 启动计时 ***/
 void timeStart(TimeCounter *tc)
@@ -316,22 +318,32 @@ void check_tcp_cmd_timeouts(void)
 {
 	int i;
 	ULONG now = tickGet();
-	ULONG timeout_ticks = sysClkRateGet() * 60;  // 60秒空闲断开
+	ULONG timeout_ticks = sysClkRateGet() * 120;  // 60秒空闲断开
 
 	for (i = 0; i < NUM_PORTS; ++i)
 	{
 		UART_Config_Params *uart = &uart_instances[i];
 
-		if (uart->cmd_client_fd >= 0)
-		{
-			if ((now - uart->last_activity_time) > timeout_ticks)
-			{
-				DEBUG_PRINT("uart[%d] cmd client timeout, closing fd=%d", i, uart->cmd_client_fd);
-				close(uart->cmd_client_fd);
-				uart->cmd_client_fd = -1;
-				uart->sock_cmd_state = STATE_TCP_OPEN;
-			}
-		}
+//		if (uart->cmd_client_fd >= 0)
+//		{
+//			if ((now - uart->last_activity_time) > timeout_ticks)
+//			{
+//				DEBUG_PRINT("uart[%d] cmd client timeout, closing fd=%d", i, uart->cmd_client_fd);
+//				close(uart->cmd_client_fd);
+//				uart->cmd_client_fd = -1;
+//				uart->sock_cmd_state = STATE_TCP_OPEN;
+//			}
+//		}
+		if (uart->cmd_client_fd >= 0 && (now - uart->last_activity_time) > timeout_ticks) {
+            // 停止心跳任务
+			 UART_Config_Params *uart = &uart_instances[i];
+			 uart->is_active = FALSE;
+            DEBUG_PRINT("uart[%d] cmd client timeout, closing fd=%d", i, uart->cmd_client_fd);
+            close(uart->cmd_client_fd);
+            uart->cmd_client_fd = -1;
+            uart->sock_cmd_state = STATE_TCP_OPEN;
+        }
+		
 	}
 }
 
@@ -348,7 +360,7 @@ void multi_tcp_cmd_servers_loop(int unused)
 		uart_instances[i].last_activity_time = tickGet();
 		uart_instances[i].cmd_count = 0;
 	}
-
+	sys_tick = sysClkRateGet();
 	taskDelay(30);
 	printf("tcp cmd loop start ... sys_tick: %d\n", sysClkRateGet());
 
@@ -510,7 +522,7 @@ void check_tcp_data_timeouts(void)
 {
 	int i;
 	ULONG now = tickGet();
-	ULONG timeout_ticks = sysClkRateGet() * 60;   // 60秒超时
+	ULONG timeout_ticks = sysClkRateGet() * 120;   // 60秒超时
 
 	for (i = 0; i < NUM_PORTS; i++)
 	{
@@ -596,7 +608,7 @@ void multi_tcp_data_servers_loop(int unused)
 			check_tcp_data_timeouts();
 			continue;
 		}
-		
+
 		for (i = 0; i < NUM_PORTS; ++i)
 		{
 			UART_Config_Params *uart = &uart_instances[i];
@@ -608,7 +620,7 @@ void multi_tcp_data_servers_loop(int unused)
 				axi16550FIFOInit(i);
 				ring_buffer_init(&uart->data_rx, uart->rx_buffer, BUFFERCOM_SIZE);
 				ring_buffer_init(&uart->data_tx, uart->tx_buffer, BUFFERCOM_SIZE);
-				
+
 				int client_fd = accept(uart->sock_data, (struct sockaddr *)&caddr, &clen);
 				if (client_fd >= 0)
 				{
@@ -619,7 +631,7 @@ void multi_tcp_data_servers_loop(int unused)
 					DEBUG_PRINT("uart[%d] sock_data port %u client connected, fd=%d", i, uart->sock_data_port, client_fd);
 					//add port LED set	
 					Portled(i, 1);
-					
+
 
 					// 设置非阻塞并启用TCP keepalive
 					int flags = fcntl(client_fd, F_GETFL, 0);
@@ -707,6 +719,8 @@ void multi_tcp_data_servers_loop(int unused)
 		taskDelay(TCP_TASK_MIN_DELAY);
 	}  // end while
 }
+
+
 
 
 // 动态计算建议tick延时
@@ -889,6 +903,36 @@ void multi_uart_forward_loop(int unused)
 		taskDelay(UART_RX_FORWARD_TASK_MIN_DELAY);
 	}
 }
+//-------------------------------- 心跳 ----------------------------
+void heartbeat_async_task(void) {
+	while (1) {
+		taskDelay(100); // 降低CPU占用（100 tick约1秒，根据sysClkRate调整）
+
+		int i;
+		for (i = 0; i < MAX_HEARTBEAT_TASKS; i++) {
+			UART_Config_Params *task = &uart_instances[i];
+			if (!task->is_active) continue;
+
+			// 计算距离上次发送的时间间隔
+			unsigned int current_tick = tickGet();
+			unsigned int elapsed_ticks = current_tick - task->last_send_tick;
+			unsigned int interval_ticks = HEARTBEAT_INTERVAL_SEC * sysClkRateGet();
+
+			if (elapsed_ticks >= interval_ticks) {
+				// 发送心跳包
+				int ret = usart_report_hearbeat(task->cmd_client_fd,i);
+				if (ret == 0) {
+					task->last_send_tick = current_tick; // 更新时间戳
+					printf("Heartbeat sent to channel %d, socket %d\n", i, task->cmd_client_fd);
+				} else {
+					// 发送失败，停止任务
+					task->is_active = FALSE;
+					printf("Heartbeat failed, stop task for channel %d\n", i);
+				}
+			}
+		}
+	}
+}
 
 void InitUartTask(UART_Config_Params *uart_instances, int num_ports)
 {
@@ -1000,6 +1044,13 @@ void InitUartTask(UART_Config_Params *uart_instances, int num_ports)
 		goto exit;
 	}
 	tid =  taskSpawn("uartNetFwd", UART_RX_FORWARD_TASK_PRIO, 0, UART_TASK_STACK, (FUNCPTR)multi_uart_forward_loop, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+	if (tid == ERROR)
+	{
+		perror("uartNetFwd failed");
+		goto exit;
+	}
+	tid =   taskSpawn("heartbeat_async", 90, 0, 4000, 
+			(FUNCPTR)heartbeat_async_task, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 	if (tid == ERROR)
 	{
 		perror("uartNetFwd failed");
