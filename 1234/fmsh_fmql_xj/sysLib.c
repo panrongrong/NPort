@@ -1636,10 +1636,10 @@ void app_main(void)
 	taskDelay(10);
 	iptftps_start();
 #endif
-	startUartServer();
 
 	taskDelay(100);
-	startsetIpFromConfigtask();
+	startsetIptask();
+	startUartServer();
 	taskDelay(10);
 	startmaintask();
 	return;
