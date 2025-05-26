@@ -68,8 +68,6 @@
 #define MCR_DTR 0x01          /*DTR（Data Terminal Ready）位*/
 #define MCR_RTS 0x02          /* RTS（Request To Send）位*/
 
-// 静态变量记录上次收到数据的时间
-static time_t last_receive_time = 0;
 const int bauderate_table[] = { 300, 600, 1200, 2400, 4800, 7200, 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600, 150, 134, 110, 75, 50};
 const unsigned int data_bit_table[] = { 5, 6, 7, 8 };
 void uart_task(unsigned int channel);
@@ -112,7 +110,7 @@ int  init_usart(UART_Config_Params *uart_instance,int client_socket, char *buf, 
 	/*data bit*/
 	data_bit = ((int)buf[3])& 0x03;
 	uart_instance->config.data_bit = data_bit_table[data_bit];
-	//	printf("data_bit: %d\n", uart_instance->config.data_bit);
+//	printf("data_bit: %d\n", uart_instance->config.data_bit);
 
 	/*stop bit*/
 	stop_bit = ((int)buf[3])& 0x04;
@@ -178,11 +176,11 @@ int  init_usart(UART_Config_Params *uart_instance,int client_socket, char *buf, 
 		mcr_reg &= ~MCR_RTS;
 	}
 	/* 写入更新后的 MCR 寄存器值*/
-	//	userAxiCfgWrite(channel, AXI_16550_MCR, mcr_reg);
+//	userAxiCfgWrite(channel, AXI_16550_MCR, mcr_reg);
 
 	uart_instance->config.usart_crtscts = (unsigned char)buf[6];
 
-	/*
+/*
 //	if(uart_instance->config.IX_on == (int)buf[7])
 //	{
 //		send_xon_xoff_char(channel, 1);
@@ -191,8 +189,8 @@ int  init_usart(UART_Config_Params *uart_instance,int client_socket, char *buf, 
 //	{
 //		send_xon_xoff_char(channel, 0);
 //	}
-	 * 
-	 * */
+ * 
+ * */
 
 	//打包数据
 	pack_buf[0] = buf[0];
@@ -252,11 +250,11 @@ int usart_set_xon_xoff(int client_socket,int channel, char *buf, int buf_len)
 	if( (strcmp(&buf[2], "VSTART")) == 0)
 	{
 		/*调用AXI_api设置XonXoff*/
-		/*		send_xon_xoff_char(channel, 1); // 发送 XON*/
+/*		send_xon_xoff_char(channel, 1); // 发送 XON*/
 	}
 	else if( (strcmp(&buf[2], "VSTOP")) == 0)
 	{
-		/*		send_xon_xoff_char(channel, 0); // 发送 XOFF*/
+/*		send_xon_xoff_char(channel, 0); // 发送 XOFF*/
 	}
 
 	/*返回数据给中间件*/
@@ -294,7 +292,7 @@ int usart_set_tx_fifo(int client_socket,int channel, char *buf, int buf_len)
 	} else if (fifo_size == 16) {
 		fcr_value |= FCR_TRIGGER_LEVEL_16;
 	}
-	//	userAxiCfgWrite(channel, AXI_16550_FCR, fcr_value);
+//	userAxiCfgWrite(channel, AXI_16550_FCR, fcr_value);
 
 	char response[3] = {0};
 	response[0] = buf[0];         
@@ -302,7 +300,7 @@ int usart_set_tx_fifo(int client_socket,int channel, char *buf, int buf_len)
 	response[2] = 'K';            
 	/*返回数据给中间件*/
 	ret = socket_send_to_middle(client_socket, response, sizeof(response));
-
+	
 	if(ret < 0)
 	{
 		/*printf("send error\n");*/
@@ -357,7 +355,7 @@ int usart_set_line_control(int client_socket,int channel, char *buf, int buf_len
 int usart_set_xon(int client_socket,int channel, char *buf, int buf_len)
 {
 	int ret;
-	/*	send_xon_xoff_char(channel, 1);*/
+/*	send_xon_xoff_char(channel, 1);*/
 	char response[3] = {0};
 	response[0] = buf[0];         
 	response[1] = 'O';            
@@ -377,7 +375,7 @@ int usart_set_xon(int client_socket,int channel, char *buf, int buf_len)
 int usart_set_xoff(int client_socket,int channel, char *buf, int buf_len)
 {
 	int ret;
-	/*	send_xon_xoff_char(channel, 0);*/
+/*	send_xon_xoff_char(channel, 0);*/
 	char response[3] = {0};
 	response[0] = buf[0];         
 	response[1] = 'O';            
@@ -397,7 +395,6 @@ int usart_set_xoff(int client_socket,int channel, char *buf, int buf_len)
 
 int usart_set_start_break(int client_socket,int channel, char *buf, int buf_len)
 {
-	//	printf("send usart_set_start_break\n");
 	axi16550SendStartBreak(channel);
 	int ret;
 	char response[3] = {0};
@@ -416,9 +413,30 @@ int usart_set_start_break(int client_socket,int channel, char *buf, int buf_len)
 
 }
 
+void usart_report_hearbeat(int client_socket, char *buf, int buf_len)
+{
+    int ret;
+
+    // 定义心跳包数据
+    unsigned char heartbeat_buf[3] = {0};
+    heartbeat_buf[0] = 0x27; // 心跳命令
+    heartbeat_buf[1] = 0x02;            // 数据长度
+    heartbeat_buf[2] = 0x01;            // 心跳数据（可以自定义）
+
+    // 打包数据并通过套接字发送给中间件
+    ret = socket_send_to_middle(client_socket, (char *)heartbeat_buf, sizeof(heartbeat_buf));
+    if (ret < 0)
+    {
+        perror("send heartbeat failed");
+        return;
+    }
+
+    printf("Heartbeat sent to client fd=%d", client_socket);
+}
+
+
 int usart_set_stop_break(int client_socket,int channel, char *buf, int buf_len)
 {
-	//	printf("send usart_set_stop_break\n");
 	int ret;
 	axi16550SendStopBreak(channel);
 	char response[3] = {0};
@@ -436,68 +454,6 @@ int usart_set_stop_break(int client_socket,int channel, char *buf, int buf_len)
 	return 0 ;
 
 }
-
-//// 心跳任务入口函数
-//void heartbeat_task(int client_socket) {
-//	while (1) {
-//		usart_report_hearbeat(client_socket);  // 主动调用心跳函数
-//		taskDelay(100);  // 降低检查频率（单位：tick，需根据 sysClkRate 调整）
-//	}
-//}
-//
-//// 在初始化中启动心跳任务
-//int start_heartbeat_task(int client_socket) {
-//	TASK_ID taskId = taskSpawn("heartbeat_task", 100, 0, 2000, 
-//			(FUNCPTR)heartbeat_task, 
-//			client_socket, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-//	if (taskId < 0) {
-//		printf("Failed to start heartbeat task\n");
-//		return -1;
-//	}
-//	return 0;
-//}
-usart_report_hearbeat(int client_socket, int channel)
-{
-//	time_t current_time = time(NULL); // 获取当前时间
-//
-//	// 首次调用或未收到数据时，更新时间并返回（不发送心跳）
-//	if (last_receive_time == 0) {
-//		last_receive_time = current_time;
-//		return 0;
-//	}
-//
-//	// 计算距离上次收到数据的时间间隔
-//	if (current_time - last_receive_time < 10) {
-//		// 未到5秒，不发送心跳
-//		return 0;
-//	}
-//	else if(current_time - last_receive_time == 10)
-//	{
-//		char pack_buf[3] = {0x27, 0x01, 0x24};
-//
-//		int ret = socket_send_to_middle(client_socket, pack_buf, sizeof(pack_buf));
-//		if (ret < 0) {
-//			return -1;
-//		}
-//
-//		// 更新上次发送时间为当前时间
-//		last_receive_time = current_time;
-//	}
-	 char pack_buf[3] = {0x27, 0x01, 0x24}; // 假设0x27是心跳回复命令
-	    int ret = socket_send_to_middle(client_socket, pack_buf, sizeof(pack_buf));
-	    
-	    if (ret == 0) {
-	        // 模拟收到中间件回复（实际需根据协议解析）
-	        // 这里假设回复成功后重置计时
-	    	UART_Config_Params *task = &uart_instances[channel];
-	    	task->last_send_tick = tickGet();
-	        return 0; // 成功
-	    } else {
-	        return -1; // 失败
-	    }
-	return 0;
-}
-
 
 int usart_report_queue(int client_socket, char *buf, int buf_len)
 {
@@ -543,7 +499,7 @@ int usart_close(int client_socket, char *buf, int buf_len)
 
 void handle_command(UART_Config_Params *uart_instance,int client_socket, char *buf, int buf_len, int channel) 
 {
-	//	printf("handle_command\r\n");
+//	printf("handle_command\r\n");
 	/*解析数据*/
 	unsigned char cmd = buf[0];
 	unsigned char data_len = buf[1];
@@ -598,31 +554,21 @@ void handle_command(UART_Config_Params *uart_instance,int client_socket, char *b
 
 	case ASPP_CMD_START_BREAK:
 	{
-		//		printf("send ASPP_CMD_START_BREAK\n");
+		printf("ASPP_CMD_START_BREAK\n");
 		usart_set_start_break(client_socket, channel, buf, data_len);
 		break;
 	}
 
 	case ASPP_CMD_STOP_BREAK:
 	{   
-		//		printf("send ASPP_CMD_STOP_BREAK\n");
+		printf("ASPP_CMD_STOP_BREAK\n");
 		usart_set_stop_break(client_socket, channel, buf, data_len);
-
 		break;
 	}
 
 	case ASPP_CMD_ALIVE:
 	{
-		//		usart_report_hearbeat(client_socket);
-		UART_Config_Params *task = &uart_instances[channel];
-			if (!task->is_active) {
-				
-				task->cmd_client_fd = client_socket;
-				task->last_send_tick = tickGet(); // 初始时间设为当前时间
-				task->is_active = TRUE;
-				printf("Activate heartbeat task for channel %d, socket %d\n", channel, client_socket);
-				break;
-			}
+//		 usart_report_hearbeat(client_socket, buf, data_len);
 		break;
 	}
 
@@ -647,7 +593,4 @@ void handle_command(UART_Config_Params *uart_instance,int client_socket, char *b
 
 	}
 }
-
-
-
 
