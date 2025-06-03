@@ -438,7 +438,9 @@ LOCAL void genPhyInit
 #else
      taskDelay(10);  /* for 32s-phy */
 #endif
-
+	phy_write(gmac_phyaddr, 0, 0x0, 0x1140);    
+	phy_write(gmac_phyaddr, 0, 0x1e , 0xa003);    
+	phy_write(gmac_phyaddr, 0, 0x1f , 0xcf3);    
 
      reg = phy_read(gmac_phyaddr, 0, 0); /* reg-0*/
      printf("phy reg-0 = 0x%x\n", reg);
