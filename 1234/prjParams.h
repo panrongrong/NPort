@@ -2,7 +2,7 @@
 
 
 /*
-GENERATED: Fri May 09 20:27:07 +0900 2025
+GENERATED: Tue Jun 03 19:37:04 +0900 2025
 DO NOT EDIT - file is regenerated whenever the project changes
 */
 
@@ -73,6 +73,7 @@ DO NOT EDIT - file is regenerated whenever the project changes
 #define INCLUDE_DEBUG
 #define INCLUDE_DEBUG_SHELL_CMD
 #define INCLUDE_DEVICE_MANAGER
+#define INCLUDE_DIAB_INTRINSICS
 #define INCLUDE_DISK_UTIL
 #define INCLUDE_DISK_UTIL_SHELL_CMD
 #define INCLUDE_DLL
@@ -112,7 +113,6 @@ DO NOT EDIT - file is regenerated whenever the project changes
 #define INCLUDE_FTP
 #define INCLUDE_GENERICPHY
 #define INCLUDE_GETOPT
-#define INCLUDE_GNU_INTRINSICS
 #define INCLUDE_HANDLE_SHOW
 #define INCLUDE_HASH
 #define INCLUDE_HOOKS
@@ -405,7 +405,7 @@ DO NOT EDIT - file is regenerated whenever the project changes
 #undef INCLUDE_BMPLIB
 #undef INCLUDE_CPLUS
 #undef INCLUDE_CPLUS_LANG
-#undef INCLUDE_DIAB_INTRINSICS
+#undef INCLUDE_GNU_INTRINSICS
 #undef INCLUDE_ICC_INTRINSICS
 #undef INCLUDE_NO_INTRINSICS
 #undef INCLUDE_CPLUS_IOSTREAMS
@@ -1690,7 +1690,7 @@ DO NOT EDIT - file is regenerated whenever the project changes
 #undef  STACK_SAVE
 #define STACK_SAVE 4096
 #undef  RAM_HIGH_ADRS
-#define RAM_HIGH_ADRS 0x10000000
+#define RAM_HIGH_ADRS 0x4000000
 #undef  RAM_LOW_ADRS
 #define RAM_LOW_ADRS 0x200000
 #undef  ROM_BASE_ADRS
@@ -2046,11 +2046,11 @@ DO NOT EDIT - file is regenerated whenever the project changes
 #undef  IPNET_MAX_DGRAM_FRAG_LIST_LEN
 #define IPNET_MAX_DGRAM_FRAG_LIST_LEN 100
 #undef  IPNET_SLAB_DESC_0
-#define IPNET_SLAB_DESC_0 IPNET_ETH_MTU, IPCOM_SLAB_F_AVERAGE
+#define IPNET_SLAB_DESC_0 IPNET_ETH_MTU,              IPCOM_SLAB_F_AVERAGE
 #undef  IPNET_SLAB_DESC_1
-#define IPNET_SLAB_DESC_1 3000, IPCOM_SLAB_F_FEW
+#define IPNET_SLAB_DESC_1 3000,                       IPCOM_SLAB_F_FEW
 #undef  IPNET_SLAB_DESC_2
-#define IPNET_SLAB_DESC_2 10000, IPCOM_SLAB_F_ONE
+#define IPNET_SLAB_DESC_2 10000,                      IPCOM_SLAB_F_ONE
 #undef  IPNET_SLAB_DESC_3
 #define IPNET_SLAB_DESC_3 IPNET_PKT_POOL_MAX_MTU + 1, IPCOM_SLAB_F_ONE
 #undef  IPNET_SLAB_DESC_4

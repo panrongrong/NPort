@@ -21,21 +21,21 @@ MAKEFILE := Makefile
 
 BUILD_SPEC := default
 SRC_DIR := .
-PRJ_ROOT_DIR := D:/vxworkspace/FMSH/1234
-WS_ROOT_DIR := D:/vxworkspace/FMSH
+PRJ_ROOT_DIR := F:/4.VX/Prj/nports
+WS_ROOT_DIR := F:/4.VX/Prj
 
 ALL_BUILD_SPECS := default default_rom default_romCompress default_romResident
 ENABLED_BUILD_SPECS := $(ALL_BUILD_SPECS)
 
 PROJECT_TYPE := VIP
 
-BSP_DIR := D:/WindRiver69_new/WindRiver69_new/vxworks-6.9/target/config/fmsh_fmql_xj
+BSP_DIR := F:/4.VX/vx/WindRiver69/vxworks-6.9/target/config/fmsh_fmql_xj
 BSP := fmsh_fmql_xj
 
 VX_CPU_FAMILY := arm
 CPU := _VX_ARMARCH7
-TOOL_FAMILY := gnu
-TOOL := gnu
+TOOL_FAMILY := diab
+TOOL := diab
 
 ifeq ($(BUILD_SPEC),default)
 OBJ_DIR := default

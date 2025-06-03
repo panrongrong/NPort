@@ -2,7 +2,7 @@
 #
 
 
-# GENERATED: Mon Apr 14 17:38:29 +0900 2025
+# GENERATED: Tue Jun 03 19:34:46 +0900 2025
 # DO NOT EDIT - file is regenerated whenever the project changes
 
 
@@ -13,10 +13,10 @@ PRJ_DIR        = ..
 else
 PRJ_DIR        = .
 endif
-PRJ_FILE       = 1234.wpj
-PRJ_FULL_PATH  = D:/vxworkspace/FMSH/1234
+PRJ_FILE       = nports.wpj
+PRJ_FULL_PATH  = F:/4.VX/Prj/nports
 PRJ_TYPE       = vxWorks
-PRJ_OBJS       = sysALib.o sysLib.o usrAppInit.o usrRtpAppInit.o prjConfig.o linkSyms.o
+PRJ_OBJS       = sysALib.o sysLib.o usrAppInit.o usrRtpAppInit.o prjConfig.o linkSyms.o net_bridge.o serial_bridge.o ringbuffer.o axi16550.o net_cmd.o net_setting.o spi_oled.o
 PRJ_MAKEFILE   = $(PRJ_DIR)/Makefile.mk
 BOOT_OBJS      =  $(BOOT_EXTRA)
 BUILD_SPEC     = default
@@ -37,8 +37,8 @@ vpath %.s $(BSP_DIR)
 ## build-configuration info
 
 CPU            = ARMARCH7
-TOOL           = gnu
-TOOL_FAMILY    = gnu
+TOOL           = diab
+TOOL_FAMILY    = diab
 ifeq ($(BUILD_SPEC),default)
 DEFAULT_RULE   = vxWorks
 endif
@@ -128,6 +128,7 @@ COMPONENTS = DRV_ARM_GIC \
 	INCLUDE_DEBUG \
 	INCLUDE_DEBUG_SHELL_CMD \
 	INCLUDE_DEVICE_MANAGER \
+	INCLUDE_DIAB_INTRINSICS \
 	INCLUDE_DISK_UTIL \
 	INCLUDE_DISK_UTIL_SHELL_CMD \
 	INCLUDE_DLL \
@@ -167,7 +168,6 @@ COMPONENTS = DRV_ARM_GIC \
 	INCLUDE_FTP \
 	INCLUDE_GENERICPHY \
 	INCLUDE_GETOPT \
-	INCLUDE_GNU_INTRINSICS \
 	INCLUDE_HANDLE_SHOW \
 	INCLUDE_HASH \
 	INCLUDE_HOOKS \
@@ -188,7 +188,6 @@ COMPONENTS = DRV_ARM_GIC \
 	INCLUDE_IO_SYSTEM \
 	INCLUDE_IPAIP \
 	INCLUDE_IPAIP_GLOBAL_CONFIGS \
-	INCLUDE_IPATTACH \
 	INCLUDE_IPCOM \
 	INCLUDE_IPCOM_SHELL_CMD \
 	INCLUDE_IPCOM_USE_AUTH \
@@ -211,7 +210,6 @@ COMPONENTS = DRV_ARM_GIC \
 	INCLUDE_IPWRAP_GETIFADDRS \
 	INCLUDE_IPWRAP_IFCONFIG \
 	INCLUDE_IPWRAP_INETLIB \
-	INCLUDE_IPWRAP_IPPROTO \
 	INCLUDE_IPWRAP_PING \
 	INCLUDE_ISR_DEFER \
 	INCLUDE_JOB_DEFER \
@@ -415,41 +413,38 @@ include $(TGT_DIR)/h/make/defs.project
 ## build-configuration info
 
 ifeq ($(BUILD_SPEC),default)
-AS               = ccarm
+AS               = dcc
 BOOT_EXTRA       = 
-CC               = ccarm
-CFLAGS_AS_PROJECT = -g -fno-builtin -t7 -mfpu=vfp -mfloat-abi=softfp -ansi -fno-zero-initialized-in-bss -I$(TGT_DIR)/config/all -I$(TGT_DIR)/h -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h @./ipcom_ipdomain -I. -I$(TGT_DIR)/h/wrn/coreip -I$(TGT_DIR)/src/config -I$(TGT_DIR)/config/comps/src -I$(TGT_DIR)/config/comps/src/dosfs2 -I$(TGT_DIR)/src/drv -I$(TGT_DIR)/src/hwif/h -DCPU=_VX_ARMARCH7 -DTOOL_FAMILY=gnu -DTOOL=gnu -D_WRS_KERNEL -DARMEL -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET -xassembler-with-cpp -D_VSB_CONFIG_FILE=\"$(VSB_CONFIG_FILE)\" -I$(VSB_INCLUDE_DIR)
-CFLAGS_PROJECT   = -g -fno-builtin -t7 -mfpu=vfp -mfloat-abi=softfp -ansi -fno-zero-initialized-in-bss -Wall -I$(TGT_DIR)/config/all -I$(TGT_DIR)/h -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h @./ipcom_ipdomain -I. -I$(TGT_DIR)/h/wrn/coreip -I$(TGT_DIR)/src/config -I$(TGT_DIR)/config/comps/src -I$(TGT_DIR)/config/comps/src/dosfs2 -I$(TGT_DIR)/src/drv -I$(TGT_DIR)/src/hwif/h -DCPU=_VX_ARMARCH7 -DTOOL_FAMILY=gnu -DTOOL=gnu -D_WRS_KERNEL -DARMEL -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET -D_VSB_CONFIG_FILE=\"$(VSB_CONFIG_FILE)\" -I$(VSB_INCLUDE_DIR)
+CC               = dcc
+CFLAGS_AS_PROJECT = -g -tARMV7LV:vxworks69 -W:c:,-Xclib-optim-off -W:c++:,-Xclib-optim-off -Xansi -Xlocal-data-area-static-only -W:c++:.CPP -Xfp-fast -Xc-new -Xdialect-c89 -Xsize-opt -I$(TGT_DIR)/config/all -I$(TGT_DIR)/h -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h -@./ipcom_ipdomain -I. -I$(TGT_DIR)/h/wrn/coreip -I$(TGT_DIR)/src/config -I$(TGT_DIR)/config/comps/src -I$(TGT_DIR)/config/comps/src/dosfs2 -I$(TGT_DIR)/src/drv -I$(TGT_DIR)/src/hwif/h -DCPU=_VX_ARMARCH7 -DTOOL_FAMILY=diab -DTOOL=diab -D_WRS_KERNEL -DARMEL -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET -Xpreprocess-assembly -Xcpp-no-space -Wa,-Xlit-auto-off -Wa,-Xenable-coprocessor-vfp -D_VSB_CONFIG_FILE=\"$(VSB_CONFIG_FILE)\" -I$(VSB_INCLUDE_DIR)
+CFLAGS_PROJECT   = -g -tARMV7LV:vxworks69 -W:c:,-Xclib-optim-off -W:c++:,-Xclib-optim-off -Xansi -Xlocal-data-area-static-only -W:c++:.CPP -Xfp-fast -Xsize-opt -W:c:,-Xmismatch-warning=2 -ew1554,1551,1552,1086,1047,1547 -ei1516,1643,1604 -ei1518,4177,4223,4301,4550,5409,1606 -ei4193,4826,4381,4237,1573,4007,4082,4177,4223,4260,4550,5361,5828,2273,5387,5388 -ei1522,4092,4111,4152,4167,4171,4174,4186,4188,4191,4192,4223,4231,4236,4284,4375,4494,4513,5152,5457 -I$(TGT_DIR)/config/all -I$(TGT_DIR)/h -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h -@./ipcom_ipdomain -I. -I$(TGT_DIR)/h/wrn/coreip -I$(TGT_DIR)/src/config -I$(TGT_DIR)/config/comps/src -I$(TGT_DIR)/config/comps/src/dosfs2 -I$(TGT_DIR)/src/drv -I$(TGT_DIR)/src/hwif/h -DCPU=_VX_ARMARCH7 -DTOOL_FAMILY=diab -DTOOL=diab -D_WRS_KERNEL -DARMEL -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET -D_VSB_CONFIG_FILE=\"$(VSB_CONFIG_FILE)\" -I$(VSB_INCLUDE_DIR)
 EXTRA_DEFINE     = -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET
-EXTRA_INCLUDE    = -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h @./ipcom_ipdomain
+EXTRA_INCLUDE    = -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h -@./ipcom_ipdomain
 EXTRA_MODULES    = $(SUB_TARGETS)
-LD_LINK_PATH     = -L$(VSB_DIR)/arm/ARMARCH7/gnu_standard -L$(VSB_DIR)/arm/ARMARCH7/gnu -L$(VSB_DIR)/arm/ARMARCH7/common -L$(VSB_DIR)/arm/ARMARCH7/gnu -L$(VSB_DIR)/arm/ARMARCH7/common -L$(WS_ROOT_DIR)/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/gnu -L$(WS_ROOT_DIR)/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/common -L$(WIND_HOME)/components/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/gnu -L$(WIND_HOME)/components/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/common
+LD_LINK_PATH     = -L$(VSB_DIR)/arm/ARMARCH7/diab_standard -L$(VSB_DIR)/arm/ARMARCH7/diab -L$(VSB_DIR)/arm/ARMARCH7/common -L$(VSB_DIR)/arm/ARMARCH7/diab -L$(VSB_DIR)/arm/ARMARCH7/common -L$(WS_ROOT_DIR)/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/diab -L$(WS_ROOT_DIR)/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/common -L$(WIND_HOME)/components/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/diab -L$(WIND_HOME)/components/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/common
 LIBS             = $(VX_OS_LIBS)
-OPTION_DEPEND    = -M -w
-OPTION_LANG_C    = -xc
-POST_BUILD_RULE  = cp vxWorks ../r123
+OPTION_DEPEND    = -Xmake-dependency -w
 RELEASE_CMD      = bootrom.bin
 USER_CFLAGS      = <put your custom flags here>
 USE_USER_FLAGS   = NO
 VFPVARIANT       = VFPv3
 VMA_START        = 0x$(ROM_TEXT_ADRS)
-_USER_CFLAGS     = -std=c99
+POST_BUILD_RULE  = 
 POST_HEX_BUILD_RULE = 
 endif
 
 ifeq ($(BUILD_SPEC),default_rom)
-AS               = ccarm
+AS               = dcc
 BOOT_EXTRA       = 
-CC               = ccarm
-CFLAGS_AS_PROJECT = -g -fno-builtin -t7 -mfpu=vfp -mfloat-abi=softfp -ansi -fno-zero-initialized-in-bss -I$(TGT_DIR)/config/all -I$(TGT_DIR)/h -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h @./ipcom_ipdomain -I. -I$(TGT_DIR)/h/wrn/coreip -I$(TGT_DIR)/src/config -I$(TGT_DIR)/config/comps/src -I$(TGT_DIR)/config/comps/src/dosfs2 -I$(TGT_DIR)/src/drv -I$(TGT_DIR)/src/hwif/h -DCPU=_VX_ARMARCH7 -DTOOL_FAMILY=gnu -DTOOL=gnu -D_WRS_KERNEL -DARMEL -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET -xassembler-with-cpp -D_VSB_CONFIG_FILE=\"$(VSB_CONFIG_FILE)\" -I$(VSB_INCLUDE_DIR)
-CFLAGS_PROJECT   = -g -fno-builtin -t7 -mfpu=vfp -mfloat-abi=softfp -ansi -fno-zero-initialized-in-bss -Wall -I$(TGT_DIR)/config/all -I$(TGT_DIR)/h -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h @./ipcom_ipdomain -I. -I$(TGT_DIR)/h/wrn/coreip -I$(TGT_DIR)/src/config -I$(TGT_DIR)/config/comps/src -I$(TGT_DIR)/config/comps/src/dosfs2 -I$(TGT_DIR)/src/drv -I$(TGT_DIR)/src/hwif/h -DCPU=_VX_ARMARCH7 -DTOOL_FAMILY=gnu -DTOOL=gnu -D_WRS_KERNEL -DARMEL -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET -D_VSB_CONFIG_FILE=\"$(VSB_CONFIG_FILE)\" -I$(VSB_INCLUDE_DIR)
+CC               = dcc
+CFLAGS_AS_PROJECT = -g -tARMV7LV:vxworks69 -W:c:,-Xclib-optim-off -W:c++:,-Xclib-optim-off -Xansi -Xlocal-data-area-static-only -W:c++:.CPP -Xfp-fast -Xc-new -Xdialect-c89 -Xsize-opt -I$(TGT_DIR)/config/all -I$(TGT_DIR)/h -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h -@./ipcom_ipdomain -I. -I$(TGT_DIR)/h/wrn/coreip -I$(TGT_DIR)/src/config -I$(TGT_DIR)/config/comps/src -I$(TGT_DIR)/config/comps/src/dosfs2 -I$(TGT_DIR)/src/drv -I$(TGT_DIR)/src/hwif/h -DCPU=_VX_ARMARCH7 -DTOOL_FAMILY=diab -DTOOL=diab -D_WRS_KERNEL -DARMEL -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET -Xpreprocess-assembly -Xcpp-no-space -Wa,-Xlit-auto-off -Wa,-Xenable-coprocessor-vfp -D_VSB_CONFIG_FILE=\"$(VSB_CONFIG_FILE)\" -I$(VSB_INCLUDE_DIR)
+CFLAGS_PROJECT   = -g -tARMV7LV:vxworks69 -W:c:,-Xclib-optim-off -W:c++:,-Xclib-optim-off -Xansi -Xlocal-data-area-static-only -W:c++:.CPP -Xfp-fast -Xsize-opt -W:c:,-Xmismatch-warning=2 -ew1554,1551,1552,1086,1047,1547 -ei1516,1643,1604 -ei1518,4177,4223,4301,4550,5409,1606 -ei4193,4826,4381,4237,1573,4007,4082,4177,4223,4260,4550,5361,5828,2273,5387,5388 -ei1522,4092,4111,4152,4167,4171,4174,4186,4188,4191,4192,4223,4231,4236,4284,4375,4494,4513,5152,5457 -I$(TGT_DIR)/config/all -I$(TGT_DIR)/h -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h -@./ipcom_ipdomain -I. -I$(TGT_DIR)/h/wrn/coreip -I$(TGT_DIR)/src/config -I$(TGT_DIR)/config/comps/src -I$(TGT_DIR)/config/comps/src/dosfs2 -I$(TGT_DIR)/src/drv -I$(TGT_DIR)/src/hwif/h -DCPU=_VX_ARMARCH7 -DTOOL_FAMILY=diab -DTOOL=diab -D_WRS_KERNEL -DARMEL -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET -D_VSB_CONFIG_FILE=\"$(VSB_CONFIG_FILE)\" -I$(VSB_INCLUDE_DIR)
 EXTRA_DEFINE     = -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET
-EXTRA_INCLUDE    = -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h @./ipcom_ipdomain
+EXTRA_INCLUDE    = -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h -@./ipcom_ipdomain
 EXTRA_MODULES    = $(SUB_TARGETS)
-LD_LINK_PATH     = -L$(VSB_DIR)/arm/ARMARCH7/gnu_standard -L$(VSB_DIR)/arm/ARMARCH7/gnu -L$(VSB_DIR)/arm/ARMARCH7/common -L$(VSB_DIR)/arm/ARMARCH7/gnu -L$(VSB_DIR)/arm/ARMARCH7/common -L$(WS_ROOT_DIR)/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/gnu -L$(WS_ROOT_DIR)/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/common -L$(WIND_HOME)/components/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/gnu -L$(WIND_HOME)/components/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/common
+LD_LINK_PATH     = -L$(VSB_DIR)/arm/ARMARCH7/diab_standard -L$(VSB_DIR)/arm/ARMARCH7/diab -L$(VSB_DIR)/arm/ARMARCH7/common -L$(VSB_DIR)/arm/ARMARCH7/diab -L$(VSB_DIR)/arm/ARMARCH7/common -L$(WS_ROOT_DIR)/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/diab -L$(WS_ROOT_DIR)/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/common -L$(WIND_HOME)/components/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/diab -L$(WIND_HOME)/components/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/common
 LIBS             = $(VX_OS_LIBS)
-OPTION_DEPEND    = -M -w
-OPTION_LANG_C    = -xc
+OPTION_DEPEND    = -Xmake-dependency -w
 RELEASE_CMD      = bootrom.bin
 ROM_SIZE         = 00200000 # number of bytes of ROM space
 ROM_TEXT_ADRS    = 0fc00000 # ROM entry address
@@ -463,18 +458,17 @@ POST_HEX_BUILD_RULE =
 endif
 
 ifeq ($(BUILD_SPEC),default_romCompress)
-AS               = ccarm
+AS               = dcc
 BOOT_EXTRA       = 
-CC               = ccarm
-CFLAGS_AS_PROJECT = -g -fno-builtin -t7 -mfpu=vfp -mfloat-abi=softfp -ansi -fno-zero-initialized-in-bss -I$(TGT_DIR)/config/all -I$(TGT_DIR)/h -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h @./ipcom_ipdomain -I. -I$(TGT_DIR)/h/wrn/coreip -I$(TGT_DIR)/src/config -I$(TGT_DIR)/config/comps/src -I$(TGT_DIR)/config/comps/src/dosfs2 -I$(TGT_DIR)/src/drv -I$(TGT_DIR)/src/hwif/h -DCPU=_VX_ARMARCH7 -DTOOL_FAMILY=gnu -DTOOL=gnu -D_WRS_KERNEL -DARMEL -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET -xassembler-with-cpp -D_VSB_CONFIG_FILE=\"$(VSB_CONFIG_FILE)\" -I$(VSB_INCLUDE_DIR)
-CFLAGS_PROJECT   = -g -fno-builtin -t7 -mfpu=vfp -mfloat-abi=softfp -ansi -fno-zero-initialized-in-bss -Wall -I$(TGT_DIR)/config/all -I$(TGT_DIR)/h -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h @./ipcom_ipdomain -I. -I$(TGT_DIR)/h/wrn/coreip -I$(TGT_DIR)/src/config -I$(TGT_DIR)/config/comps/src -I$(TGT_DIR)/config/comps/src/dosfs2 -I$(TGT_DIR)/src/drv -I$(TGT_DIR)/src/hwif/h -DCPU=_VX_ARMARCH7 -DTOOL_FAMILY=gnu -DTOOL=gnu -D_WRS_KERNEL -DARMEL -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET -D_VSB_CONFIG_FILE=\"$(VSB_CONFIG_FILE)\" -I$(VSB_INCLUDE_DIR)
+CC               = dcc
+CFLAGS_AS_PROJECT = -g -tARMV7LV:vxworks69 -W:c:,-Xclib-optim-off -W:c++:,-Xclib-optim-off -Xansi -Xlocal-data-area-static-only -W:c++:.CPP -Xfp-fast -Xc-new -Xdialect-c89 -Xsize-opt -I$(TGT_DIR)/config/all -I$(TGT_DIR)/h -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h -@./ipcom_ipdomain -I. -I$(TGT_DIR)/h/wrn/coreip -I$(TGT_DIR)/src/config -I$(TGT_DIR)/config/comps/src -I$(TGT_DIR)/config/comps/src/dosfs2 -I$(TGT_DIR)/src/drv -I$(TGT_DIR)/src/hwif/h -DCPU=_VX_ARMARCH7 -DTOOL_FAMILY=diab -DTOOL=diab -D_WRS_KERNEL -DARMEL -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET -Xpreprocess-assembly -Xcpp-no-space -Wa,-Xlit-auto-off -Wa,-Xenable-coprocessor-vfp -D_VSB_CONFIG_FILE=\"$(VSB_CONFIG_FILE)\" -I$(VSB_INCLUDE_DIR)
+CFLAGS_PROJECT   = -g -tARMV7LV:vxworks69 -W:c:,-Xclib-optim-off -W:c++:,-Xclib-optim-off -Xansi -Xlocal-data-area-static-only -W:c++:.CPP -Xfp-fast -Xsize-opt -W:c:,-Xmismatch-warning=2 -ew1554,1551,1552,1086,1047,1547 -ei1516,1643,1604 -ei1518,4177,4223,4301,4550,5409,1606 -ei4193,4826,4381,4237,1573,4007,4082,4177,4223,4260,4550,5361,5828,2273,5387,5388 -ei1522,4092,4111,4152,4167,4171,4174,4186,4188,4191,4192,4223,4231,4236,4284,4375,4494,4513,5152,5457 -I$(TGT_DIR)/config/all -I$(TGT_DIR)/h -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h -@./ipcom_ipdomain -I. -I$(TGT_DIR)/h/wrn/coreip -I$(TGT_DIR)/src/config -I$(TGT_DIR)/config/comps/src -I$(TGT_DIR)/config/comps/src/dosfs2 -I$(TGT_DIR)/src/drv -I$(TGT_DIR)/src/hwif/h -DCPU=_VX_ARMARCH7 -DTOOL_FAMILY=diab -DTOOL=diab -D_WRS_KERNEL -DARMEL -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET -D_VSB_CONFIG_FILE=\"$(VSB_CONFIG_FILE)\" -I$(VSB_INCLUDE_DIR)
 EXTRA_DEFINE     = -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET
-EXTRA_INCLUDE    = -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h @./ipcom_ipdomain
+EXTRA_INCLUDE    = -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h -@./ipcom_ipdomain
 EXTRA_MODULES    = $(SUB_TARGETS)
-LD_LINK_PATH     = -L$(VSB_DIR)/arm/ARMARCH7/gnu_standard -L$(VSB_DIR)/arm/ARMARCH7/gnu -L$(VSB_DIR)/arm/ARMARCH7/common -L$(VSB_DIR)/arm/ARMARCH7/gnu -L$(VSB_DIR)/arm/ARMARCH7/common -L$(WS_ROOT_DIR)/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/gnu -L$(WS_ROOT_DIR)/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/common -L$(WIND_HOME)/components/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/gnu -L$(WIND_HOME)/components/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/common
+LD_LINK_PATH     = -L$(VSB_DIR)/arm/ARMARCH7/diab_standard -L$(VSB_DIR)/arm/ARMARCH7/diab -L$(VSB_DIR)/arm/ARMARCH7/common -L$(VSB_DIR)/arm/ARMARCH7/diab -L$(VSB_DIR)/arm/ARMARCH7/common -L$(WS_ROOT_DIR)/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/diab -L$(WS_ROOT_DIR)/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/common -L$(WIND_HOME)/components/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/diab -L$(WIND_HOME)/components/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/common
 LIBS             = $(VX_OS_LIBS)
-OPTION_DEPEND    = -M -w
-OPTION_LANG_C    = -xc
+OPTION_DEPEND    = -Xmake-dependency -w
 RELEASE_CMD      = bootrom.bin
 ROM_SIZE         = 00200000 # number of bytes of ROM space
 ROM_TEXT_ADRS    = 0fc00000 # ROM entry address
@@ -488,18 +482,17 @@ POST_HEX_BUILD_RULE =
 endif
 
 ifeq ($(BUILD_SPEC),default_romResident)
-AS               = ccarm
+AS               = dcc
 BOOT_EXTRA       = 
-CC               = ccarm
-CFLAGS_AS_PROJECT = -g -fno-builtin -t7 -mfpu=vfp -mfloat-abi=softfp -ansi -fno-zero-initialized-in-bss -I$(TGT_DIR)/config/all -I$(TGT_DIR)/h -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h @./ipcom_ipdomain -I. -I$(TGT_DIR)/h/wrn/coreip -I$(TGT_DIR)/src/config -I$(TGT_DIR)/config/comps/src -I$(TGT_DIR)/config/comps/src/dosfs2 -I$(TGT_DIR)/src/drv -I$(TGT_DIR)/src/hwif/h -DCPU=_VX_ARMARCH7 -DTOOL_FAMILY=gnu -DTOOL=gnu -D_WRS_KERNEL -DARMEL -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET -xassembler-with-cpp -D_VSB_CONFIG_FILE=\"$(VSB_CONFIG_FILE)\" -I$(VSB_INCLUDE_DIR)
-CFLAGS_PROJECT   = -g -fno-builtin -t7 -mfpu=vfp -mfloat-abi=softfp -ansi -fno-zero-initialized-in-bss -Wall -I$(TGT_DIR)/config/all -I$(TGT_DIR)/h -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h @./ipcom_ipdomain -I. -I$(TGT_DIR)/h/wrn/coreip -I$(TGT_DIR)/src/config -I$(TGT_DIR)/config/comps/src -I$(TGT_DIR)/config/comps/src/dosfs2 -I$(TGT_DIR)/src/drv -I$(TGT_DIR)/src/hwif/h -DCPU=_VX_ARMARCH7 -DTOOL_FAMILY=gnu -DTOOL=gnu -D_WRS_KERNEL -DARMEL -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET -D_VSB_CONFIG_FILE=\"$(VSB_CONFIG_FILE)\" -I$(VSB_INCLUDE_DIR)
+CC               = dcc
+CFLAGS_AS_PROJECT = -g -tARMV7LV:vxworks69 -W:c:,-Xclib-optim-off -W:c++:,-Xclib-optim-off -Xansi -Xlocal-data-area-static-only -W:c++:.CPP -Xfp-fast -Xc-new -Xdialect-c89 -Xsize-opt -I$(TGT_DIR)/config/all -I$(TGT_DIR)/h -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h -@./ipcom_ipdomain -I. -I$(TGT_DIR)/h/wrn/coreip -I$(TGT_DIR)/src/config -I$(TGT_DIR)/config/comps/src -I$(TGT_DIR)/config/comps/src/dosfs2 -I$(TGT_DIR)/src/drv -I$(TGT_DIR)/src/hwif/h -DCPU=_VX_ARMARCH7 -DTOOL_FAMILY=diab -DTOOL=diab -D_WRS_KERNEL -DARMEL -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET -Xpreprocess-assembly -Xcpp-no-space -Wa,-Xlit-auto-off -Wa,-Xenable-coprocessor-vfp -D_VSB_CONFIG_FILE=\"$(VSB_CONFIG_FILE)\" -I$(VSB_INCLUDE_DIR)
+CFLAGS_PROJECT   = -g -tARMV7LV:vxworks69 -W:c:,-Xclib-optim-off -W:c++:,-Xclib-optim-off -Xansi -Xlocal-data-area-static-only -W:c++:.CPP -Xfp-fast -Xsize-opt -W:c:,-Xmismatch-warning=2 -ew1554,1551,1552,1086,1047,1547 -ei1516,1643,1604 -ei1518,4177,4223,4301,4550,5409,1606 -ei4193,4826,4381,4237,1573,4007,4082,4177,4223,4260,4550,5361,5828,2273,5387,5388 -ei1522,4092,4111,4152,4167,4171,4174,4186,4188,4191,4192,4223,4231,4236,4284,4375,4494,4513,5152,5457 -I$(TGT_DIR)/config/all -I$(TGT_DIR)/h -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h -@./ipcom_ipdomain -I. -I$(TGT_DIR)/h/wrn/coreip -I$(TGT_DIR)/src/config -I$(TGT_DIR)/config/comps/src -I$(TGT_DIR)/config/comps/src/dosfs2 -I$(TGT_DIR)/src/drv -I$(TGT_DIR)/src/hwif/h -DCPU=_VX_ARMARCH7 -DTOOL_FAMILY=diab -DTOOL=diab -D_WRS_KERNEL -DARMEL -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET -D_VSB_CONFIG_FILE=\"$(VSB_CONFIG_FILE)\" -I$(VSB_INCLUDE_DIR)
 EXTRA_DEFINE     = -DCPU_CORTEXA8 -DARMMMU=ARMMMU_CORTEXA8 -DARMCACHE=ARMCACHE_CORTEXA15 -DARM_USE_VFP -DIP_PORT_VXWORKS=69 -DINET
-EXTRA_INCLUDE    = -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h @./ipcom_ipdomain
+EXTRA_INCLUDE    = -I$(WIND_HOME)/components/windml-5.4/src/include/vxworks-6.9 -I$(WIND_HOME)/components/windml-5.4/h -I$(WIND_HOME)/components/webservices-1.8/h -I$(WIND_HOME)/components/webcli-4.9/target/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/hostfs/h -I$(WIND_HOME)/components/tcf_agent-1.4/agent/src/tcflib -I$(WIND_HOME)/components/stacktrace-1.0/include -I$(WIND_HOME)/components/opc-3.2/h -I$(WIND_HOME)/components/dcom-2.3/h -I$(WIND_HOME)/components/cafe-0.1/hpc/include -I$(WIND_HOME)/components/cafe-0.1/cafe/include -I$(WIND_HOME)/components/cafe-0.1/vxworks/include -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/src -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/src -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/src -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/src -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/src -I$(WIND_HOME)/components/windml-5.4/osconfig/vxworks/h -I$(WIND_HOME)/components/tcf_agent-1.4/osconfig/vxworks/h -I$(WIND_HOME)/components/stacktrace-1.0/osconfig/vxworks/h -I$(WIND_HOME)/components/ip_net2-6.9/osconfig/vxworks/h -I$(WIND_HOME)/components/cafe-0.1/osconfig/vxworks/h -I$(TGT_DIR)/src/hwif -I$(TGT_DIR)/src/hwif/h -@./ipcom_ipdomain
 EXTRA_MODULES    = $(SUB_TARGETS)
-LD_LINK_PATH     = -L$(VSB_DIR)/arm/ARMARCH7/gnu_standard -L$(VSB_DIR)/arm/ARMARCH7/gnu -L$(VSB_DIR)/arm/ARMARCH7/common -L$(VSB_DIR)/arm/ARMARCH7/gnu -L$(VSB_DIR)/arm/ARMARCH7/common -L$(WS_ROOT_DIR)/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/gnu -L$(WS_ROOT_DIR)/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/common -L$(WIND_HOME)/components/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/gnu -L$(WIND_HOME)/components/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/common
+LD_LINK_PATH     = -L$(VSB_DIR)/arm/ARMARCH7/diab_standard -L$(VSB_DIR)/arm/ARMARCH7/diab -L$(VSB_DIR)/arm/ARMARCH7/common -L$(VSB_DIR)/arm/ARMARCH7/diab -L$(VSB_DIR)/arm/ARMARCH7/common -L$(WS_ROOT_DIR)/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/diab -L$(WS_ROOT_DIR)/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/common -L$(WIND_HOME)/components/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/diab -L$(WIND_HOME)/components/obj/vxworks-6.9/krnl/lib/arm/ARMARCH7/common
 LIBS             = $(VX_OS_LIBS)
-OPTION_DEPEND    = -M -w
-OPTION_LANG_C    = -xc
+OPTION_DEPEND    = -Xmake-dependency -w
 RELEASE_CMD      = bootrom.bin
 ROM_SIZE         = 00200000 # number of bytes of ROM space
 ROM_TEXT_ADRS    = 0fc00000 # ROM entry address
@@ -531,6 +524,34 @@ usrAppInit.o:  $(PRJ_DIR)/usrAppInit.c
 usrRtpAppInit.o:  $(PRJ_DIR)/usrRtpAppInit.c 
 	$(RM) usrRtpAppInit.o
 	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/usrRtpAppInit.c
+
+net_bridge.o:  $(PRJ_DIR)/net_bridge.c 
+	$(RM) net_bridge.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/net_bridge.c
+
+serial_bridge.o:  $(PRJ_DIR)/serial_bridge.c 
+	$(RM) serial_bridge.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/serial_bridge.c
+
+ringbuffer.o:  $(PRJ_DIR)/ringbuffer.c 
+	$(RM) ringbuffer.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/ringbuffer.c
+
+axi16550.o:  $(PRJ_DIR)/axi16550.c 
+	$(RM) axi16550.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/axi16550.c
+
+net_cmd.o:  $(PRJ_DIR)/net_cmd.c 
+	$(RM) net_cmd.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/net_cmd.c
+
+net_setting.o:  $(PRJ_DIR)/net_setting.c 
+	$(RM) net_setting.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/net_setting.c
+
+spi_oled.o:  $(PRJ_DIR)/spi_oled.c 
+	$(RM) spi_oled.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/spi_oled.c
 endif
 
 ifeq ($(BUILD_SPEC),default_rom)
@@ -542,6 +563,34 @@ usrAppInit.o:  $(PRJ_DIR)/usrAppInit.c
 usrRtpAppInit.o:  $(PRJ_DIR)/usrRtpAppInit.c 
 	$(RM) usrRtpAppInit.o
 	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/usrRtpAppInit.c
+
+net_bridge.o:  $(PRJ_DIR)/net_bridge.c 
+	$(RM) net_bridge.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/net_bridge.c
+
+serial_bridge.o:  $(PRJ_DIR)/serial_bridge.c 
+	$(RM) serial_bridge.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/serial_bridge.c
+
+ringbuffer.o:  $(PRJ_DIR)/ringbuffer.c 
+	$(RM) ringbuffer.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/ringbuffer.c
+
+axi16550.o:  $(PRJ_DIR)/axi16550.c 
+	$(RM) axi16550.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/axi16550.c
+
+net_cmd.o:  $(PRJ_DIR)/net_cmd.c 
+	$(RM) net_cmd.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/net_cmd.c
+
+net_setting.o:  $(PRJ_DIR)/net_setting.c 
+	$(RM) net_setting.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/net_setting.c
+
+spi_oled.o:  $(PRJ_DIR)/spi_oled.c 
+	$(RM) spi_oled.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/spi_oled.c
 endif
 
 ifeq ($(BUILD_SPEC),default_romCompress)
@@ -553,6 +602,34 @@ usrAppInit.o:  $(PRJ_DIR)/usrAppInit.c
 usrRtpAppInit.o:  $(PRJ_DIR)/usrRtpAppInit.c 
 	$(RM) usrRtpAppInit.o
 	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/usrRtpAppInit.c
+
+net_bridge.o:  $(PRJ_DIR)/net_bridge.c 
+	$(RM) net_bridge.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/net_bridge.c
+
+serial_bridge.o:  $(PRJ_DIR)/serial_bridge.c 
+	$(RM) serial_bridge.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/serial_bridge.c
+
+ringbuffer.o:  $(PRJ_DIR)/ringbuffer.c 
+	$(RM) ringbuffer.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/ringbuffer.c
+
+axi16550.o:  $(PRJ_DIR)/axi16550.c 
+	$(RM) axi16550.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/axi16550.c
+
+net_cmd.o:  $(PRJ_DIR)/net_cmd.c 
+	$(RM) net_cmd.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/net_cmd.c
+
+net_setting.o:  $(PRJ_DIR)/net_setting.c 
+	$(RM) net_setting.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/net_setting.c
+
+spi_oled.o:  $(PRJ_DIR)/spi_oled.c 
+	$(RM) spi_oled.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/spi_oled.c
 endif
 
 ifeq ($(BUILD_SPEC),default_romResident)
@@ -564,6 +641,34 @@ usrAppInit.o:  $(PRJ_DIR)/usrAppInit.c
 usrRtpAppInit.o:  $(PRJ_DIR)/usrRtpAppInit.c 
 	$(RM) usrRtpAppInit.o
 	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/usrRtpAppInit.c
+
+net_bridge.o:  $(PRJ_DIR)/net_bridge.c 
+	$(RM) net_bridge.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/net_bridge.c
+
+serial_bridge.o:  $(PRJ_DIR)/serial_bridge.c 
+	$(RM) serial_bridge.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/serial_bridge.c
+
+ringbuffer.o:  $(PRJ_DIR)/ringbuffer.c 
+	$(RM) ringbuffer.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/ringbuffer.c
+
+axi16550.o:  $(PRJ_DIR)/axi16550.c 
+	$(RM) axi16550.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/axi16550.c
+
+net_cmd.o:  $(PRJ_DIR)/net_cmd.c 
+	$(RM) net_cmd.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/net_cmd.c
+
+net_setting.o:  $(PRJ_DIR)/net_setting.c 
+	$(RM) net_setting.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/net_setting.c
+
+spi_oled.o:  $(PRJ_DIR)/spi_oled.c 
+	$(RM) spi_oled.o
+	$(CC) $(CFLAGS) $(CFLAGS_OPTIONS_ALL) -c $(PRJ_DIR)/spi_oled.c
 endif
 
 

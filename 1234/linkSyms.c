@@ -2,7 +2,7 @@
 
 
 /*
-GENERATED: Mon Apr 14 17:38:30 +0900 2025
+GENERATED: Tue Jun 03 19:37:04 +0900 2025
 DO NOT EDIT - file is regenerated whenever the project changes
 */
 
@@ -81,7 +81,6 @@ extern int inet_ntoa ();
 extern int inet_ntop ();
 extern int inet_pton ();
 extern int ioHelp ();
-extern int ipAttach ();
 extern int ipcom_register_dev_name_mapping ();
 extern int ipcom_start_shell_native ();
 extern int ipnet_cmd_ping ();
@@ -269,7 +268,6 @@ FUNC linkSyms [] = {
     inet_ntop,
     inet_pton,
     ioHelp,
-    ipAttach,
     ipcom_register_dev_name_mapping,
     ipcom_start_shell_native,
     ipnet_cmd_ping,

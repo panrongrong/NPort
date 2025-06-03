@@ -2,7 +2,7 @@
 
 
 /*
-GENERATED: Mon Apr 14 17:38:30 +0900 2025
+GENERATED: Tue Jun 03 19:37:04 +0900 2025
 DO NOT EDIT - file is regenerated whenever the project changes
 */
 
@@ -73,6 +73,7 @@ DO NOT EDIT - file is regenerated whenever the project changes
 #define INCLUDE_DEBUG
 #define INCLUDE_DEBUG_SHELL_CMD
 #define INCLUDE_DEVICE_MANAGER
+#define INCLUDE_DIAB_INTRINSICS
 #define INCLUDE_DISK_UTIL
 #define INCLUDE_DISK_UTIL_SHELL_CMD
 #define INCLUDE_DLL
@@ -112,7 +113,6 @@ DO NOT EDIT - file is regenerated whenever the project changes
 #define INCLUDE_FTP
 #define INCLUDE_GENERICPHY
 #define INCLUDE_GETOPT
-#define INCLUDE_GNU_INTRINSICS
 #define INCLUDE_HANDLE_SHOW
 #define INCLUDE_HASH
 #define INCLUDE_HOOKS
@@ -133,7 +133,6 @@ DO NOT EDIT - file is regenerated whenever the project changes
 #define INCLUDE_IO_SYSTEM
 #define INCLUDE_IPAIP
 #define INCLUDE_IPAIP_GLOBAL_CONFIGS
-#define INCLUDE_IPATTACH
 #define INCLUDE_IPCOM
 #define INCLUDE_IPCOM_SHELL_CMD
 #define INCLUDE_IPCOM_USE_AUTH
@@ -156,7 +155,6 @@ DO NOT EDIT - file is regenerated whenever the project changes
 #define INCLUDE_IPWRAP_GETIFADDRS
 #define INCLUDE_IPWRAP_IFCONFIG
 #define INCLUDE_IPWRAP_INETLIB
-#define INCLUDE_IPWRAP_IPPROTO
 #define INCLUDE_IPWRAP_PING
 #define INCLUDE_ISR_DEFER
 #define INCLUDE_JOB_DEFER
